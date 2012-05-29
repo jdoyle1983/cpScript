@@ -19,11 +19,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StdLib", "StdLib", "{481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic.StdLib.ConsoleIO", "libCpScript.Net.ObjectBasic.StdLib.ConsoleIO\libCpScript.Net.ObjectBasic.StdLib.ConsoleIO.csproj", "{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.StdLib.ConsoleIO", "libCpScript.Net.StdLib.ConsoleIO\libCpScript.Net.StdLib.ConsoleIO.csproj", "{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic.StdLib.FileIO", "libCpScript.Net.ObjectBasic.StdLib.FileIO\libCpScript.Net.ObjectBasic.StdLib.FileIO.csproj", "{0080B553-277D-4183-8D51-D3976D52357D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.StdLib.FileIO", "libCpScript.Net.StdLib.FileIO\libCpScript.Net.StdLib.FileIO.csproj", "{0080B553-277D-4183-8D51-D3976D52357D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic.StdLib.Math", "libCpScript.Net.ObjectBasic.StdLib.Math\libCpScript.Net.ObjectBasic.StdLib.Math.csproj", "{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.StdLib.Math", "libCpScript.Net.StdLib.Math\libCpScript.Net.StdLib.Math.csproj", "{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
