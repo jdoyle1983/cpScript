@@ -1,0 +1,159 @@
+LBL _Toy_Init
+POPB $this
+PUSH "Toy"
+POP $this:1
+PUSH "Base Toy"
+POP $this:2
+RTN
+LBL _Toy_ShowDetails
+POPB $this
+AB %toPrint
+PUSH "Type: "
+PUSH $this:1
+CAT
+PUSH " Name: "
+CAT
+PUSH $this:2
+CAT
+POP %toPrint
+PUSH %toPrint
+JMP WriteLine
+RTN
+LBL _Toy_EvenMoreDetails
+POPB $this
+AB %toPrint
+PUSH $this:2
+PUSH " -- "
+CAT
+PUSH $this:1
+CAT
+POP %toPrint
+PUSH %toPrint
+JMP WriteLine
+RTN
+LBL _Ball_Init
+POPB $this
+PUSH "Ball"
+POP $this:1
+PUSH "Basic Ball"
+POP $this:2
+PUSH 10
+POP $this:3
+RTN
+LBL _Ball_ShowDetails
+POPB $this
+AB %toPrint
+PUSH "Type: "
+PUSH $this:1
+CAT
+PUSH " Name: "
+CAT
+PUSH $this:2
+CAT
+PUSH " Size: "
+CAT
+PUSH $this:3
+CAT
+POP %toPrint
+PUSH %toPrint
+JMP WriteLine
+RTN
+LBL _Ball_AddToSize
+POP @1
+POPB $this
+PUSH $this:3
+PUSH @1
+ADD
+POP $this:3
+RTN
+LBL Add2Ints
+POP @2
+POP @1
+PUSH @2
+PUSH @1
+ADD
+RTN
+LBL Main
+PUSH "Param1"
+PUSH "Param2"
+PUSH "Param3"
+PUSH "Param4"
+PUSH "Param5"
+JMP ParamCheck
+PUSH "Start... FOR"
+JMP WriteLine
+AB %counter
+PUSH 0
+POP %counter
+MOV %counter, 100
+LBL _ForStart1
+PUSH %counter
+JMP WriteLine
+PUSH 10
+PUSH %counter
+SUB
+POP %counter
+JGE %counter, 0, _ForStart1
+PUSH "Start... WHILE"
+JMP WriteLine
+PUSH 0
+POP %counter
+AB %AllResults
+PUSH 1
+PUSH 9
+JMP Add2Ints
+POP %AllResults
+LBL _WhileTestStart2
+PUSH %counter
+PUSH %AllResults
+CL
+POP @1
+JN @1, True, _WhileEnd2
+PUSH %counter
+PUSH 10
+CL
+POP @2
+JN @2, True, _Skip4
+PUSH "< 10 : "
+PUSH %counter
+CAT
+JMP WriteLine
+LJMP _EndIf3
+LBL _Skip4
+PUSH %counter
+PUSH 10
+CGE
+PUSH %counter
+PUSH 50
+CLE
+CA
+POP @2
+JN @2, True, _Skip5
+PUSH ">= 10 AND <= 50 : "
+PUSH %counter
+CAT
+JMP WriteLine
+LJMP _EndIf3
+LBL _Skip5
+PUSH "> 50 : "
+PUSH %counter
+CAT
+JMP WriteLine
+LBL _EndIf3
+PUSH %counter
+PUSH 1
+ADD
+POP %counter
+LJMP _WhileTestStart2
+LBL _WhileEnd2
+ABS $myToy, 2
+PUSHB $myToy
+JMP _Toy_Init
+PUSHB $myToy
+JMP _Toy_ShowDetails
+ABS $myBall, 3
+PUSHB $myBall
+JMP _Ball_Init
+PUSHB $myBall
+JMP _Ball_ShowDetails
+RTN

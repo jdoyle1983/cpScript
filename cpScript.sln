@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CLI", "CLI", "{79AD5A44-EDC9-4219-BDED-D99A0BC82C8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cpInt", "cpInt\cpInt.csproj", "{1C9CF825-5667-4F07-8F63-CF422CAD0BAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cpObjCmp", "cpObjCmp\cpObjCmp.csproj", "{A5582C42-C6A2-4A3B-81CA-15BE791E0B8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{A76C3B3E-D827-4FCD-A1CD-94F3C15F9B0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cpScriptTest.Net", "cpScriptTest.Net\cpScriptTest.Net.csproj", "{18C70325-2F07-4687-ACDB-5D4F92F8269A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{37CA7073-D220-4DF4-8C1B-EFD581EF5AEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.Asm", "libCpScript.Net.Asm\libCpScript.Net.Asm.csproj", "{3E22C42D-F84A-4466-932F-AF5326DFDBE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic", "libCpScript.Net.ObjectBasic\libCpScript.Net.ObjectBasic.csproj", "{53631606-901F-4C0A-8D43-1A828B8094F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StdLib", "StdLib", "{481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic.StdLib.ConsoleIO", "libCpScript.Net.ObjectBasic.StdLib.ConsoleIO\libCpScript.Net.ObjectBasic.StdLib.ConsoleIO.csproj", "{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic.StdLib.FileIO", "libCpScript.Net.ObjectBasic.StdLib.FileIO\libCpScript.Net.ObjectBasic.StdLib.FileIO.csproj", "{0080B553-277D-4183-8D51-D3976D52357D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic.StdLib.Math", "libCpScript.Net.ObjectBasic.StdLib.Math\libCpScript.Net.ObjectBasic.StdLib.Math.csproj", "{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C9CF825-5667-4F07-8F63-CF422CAD0BAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C9CF825-5667-4F07-8F63-CF422CAD0BAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C9CF825-5667-4F07-8F63-CF422CAD0BAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C9CF825-5667-4F07-8F63-CF422CAD0BAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5582C42-C6A2-4A3B-81CA-15BE791E0B8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5582C42-C6A2-4A3B-81CA-15BE791E0B8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5582C42-C6A2-4A3B-81CA-15BE791E0B8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5582C42-C6A2-4A3B-81CA-15BE791E0B8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18C70325-2F07-4687-ACDB-5D4F92F8269A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18C70325-2F07-4687-ACDB-5D4F92F8269A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18C70325-2F07-4687-ACDB-5D4F92F8269A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18C70325-2F07-4687-ACDB-5D4F92F8269A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E22C42D-F84A-4466-932F-AF5326DFDBE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E22C42D-F84A-4466-932F-AF5326DFDBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E22C42D-F84A-4466-932F-AF5326DFDBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E22C42D-F84A-4466-932F-AF5326DFDBE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53631606-901F-4C0A-8D43-1A828B8094F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53631606-901F-4C0A-8D43-1A828B8094F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53631606-901F-4C0A-8D43-1A828B8094F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53631606-901F-4C0A-8D43-1A828B8094F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0080B553-277D-4183-8D51-D3976D52357D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0080B553-277D-4183-8D51-D3976D52357D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0080B553-277D-4183-8D51-D3976D52357D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0080B553-277D-4183-8D51-D3976D52357D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1C9CF825-5667-4F07-8F63-CF422CAD0BAE} = {79AD5A44-EDC9-4219-BDED-D99A0BC82C8B}
+		{A5582C42-C6A2-4A3B-81CA-15BE791E0B8E} = {79AD5A44-EDC9-4219-BDED-D99A0BC82C8B}
+		{18C70325-2F07-4687-ACDB-5D4F92F8269A} = {A76C3B3E-D827-4FCD-A1CD-94F3C15F9B0E}
+		{3E22C42D-F84A-4466-932F-AF5326DFDBE2} = {37CA7073-D220-4DF4-8C1B-EFD581EF5AEB}
+		{53631606-901F-4C0A-8D43-1A828B8094F5} = {37CA7073-D220-4DF4-8C1B-EFD581EF5AEB}
+		{481C2BC8-C6E5-4273-BEAB-1F76CDA83C81} = {37CA7073-D220-4DF4-8C1B-EFD581EF5AEB}
+		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
+		{0080B553-277D-4183-8D51-D3976D52357D} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
+		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = cpScriptTest.Net\cpScriptTest.Net.csproj
+	EndGlobalSection
+EndGlobal

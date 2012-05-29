@@ -1,0 +1,358 @@
+libCpScript ObjectBasic Reference Manual
+(c) 2012 Jason Doyle, All Rights Reserved
+
+I. 		Overview
+II.		Example Code
+
+
+
+I.		Overview
+
+libCpScript ObjectBasic (lcsob) is a BASIC like language, with full
+object support.  It compiles into libCpScript Assembly.  It supports
+extending of classes.
+
+
+II. 	Pre Processor Directives
+
+	#HostFunction [FUNC]	-	Informs the compiler there is a host
+				function that will be implemented at a later time.
+				This is required to allow the parser to recognize a
+				function name as a function, rather than a literal
+				string.
+				
+	#Include [PATH]			-	Include additional script code into
+				this script.  This script must be relative to the 
+				executing host application.
+				
+	#Lib [PATH]				-	Include a library in this script.
+				This script must be relative to the executing host
+				application.
+				
+				
+				
+II.		Example Code
+
+-- Lib/ConsoleIO.obh
+#Lib Lib/libCpScript.libConsoleIO.dll
+#HostFunction __StdLib__ConsoleIO__Write
+#HostFunction __StdLib__ConsoleIO__WriteLine
+#HostFunction __StdLib__ConsoleIO__ReadLine
+
+CLASS Console
+
+	METHOD STATIC Write(val)
+		__StdLib__ConsoleIO__Write(val)
+	END METHOD
+	
+	METHOD STATIC WriteLine(val)
+		__StdLib__ConsoleIO__WriteLine(val)
+	END METHOD
+	
+	METHOD STATIC ReadLine()
+		RETURN __StdLib__ConsoleIO__ReadLine()
+	END METHOD
+	
+END CLASS
+
+-- Lib/FileIO.obh
+#Lib Lib/libCpScript.libFileIO.dll
+#HostFunction __StdLib__FileIO__Open
+#HostFunction __StdLib__FileIO__WriteLine
+#HostFunction __StdLib__FileIO__ReadLine
+#HostFunction __StdLib__FileIO__Close
+#HostFunction __StdLib__FileIO__Eof
+
+CLASS File
+
+	PROP FileObj
+
+	METHOD Init()
+	END METHOD
+
+	METHOD OpenRead(filepath)
+		FileObj = __StdLib__FileIO__Open("r", filepath)
+	END METHOD
+	
+	METHOD OpenWrite(filepath)
+		FileObj = __StdLib__FileIO__Open("w", filepath)
+	END METHOD
+	
+	METHOD WriteLine(val)
+		__StdLib__FileIO__WriteLine(FileObj, val)
+	END METHOD
+	
+	METHOD ReadLine()
+		RETURN __StdLib__FileIO__ReadLine(FileObj)
+	END METHOD
+	
+	METHOD Close()
+		__StdLib__FileIO__Close(FileObj)
+	END METHOD
+	
+	METHOD Eof()
+		RETURN __StdLib__FileIO__Eof(FileObj)
+	END METHOD
+	
+END CLASS
+
+-- Lib/Math.obh
+#Lib Lib/libCpScript.libMath.dll
+#HostFunction __StdLib__Math__Abs
+#HostFunction __StdLib__Math__Floor
+#HostFunction __StdLib__Math__Ceiling
+
+CLASS Math
+
+	METHOD STATIC ABS(val)
+		RETURN __StdLib__Math__Abs(val)
+	END METHOD
+	
+	METHOD STATIC FLOOR(val)
+		RETURN __StdLib__Math__Floor(val)
+	END METHOD
+	
+	METHOD STATIC CEILING(val)
+		RETURN __StdLib__Math__Ceiling(val)
+	END METHOD
+	
+END CLASS
+
+-- Main Script
+#HostFunction ParamCheck
+#include Lib/ConsoleIO.obh
+#include Lib/FileIO.obh
+#include Lib/Math.obh
+
+CLASS BaseObject
+	PROP ObjectId
+	
+	METHOD Init()
+		ObjectId = 0
+	END METHOD
+END CLASS
+
+CLASS String EXTENDS BaseObject
+	PROP Value
+	
+	METHOD Init()
+		ObjectId = 1
+	END METHOD
+END CLASS
+
+CLASS StringBuilder EXTENDS String
+	METHOD Init()
+		ObjectId = 2
+	END METHOD
+	
+	METHOD Append(val)
+		Value = Value .. val
+	END METHOD
+
+	METHOD AppendLine(val)
+		Value = Value .. val .. "\n"
+	END METHOD
+END CLASS
+
+CLASS TestClass1
+	METHOD Init()
+	END METHOD
+	
+	METHOD ShouldDoSomething(myval)
+		Console.WriteLine(myval)
+	END METHOD
+END CLASS
+
+CLASS TestClass2
+	METHOD Init()
+	END METHOD
+	
+	METHOD DoSomething(myitem:TestClass1)
+	
+		myitem.ShouldDoSomething("Test Line")
+	
+	END METHOD
+END CLASS
+
+FUNCTION Main()
+
+	TestClass1 ts1
+	TestClass2 ts2
+	ts2.DoSomething(ts1)
+
+	File f1
+	f1.OpenWrite("output.txt")
+	f1.WriteLine("Line 1")
+	f1.WriteLine("Line 2")
+	f1.Close()
+	File f2
+	f2.OpenRead("output.txt")
+	Console.WriteLine(f2.ReadLine())
+	Console.WriteLine(f2.ReadLine())
+	f2.Close()
+	
+	Console.WriteLine("Function Main() Start")
+	ParamCheck("1","2","3","4","5")
+	StringBuilder builder
+	builder.AppendLine("Line 1")
+	builder.AppendLine("Line 2")
+	builder.AppendLine("Line 3")
+	builder.AppendLine("Live 4")
+	Console.WriteLine(builder.Value)
+	Console.WriteLine("Enter a String: ")
+	VAR Input = Console.ReadLine()
+	Console.Write("You Entered: ")
+	Console.WriteLine(Input)
+	Console.WriteLine("Goodbye.")
+	Console.WriteLine("Function Main() End")
+	
+	VAR myVar
+	myVar = 189 * (232 / 34 + 83 - 34) * 45
+	Console.WriteLine(myVar)
+	
+	VAR myVar2 = 8 % 3
+	Console.WriteLine(myVar2)
+	
+	Console.WriteLine(Math.ABS(-23))
+	
+	VAR myVar3 = 125 * ((4 + 3) * (-(28 - 4) * 5) + 88)
+	Console.WriteLine(myVar3)
+END FUNCTION
+
+
+
+
+
+
+
+Example Code: Fibonacci Sequence:
+#include Lib/ConsoleIO.obh
+
+FUNCTION Main()
+	Console.Write("Enter Fibonacci Sequence Iteration Count: ")
+	VAR fibMax = Console.ReadLine()
+	VAR f1 = 0
+	VAR f2 = 0
+	VAR f3 = 0
+	VAR i = 0
+	FOR i = 1 to fibMax
+		IF i == 1 THEN
+			f1 = 1
+			Console.WriteLine("Seq " .. i .. ": " .. f1)
+		ELSE IF i == 2 THEN
+			f2 = 1
+			Console.WriteLine("Seq " .. i .. ": " .. f2)
+		ELSE
+			f3 = f1 + f2
+			Console.WriteLine("Seq " .. i .. ": " .. f3)
+			f1 = f2
+			f2 = f3
+		END IF
+	NEXT
+END FUNCTION
+
+
+
+
+
+
+
+
+
+
+
+
+Variable Declaration
+VAR MyVar
+VAR MyVar2 = 34 + 32
+VAR MyVar3 = 89 * (SomeFunction(14, "Yes") + 2)
+
+Class Variable Declaration
+CLASSNAME MyClassVar
+MyClassVar.SomePrperty = 342
+MyClassVar.SomeFunction(43, 23)
+CLASSNAME.StaticFunction(33, 23)
+
+If Statement
+IF ((SomeValue == 32) || MyVar2 = 66) && MyVar3 != "Yes" THEN
+	...Perform Some Action
+ELSE IF (...Some Condition) THEN
+	...Perform Some Action
+ELSE
+	...Perform Some Action
+END IF
+
+While Statement
+WHILE (...Some Condition)
+	...Perform Some Action
+LOOP
+
+For Statement
+VAR Counter = 0
+FOR Counter = 0 TO 100 STEP + 10
+	...Perform Some Action
+NEXT
+FOR Counter = 100 TO 0 STEP - 10
+	...Perform Some Action
+NEXT
+FOR Counter = 1 TO 10
+	...Perform Some Action (Step + 1 is assumed)
+NEXT
+
+Class Declaration
+CLASS SomeClass
+	PROP SomeProp
+	PROP SomeProp2
+	
+	METHOD Init() ...Init Required If Instance Class
+	END METHOD
+	
+	METHOD SomeMethod(var1, var2)
+	END METHOD
+	
+	METHOD STATIC SomeStaticMethod(var1, var2)
+	END METHOD
+END CLASS
+
+CLASS SomeClass2 EXTENDS SomeClass
+	PROP SomeProp3
+	PROP SomeProp4
+	
+	METHOD Init() ...Init Required, Will Call Base Init First Up The Extension Chain
+	END METHOD
+	
+	METHOD OVERRIDE SomeMethod(var1, var2)
+		...This method will replace the base method for this object, and any extensions of this object
+	END METHOD
+	
+	METHOD SomeMethod2(var1, var2)
+	END METHOD
+END CLASS
+
+
+Math Operands
++		Add
+-		Subtract
+*		Multiply
+/		Divide
+%		Modulo
+..		Concat
+
+Comparison Operands
+==		Equal To
+!=		Not Equal To
+>		Greater Than
+>=		Greater Than or Equal To
+<		Less Than
+<=		Less Than or Equal To
+!		Not
+&&		Logical AND
+||		Logical OR
+
+Function Type Hints
+When passing a class as a function parameter, a type hint is necessary.  This just tells the compiler what kind of class is expected.
+You could hint a base class, and send a higher level extension.
+FUNCTION MyFunction(var1 : MYCLASS, var2, var3 : MYOTHERCLASS)
+END FUNCTION
+
+

@@ -1,0 +1,430 @@
+libCpScript Assembly Reference Manual
+(c) 2012 Jason Doyle, All Rights Reserved
+Email: jdoyle1983@gmail.com
+
+
+I. 		Overview
+II.		Variables
+III. 	Syntax
+IV.		Example Code
+
+
+
+
+
+I.		Overview
+
+libCpScript Assembly (lcsa) is a higher level assembly like language.
+It's purpose is to allow increment execution, one opcode at a time.
+This allows a higher level languages (such as libCpScript ObjectBasic)
+to be compiled into a lower level, transportable code base.
+
+lcsa utilizes a few unique features that enable it to function as a
+stand alone language.  These items include block memory management,
+variable recognition, custom library integration, host process function
+importing, and typeless variables.
+
+This makes the overall usability of the language fairly high.
+
+
+
+II.		Variables
+		@[INTEGER] - A scoped general register.  Each time a JMP occures, these values are pushed onto a stack,
+				when a coorisponding RTN is called, these values are popped back into scope.
+		%[STRING]  - A scoped block, this block must be allocated with AB %[VAR].  Where [VAR] is a uniqe variable
+				name in scope.  It must also be freed with FB %[VAR].  Each time a JMP occures, these values are
+				pushed onto a stack, when a coorisponding RTN is called, these values are popped back into scope.
+		$[STRING]  - A scoped block set, this is an indexed block that must be allocated with ABS $[VAR],[INTEGER]
+				Where [VAR] is a unique variable name in scope, and [INTEGER] is the number of blocks.  It must also
+				be freed with FBS $[VAR].  Individual values can be pushed on the stack with $[VAR]:[INDEX].  Each
+				time a JMP occures, these values are pushed onto a stack, when a coorisponding RTN is called, these
+				values are popped back into scope.
+
+
+
+III.	Syntax
+
+	A. Parameter Index
+			L   = Literal value, quoted or not
+			La  = Label value, non-quoted literal
+			I   = Integer value
+			@   = Register Variable
+			%   = Block Variable
+			$   = Block Set Variable
+			$:I = Block Set Index Variable
+	
+		[1] L, I, @, %, $:I
+		[2] @, %, $:I
+		[3] L
+		[4] L, I, @, %, $:I
+		[5] %
+		[6] I, @, %
+		[7] $
+		[8] La
+		[9] I
+		
+	B. Op Codes
+		
+		PUSH [1]
+			Push a value onto the stack.
+		POP [2]
+			Pop a value from the stack, into [2]
+		ADD
+			Pop the last 2 values from the stack, add them, push the result onto the stack.
+		SUB
+			Pop the last 2 values from the stack, subtract them, push the result onto the stack.
+		MUL
+			Pop the last 2 values from the stack, multiply them, push the result onto the stack.
+		DIV
+			Pop the last 2 values from the stack, divide them, push the result onto the stack.
+		MOD
+			Pop the last 2 values from the stack, divide them, push the remainder onto the stack.
+		CAT
+			Pop the last 2 values from the stack, concat them, push the result onto the stack.
+		NEG
+			Pop the last value from the stack, negate it, push it back onto the stack.
+		LBL [8]
+			Assign a jumpable location in the script.
+		JMP [8]
+			Push the next offset onto the stack, jump to this offset of this label (scoping occures).
+		LJMP [8]
+			Jump to the offset, no scoping, no storing of last position.
+		MOV [2],[4]
+			Move the value of [4] into [2]
+		RTN
+			Return to the last offset pushed onto the stack, free and descope variables.
+		JE [4]a,[4]b,[8]
+			If [4]a is equal to [4]b, jump to [8]
+		JN [4]a,[4]b,[8]
+			If [4]a is not equal to [4]b, jump to [8]
+		JG [4]a,[4]b,[8]
+			If [4]a is greater than [4]b, jump to [8]
+		JGE [4]a,[4]b,[8]
+			If [4]a is greater than or equal to [4]b, jump to [8]
+		JL [4]a,[4]b,[8]
+			If [4]a is less than [4]b, jump to [8]
+		JLE [4]a,[4]b,[8]
+			If [4]a is less than or equal to [4]b, jump to [8]
+		AB [5]
+			Allocate a new variable
+		RB [5]a,[5]b
+			Reference [5]a, to [5]b, they share the same space in memory
+		FB [5]
+			Free block [5]
+		PUSHA [5]
+			Push address of [5]
+		POPA [5]
+			Pop address of [5]
+		CE
+			Pop the last 2 values from the stack, if they are equal, push 1 onto the stack, otherwise 0.
+		CN
+			Pop the last 2 values from the stack, if they are not equal, push a 1 onto the stack, otherwise 0.
+		CG
+			Pop the last 2 values from the stack, if the first is greater than the second, push a 1 onto the stack, otherwise 0.
+		CGE
+			Pop the last 2 values from the stack, if the first is greater than or equal to the second, push a 1 on the stack, otherwise 0.
+		CL
+			Pop the last 2 values from the stack, if the first is less than the second, push a 1 on the stack, otherwise a 0.
+		CLE
+			Pop the last 2 values from the stack, if the first is less than or equal to the second, push a 1 on the stack, othewise a 0.
+		CO
+			Pop the last 2 values from the stack, or them, push the result on the stack.
+		CA
+			Pop the last 2 values from the stack, and them, push the result on the stack.
+		CI
+			Pop the last value from the stack, invert it (false->true,true-false), push the result on the stack.
+		JMPO [6]
+			Jump to offset specified in [6] (scoping occures)
+		LJMPO [6]
+			Jump to offset specified in [6] (no scoping)
+		ABS [7],[9]
+			Allocate a new block set [7], with [9] blocks.
+		RBS [7]a,[7]b
+			Reference block set [7]a in [7]b (they share the same memory space).
+		FBS [7]
+			Free block set.
+		PUSHB [7]
+			Push all block data from [7] into the stack.
+		POPB [7]
+			Pop all block data from the stack into [7].
+		EOE
+			End of Execution, halts the entire system.
+			
+			
+			
+IV.		Example Code
+
+This code below is generated from the ObjectBasic example code.
+
+LIB "Lib/libCpScript.libConsoleIO.dll"
+LIB "Lib/libCpScript.libFileIO.dll"
+LIB "Lib/libCpScript.libMath.dll"
+
+LBL _BaseObject_Init
+POPB $this
+PUSH 0
+POP $this:1
+RTN
+
+LBL _String_Init
+POPB $this
+PUSH 1
+POP $this:1
+RTN
+
+LBL _StringBuilder_Init
+POPB $this
+PUSH 2
+POP $this:1
+RTN
+
+LBL _StringBuilder_Append
+POPB $this
+POP @1
+PUSH $this:2
+PUSH @1
+CAT
+POP $this:2
+RTN
+
+LBL _StringBuilder_AppendLine
+POPB $this
+POP @1
+PUSH $this:2
+PUSH @1
+CAT
+PUSH "\n"
+CAT
+POP $this:2
+RTN
+
+LBL _TestClass1_Init
+POPB $this
+RTN
+
+LBL _TestClass1_ShouldDoSomething
+POPB $this
+POP @1
+PUSH @1
+JMP _Console_WriteLine
+RTN
+
+LBL _TestClass2_Init
+POPB $this
+RTN
+
+LBL _TestClass2_DoSomething
+POPB $this
+POPB $myitem
+PUSH "Test Line"
+PUSHB $myitem
+JMP _TestClass1_ShouldDoSomething
+RTN
+
+LBL _Console_Write
+POP @1
+PUSH @1
+JMP __StdLib__ConsoleIO__Write
+RTN
+
+LBL _Console_WriteLine
+POP @1
+PUSH @1
+JMP __StdLib__ConsoleIO__WriteLine
+RTN
+
+LBL _Console_ReadLine
+JMP __StdLib__ConsoleIO__ReadLine
+RTN
+
+LBL _File_Init
+POPB $this
+RTN
+
+LBL _File_OpenRead
+POPB $this
+POP @1
+PUSH "r"
+PUSH @1
+JMP __StdLib__FileIO__Open
+POP $this:1
+RTN
+
+LBL _File_OpenWrite
+POPB $this
+POP @1
+PUSH "w"
+PUSH @1
+JMP __StdLib__FileIO__Open
+POP $this:1
+RTN
+
+LBL _File_WriteLine
+POPB $this
+POP @1
+PUSH $this:1
+PUSH @1
+JMP __StdLib__FileIO__WriteLine
+RTN
+
+LBL _File_ReadLine
+POPB $this
+PUSH $this:1
+JMP __StdLib__FileIO__ReadLine
+RTN
+
+LBL _File_Close
+POPB $this
+PUSH $this:1
+JMP __StdLib__FileIO__Close
+RTN
+
+LBL _File_Eof
+POPB $this
+PUSH $this:1
+JMP __StdLib__FileIO__Eof
+RTN
+
+LBL _Math_ABS
+POP @1
+PUSH @1
+JMP __StdLib__Math__Abs
+RTN
+
+LBL _Math_FLOOR
+POP @1
+PUSH @1
+JMP __StdLib__Math__Floor
+RTN
+
+LBL _Math_CEILING
+POP @1
+PUSH @1
+JMP __StdLib__Math__Ceiling
+RTN
+
+LBL Main
+ABS $ts1, 0
+PUSHB $ts1
+JMP _TestClass1_Init
+ABS $ts2, 0
+PUSHB $ts2
+JMP _TestClass2_Init
+PUSHB $ts1
+PUSHB $ts2
+JMP _TestClass2_DoSomething
+ABS $f1, 1
+PUSHB $f1
+JMP _File_Init
+PUSH "output.txt"
+PUSHB $f1
+JMP _File_OpenWrite
+PUSH "Line 1"
+PUSHB $f1
+JMP _File_WriteLine
+PUSH "Line 2"
+PUSHB $f1
+JMP _File_WriteLine
+PUSHB $f1
+JMP _File_Close
+ABS $f2, 1
+PUSHB $f2
+JMP _File_Init
+PUSH "output.txt"
+PUSHB $f2
+JMP _File_OpenRead
+PUSHB $f2
+JMP _File_ReadLine
+JMP _Console_WriteLine
+PUSHB $f2
+JMP _File_ReadLine
+JMP _Console_WriteLine
+PUSHB $f2
+JMP _File_Close
+PUSH "Function Main() Start"
+JMP _Console_WriteLine
+PUSH "1"
+PUSH "2"
+PUSH "3"
+PUSH "4"
+PUSH "5"
+JMP ParamCheck
+ABS $builder, 2
+PUSHB $builder
+JMP _BaseObject_Init
+PUSHB $builder
+JMP _String_Init
+PUSHB $builder
+JMP _StringBuilder_Init
+PUSH "Line 1"
+PUSHB $builder
+JMP _StringBuilder_AppendLine
+PUSH "Line 2"
+PUSHB $builder
+JMP _StringBuilder_AppendLine
+PUSH "Line 3"
+PUSHB $builder
+JMP _StringBuilder_AppendLine
+PUSH "Live 4"
+PUSHB $builder
+JMP _StringBuilder_AppendLine
+PUSH $builder:2
+JMP _Console_WriteLine
+PUSH "Enter a String: "
+JMP _Console_WriteLine
+AB %Input
+JMP _Console_ReadLine
+POP %Input
+PUSH "You Entered: "
+JMP _Console_Write
+PUSH %Input
+JMP _Console_WriteLine
+PUSH "Goodbye."
+JMP _Console_WriteLine
+PUSH "Function Main() End"
+JMP _Console_WriteLine
+AB %myVar
+PUSH 189
+PUSH 232
+PUSH 34
+DIV
+PUSH 83
+ADD
+PUSH 34
+SUB
+MUL
+PUSH 45
+MUL
+POP %myVar
+PUSH %myVar
+JMP _Console_WriteLine
+AB %myVar2
+PUSH 8
+PUSH 3
+MOD
+POP %myVar2
+PUSH %myVar2
+JMP _Console_WriteLine
+PUSH 23
+NEG
+JMP _Math_ABS
+JMP _Console_WriteLine
+AB %myVar3
+PUSH 125
+PUSH 4
+PUSH 3
+ADD
+PUSH 28
+PUSH 4
+SUB
+NEG
+PUSH 5
+MUL
+MUL
+PUSH 88
+ADD
+MUL
+POP %myVar3
+PUSH %myVar3
+JMP _Console_WriteLine
+RTN

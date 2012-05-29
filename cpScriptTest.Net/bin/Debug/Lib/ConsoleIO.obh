@@ -1,0 +1,20 @@
+#Lib Lib/libCpScript.libConsoleIO.dll
+#HostFunction __StdLib__ConsoleIO__Write
+#HostFunction __StdLib__ConsoleIO__WriteLine
+#HostFunction __StdLib__ConsoleIO__ReadLine
+
+CLASS Console
+
+	METHOD STATIC Write(val)
+		__StdLib__ConsoleIO__Write(val)
+	END METHOD
+	
+	METHOD STATIC WriteLine(val)
+		__StdLib__ConsoleIO__WriteLine(val)
+	END METHOD
+	
+	METHOD STATIC ReadLine()
+		RETURN __StdLib__ConsoleIO__ReadLine()
+	END METHOD
+	
+END CLASS
