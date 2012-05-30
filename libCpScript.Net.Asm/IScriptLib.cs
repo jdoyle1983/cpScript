@@ -19,6 +19,10 @@ This file is part of libCpScript.
 	Original Author: Jason Doyle (jdoyle1983@gmail.com)
 */
 
+/*
+    This interface is used for extending cpScript
+*/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +32,8 @@ namespace libCpScript.Net.Asm
 {
     public interface IScriptLib
     {
-        string Author();
-        string Version();
-        void Init(State Script);
+        string Author();            //Should Report the Author of the Library
+        string Version();           //Should Report the Current Version of the Library
+        void Init(State Script);    //All initialization should happen here (registering static functions for use)
     }
 }

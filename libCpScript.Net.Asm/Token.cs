@@ -23,7 +23,7 @@ using System;
 
 namespace libCpScript.Net.Asm
 {
-	public enum Token
+	public enum Token //Token values
 	{
 		Invalid = 0,
 		Push,
@@ -83,8 +83,8 @@ namespace libCpScript.Net.Asm
 	
 	public class AssemblyToken
 	{
-		public Token Tok = Token.Invalid;
-		public string Val = "";
+		public Token Tok = Token.Invalid;       //Token Type
+		public string Val = "";                 //String Value
 		
 		public AssemblyToken(Token _Tok, string _Val)
 		{

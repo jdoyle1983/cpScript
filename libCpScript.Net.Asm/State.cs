@@ -28,23 +28,25 @@ using System.Reflection;
 
 namespace libCpScript.Net.Asm
 {
+    //Delegate for user functions
 	public delegate void UserFunction(State state);
 	
 	public class State
 	{
-		internal Stack<int> _CursorStack = new Stack<int>();
-		internal Stack<string> _Stack = new Stack<string>();
-		internal List<MemoryBlock> _Memory = new List<MemoryBlock>();
-		internal List<LabelDef> _Labels = new List<LabelDef>();
-		internal List<UserFunction> _UserFunctions = new List<UserFunction>();
-		internal Stack<List<string>> _Registers = new Stack<List<string>>();
-		internal Stack<List<MemoryBlockHeader>> _Headers = new Stack<List<MemoryBlockHeader>>();
-		internal Stack<List<MemoryBlockSetHeader>> _BlockHeaders = new Stack<List<MemoryBlockSetHeader>>();
+        internal Stack<int> _CursorStack = new Stack<int>();                                                    //Stack to push cursor when scoping
+		internal Stack<string> _Stack = new Stack<string>();                                                    //Value stack
+		internal List<MemoryBlock> _Memory = new List<MemoryBlock>();                                           //Actual memory
+		internal List<LabelDef> _Labels = new List<LabelDef>();                                                 //Label list
+		internal List<UserFunction> _UserFunctions = new List<UserFunction>();                                  //User functions
+		internal Stack<List<string>> _Registers = new Stack<List<string>>();                                    //Scopable Registers
+		internal Stack<List<MemoryBlockHeader>> _Headers = new Stack<List<MemoryBlockHeader>>();                //Scopable Memory Block Headers
+		internal Stack<List<MemoryBlockSetHeader>> _BlockHeaders = new Stack<List<MemoryBlockSetHeader>>();     //Socpable Memory Block Set Headers
 		
-		internal AssemblyToken[] _Tokens = null;
+		internal AssemblyToken[] _Tokens = null;                                                                //This scripts tokens
 		
-		internal int _Offset = -1;
+		internal int _Offset = -1;                                                                              //Current script offset
 
+        //Compress the buffer
         internal byte[] Compress(byte[] buffer)
         {
             var memoryStream = new MemoryStream();
@@ -59,6 +61,7 @@ namespace libCpScript.Net.Asm
             return gZipBuffer;
         }
 
+        //Decompress the buffer
         internal byte[] Decompress(byte[] gZipBuffer)
         {
             using (var memoryStream = new MemoryStream())
@@ -75,6 +78,7 @@ namespace libCpScript.Net.Asm
             }
         }
 		
+        //Main intialization
 		internal void DoInit()
 		{
             //Find Library Calls

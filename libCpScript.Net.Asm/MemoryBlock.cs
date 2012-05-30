@@ -25,25 +25,30 @@ using System.Collections.Generic;
 
 namespace libCpScript.Net.Asm
 {
+    //An array of memory (continous block of memory)
 	public class MemoryBlockSetHeader
 	{
-		public string Name;
-		public List<int> IndexOffset;
+		public string Name;             //Title of the memory
+		public List<int> IndexOffset;   //Index of memory block
 		
+        //Create new memory block set
 		public MemoryBlockSetHeader(string _Name, int _Count)
 		{
 			Name = _Name;
+            //Set inital memory offset to an invalid value
 			IndexOffset = new List<int>();
 			for(int i = 0; i < _Count; i++)
 				IndexOffset.Add(-1);
 		}
 	}
 	
+    //A single block of memory
 	public class MemoryBlockHeader
 	{
-		public string Name;
-		public int Offset;
+		public string Name;             //Title of the memory
+		public int Offset;              //Offset of memory
 		
+        //Create new memory block 
 		public MemoryBlockHeader(string _Name, int _Offset)
 		{
 			Name = _Name;
@@ -51,17 +56,20 @@ namespace libCpScript.Net.Asm
 		}
 	}
 	
+    //The physical memory block
 	public class MemoryBlock
 	{
-		public bool Used = false;
-		public string Value = "";
+		public bool Used = false;       //Is the block used
+		public string Value = "";       //Value of the block
 		
+        //Set the value of the block
 		public void SetValue(string Val)
 		{
 			Used = true;
 			Value = Val;
 		}
 		
+        //Free the block
 		public void Free()
 		{
 			Used = false;

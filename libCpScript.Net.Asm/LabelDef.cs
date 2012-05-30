@@ -24,17 +24,19 @@ namespace libCpScript.Net.Asm
 {
 	public class LabelDef
 	{
-		public string Label = "";
-		public int Offset = -1;
-		public UserFunction Function = null;
-        public bool IsStub = false;
+		public string Label = "";               //The literal title of the label
+		public int Offset = -1;                 //Offset in script of the label, if it is a script label
+		public UserFunction Function = null;    //User function, if it is a user function
+        public bool IsStub = false;             //Defines a stub function, basically a forward declaration, that will be fullfilled later
 		
+        //Define an Offset Label
 		public LabelDef (string _Label, int _Offset)
 		{
 			Label = _Label;
 			Offset = _Offset;
 		}
 		
+        //Define a User Function Label
 		public LabelDef(string _Label, UserFunction _Function, bool StubFunc)
 		{
 			Label = _Label;

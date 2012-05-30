@@ -19,6 +19,10 @@ This file is part of libCpScript.
 	Original Author: Jason Doyle (jdoyle1983@gmail.com)
 */
 
+/*  
+    This class parses the ASM script into tokens
+*/
+
 using System;
 using System.Collections.Generic;
 using libCpScript.Net.Utils;
@@ -30,27 +34,33 @@ namespace libCpScript.Net.Asm
 		public static AssemblyToken[] Parse(string Input)
 		{
 			List<AssemblyToken> Toks = new List<AssemblyToken>();
+
+            //These vars handle parsing out quoted literals
 			bool inQuotes = false;
 			string quoteChar = "";
 			string quotedString = "";
+
+            //Split input based on a few key characters
 			foreach(string s in Input.SplitAndKeep(new char[] { ' ', ',', '\n', '\r', '\'', '"' }))
 			{
 				string tVal = s.ToLower().Trim();
 				
+                //If we are not currently in a quoted string, parse as normal
 				if(!inQuotes)
 				{
 					if(tVal == "" && Toks.Count > 0 && Toks[Toks.Count - 1].Tok == Token.Literal && s != "\n" && s != "\r")
-						Toks[Toks.Count - 1].Val += s;
+						Toks[Toks.Count - 1].Val += s; //Set the token value
 					else if(tVal == "")
 					{
+                        //We want to gracefully skip this
 					}
-					else if(tVal == "'")
+					else if(tVal == "'") //Now in a quoted literal
 					{
 						inQuotes = true;
 						quotedString = "";
 						quoteChar = "'";
 					}
-					else if(tVal == "\"")
+					else if(tVal == "\"") //Now in a quoted literal
 					{
 						inQuotes = true;
 						quotedString = "";
@@ -58,8 +68,8 @@ namespace libCpScript.Net.Asm
 					}
 					else
 					{
-						Token tok = Token.Literal;
-						switch(tVal)
+						Token tok = Token.Literal; //Set as literal by default
+						switch(tVal) //Grab the correct token
 						{
 						case "push": tok = Token.Push; break;
 						case "pop": tok = Token.Pop; break;
@@ -107,31 +117,33 @@ namespace libCpScript.Net.Asm
                         case "lib": tok = Token.Lib; break;
 						default:
 						{
-							if(tVal.StartsWith("@"))
+							if(tVal.StartsWith("@")) //Has to be a register
 								tok = Token.Register;
-							else if(tVal.StartsWith("%"))
+							else if(tVal.StartsWith("%")) //Has to be a memory var
 								tok = Token.MemoryVar;
 							else
-								tok = Token.Literal;
+								tok = Token.Literal; //Defualt back to literal
 							}break;
 						}
-						Toks.Add(new AssemblyToken(tok, s));
+						Toks.Add(new AssemblyToken(tok, s)); //Add the token
 					}
 				}
-				else
+				else //We are in a quoated string still
 				{
-					if(tVal == quoteChar)
+					if(tVal == quoteChar) //The next character is our termination
 					{
+                        //Clear state flags
 						inQuotes = false;
 						quoteChar = "";
+                        //Add quoted literal token with the value
 						Toks.Add(new AssemblyToken(Token.QuotedLiteral, quotedString));
 						quotedString = "";
 					}
-					else
-						quotedString += s;
+					else 
+						quotedString += s; //append orignal string to running quoted literal token
 				}
 			}
-			return Toks.ToArray();
+			return Toks.ToArray(); //Return results as array
 		}
 	}
 }
