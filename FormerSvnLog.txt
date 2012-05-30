@@ -1,0 +1,686 @@
+Revision: 38
+Author: jdoyle
+Date: Tuesday, May 29, 2012 3:34:35 PM
+Message:
+General Updates
+----
+Modified : /trunk/ObjectBasicDoc.txt
+Modified : /trunk/cpScript.sln
+Modified : /trunk/cpScriptTest.Net/Main.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Evaluator.cs
+
+Revision: 37
+Author: jdoyle
+Date: Friday, May 25, 2012 6:55:09 PM
+Message:
+Removed class that was no longer being used.
+Updated the classes names of the StdLib classes.
+The load library functions will now find and load any class in a dll that implements the IScriptLib interface, and will initialize them for the script.
+----
+Modified : /trunk/cpScript.sln
+Modified : /trunk/libCpScript.Net.Asm/State.cs
+Deleted : /trunk/libCpScript.Net.ObjectBasic/IObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/libCpScript.Net.ObjectBasic.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/ObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/ObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/ObjectBasicLib.cs
+
+Revision: 36
+Author: jdoyle
+Date: Friday, May 25, 2012 6:15:13 PM
+Message:
+Solution Tree Update
+----
+Modified : /trunk/cpScript.sln
+
+Revision: 35
+Author: jdoyle
+Date: Friday, May 25, 2012 6:13:26 PM
+Message:
+Removed libCpScript.Net.Utils.
+
+All of the functionality this library supplied is included in the assembly parser.
+----
+Deleted : /trunk/libCpScript.Net.Utils
+
+Revision: 34
+Author: jdoyle
+Date: Friday, May 25, 2012 6:12:24 PM
+Message:
+Abandoned C project.  Might attempt at a later date.  Would put the scope of this project too high.  Will work on optimizing the ASM parser first.
+----
+Deleted : /trunk/CProject
+
+Revision: 33
+Author: jdoyle
+Date: Friday, May 25, 2012 6:11:00 PM
+Message:
+Removed Extensions as external library.  Now included in libCpScript.Net.Asm.dll
+----
+Modified : /trunk/cpScript.sln
+Added : /trunk/libCpScript.Net.Asm/Extensions.cs
+Modified : /trunk/libCpScript.Net.Asm/libCpScript.Net.Asm.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic/libCpScript.Net.ObjectBasic.csproj
+
+Revision: 32
+Author: jdoyle
+Date: Thursday, May 24, 2012 9:02:10 PM
+Message:
+More updates
+----
+Modified : /trunk/CProject/cpScript.workspace
+Modified : /trunk/CProject/cpScriptTest/cpScriptTest.cbp
+Modified : /trunk/CProject/cpScriptTest/main.c
+Modified : /trunk/CProject/libCpScriptAsm/include/List.h
+Modified : /trunk/CProject/libCpScriptAsm/include/Stack.h
+Modified : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+Modified : /trunk/CProject/libCpScriptAsm/src/LabelDef.c
+Modified : /trunk/CProject/libCpScriptAsm/src/List.c
+Modified : /trunk/CProject/libCpScriptAsm/src/MemoryBlock.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/Jump.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/JumpC.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/Memory.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/MemoryBlock.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/MemoryBlockSet.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/Shared.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Stack.c
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Token.c
+Modified : /trunk/CProject/libMemMan/include/libMemMan.h
+Modified : /trunk/CProject/libMemMan/include/mmString.h
+Modified : /trunk/CProject/libMemMan/libMemMan.cbp
+Modified : /trunk/CProject/libMemMan/src/libMemMan.c
+Modified : /trunk/CProject/libMemMan/src/mmString.c
+
+Revision: 31
+Author: jdoyle
+Date: Thursday, May 24, 2012 3:56:46 PM
+Message:
+External Memory management update.
+----
+Modified : /trunk/CProject/libMemMan/include/libMemMan.h
+Modified : /trunk/CProject/libMemMan/libMemMan.cbp
+Modified : /trunk/CProject/libMemMan/src/libMemMan.c
+
+Revision: 30
+Author: jdoyle
+Date: Thursday, May 24, 2012 3:12:58 PM
+Message:
+Began working on external Memory Management Library
+----
+Modified : /trunk/CProject/cpScript.workspace
+Modified : /trunk/CProject/cpScriptTest/cpScriptTest.cbp
+Modified : /trunk/CProject/cpScriptTest/main.c
+Modified : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+Modified : /trunk/CProject/libCpScriptAsm/src/List.c
+Modified : /trunk/CProject/libCpScriptAsm/src/MemMan.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/Cmp.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/Jump.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/JumpC.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/MemoryBlock.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/MemoryBlockSet.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Runtime/Move.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Stack.c
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Token.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Util.c
+Added : /trunk/CProject/libMemMan
+Added : /trunk/CProject/libMemMan/include
+Added : /trunk/CProject/libMemMan/include/libMemMan.h
+Added : /trunk/CProject/libMemMan/include/mmString.h
+Added : /trunk/CProject/libMemMan/libMemMan.cbp
+Added : /trunk/CProject/libMemMan/src
+Added : /trunk/CProject/libMemMan/src/libMemMan.c
+Added : /trunk/CProject/libMemMan/src/mmString.c
+
+Revision: 29
+Author: jdoyle
+Date: Wednesday, May 23, 2012 12:46:14 PM
+Message:
+project update
+----
+Modified : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+
+Revision: 28
+Author: jdoyle
+Date: Wednesday, May 23, 2012 12:44:45 PM
+Message:
+added missing files
+----
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Cmp.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Jump.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/JumpC.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Lib.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Math.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Memory.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/MemoryBlock.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/MemoryBlockSet.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Move.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Pop.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Push.h
+Added : /trunk/CProject/libCpScriptAsm/include/Runtime/Shared.h
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Cmp.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Jump.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/JumpC.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Lib.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Math.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Memory.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/MemoryBlock.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/MemoryBlockSet.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Move.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Pop.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Push.c
+Added : /trunk/CProject/libCpScriptAsm/src/Runtime/Shared.c
+
+Revision: 27
+Author: jdoyle
+Date: Wednesday, May 23, 2012 12:43:58 PM
+Message:
+Moved c files back out
+----
+Added : /trunk/CProject/libCpScriptAsm/include (Copy from path: /trunk/CProject/libCpScriptAsm/include.old, Revision, 26)
+Deleted : /trunk/CProject/libCpScriptAsm/include.old
+Modified : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+Added : /trunk/CProject/libCpScriptAsm/src (Copy from path: /trunk/CProject/libCpScriptAsm/src.old, Revision, 26)
+Deleted : /trunk/CProject/libCpScriptAsm/src.old
+
+Revision: 26
+Author: jdoyle
+Date: Wednesday, May 23, 2012 12:31:32 PM
+Message:
+Moved files
+----
+Deleted : /trunk/CProject/libCpScriptAsm/include
+Added : /trunk/CProject/libCpScriptAsm/include.old (Copy from path: /trunk/CProject/libCpScriptAsm/include, Revision, 18)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/CpLib.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/CpLib.h, Revision, 19)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/InternalTypes.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/InternalTypes.h, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/LabelDef.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/LabelDef.h, Revision, 19)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/List.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/List.h, Revision, 24)
+Added : /trunk/CProject/libCpScriptAsm/include.old/MemMan.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/MemMan.h, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/MemoryBlock.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/MemoryBlock.h, Revision, 19)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/Stack.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/Stack.h, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/State.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/State.h, Revision, 23)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/Token.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/Token.h, Revision, 19)
+Replacing : /trunk/CProject/libCpScriptAsm/include.old/Util.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/Util.h, Revision, 24)
+Added : /trunk/CProject/libCpScriptAsm/include.old/libCpScriptAsm.h (Copy from path: /trunk/CProject/libCpScriptAsm/include/libCpScriptAsm.h, Revision, 19)
+Deleted : /trunk/CProject/libCpScriptAsm/src
+Added : /trunk/CProject/libCpScriptAsm/src.old (Copy from path: /trunk/CProject/libCpScriptAsm/src, Revision, 18)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/CpLib.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/CpLib.c, Revision, 19)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/LabelDef.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/LabelDef.c, Revision, 19)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/List.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/List.c, Revision, 24)
+Added : /trunk/CProject/libCpScriptAsm/src.old/MemMan.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/MemMan.c, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/MemoryBlock.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/MemoryBlock.c, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/Stack.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/Stack.c, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/State.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/State.c, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/Token.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/Token.c, Revision, 24)
+Replacing : /trunk/CProject/libCpScriptAsm/src.old/Util.c (Copy from path: /trunk/CProject/libCpScriptAsm/src/Util.c, Revision, 24)
+
+Revision: 25
+Author: jdoyle
+Date: Wednesday, May 23, 2012 12:30:18 PM
+Message:
+added dir
+----
+Added : /trunk/CProject/libCpScriptAsm/OldC
+
+Revision: 24
+Author: jdoyle
+Date: Wednesday, May 23, 2012 12:29:32 PM
+Message:
+Bug in C code, going to port to c++ first, then attempt c base again.
+----
+Modified : /trunk/CProject/StdLib/ConsoleIO/ConsoleIO.cbp
+Modified : /trunk/CProject/cpScriptTest/cpScriptTest.cbp
+Modified : /trunk/CProject/cpScriptTest/main.c
+Modified : /trunk/CProject/libCpScriptAsm/include/InternalTypes.h
+Modified : /trunk/CProject/libCpScriptAsm/include/List.h
+Added : /trunk/CProject/libCpScriptAsm/include/MemMan.h
+Modified : /trunk/CProject/libCpScriptAsm/include/Stack.h
+Modified : /trunk/CProject/libCpScriptAsm/include/Util.h
+Modified : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+Modified : /trunk/CProject/libCpScriptAsm/src/List.c
+Added : /trunk/CProject/libCpScriptAsm/src/MemMan.c
+Modified : /trunk/CProject/libCpScriptAsm/src/MemoryBlock.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Stack.c
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Token.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Util.c
+
+Revision: 23
+Author: jdoyle
+Date: Monday, May 21, 2012 3:12:21 PM
+Message:
+more c api updates
+----
+Modified : /trunk/CProject/StdLib/ConsoleIO/ConsoleIO.cbp
+Added : /trunk/CProject/bin
+Added : /trunk/CProject/bin/Debug
+Added : /trunk/CProject/bin/Release
+Modified : /trunk/CProject/cpScriptTest/cpScriptTest.cbp
+Modified : /trunk/CProject/libCpScriptAsm/include/State.h
+Modified : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+
+Revision: 22
+Author: jdoyle
+Date: Monday, May 21, 2012 2:41:24 PM
+Message:
+More c updates.
+all additional functions seem to be complete (un-tested).
+Working on iterate function next.
+----
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+
+Revision: 21
+Author: jdoyle
+Date: Monday, May 21, 2012 12:56:30 PM
+Message:
+More c updates
+----
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+
+Revision: 20
+Author: jdoyle
+Date: Monday, May 21, 2012 11:48:34 AM
+Message:
+More c updates
+----
+Modified : /trunk/CProject/libCpScriptAsm/include/Stack.h
+Modified : /trunk/CProject/libCpScriptAsm/include/Util.h
+Modified : /trunk/CProject/libCpScriptAsm/src/Stack.c
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Util.c
+
+Revision: 19
+Author: jdoyle
+Date: Monday, May 21, 2012 11:15:21 AM
+Message:
+c updates
+----
+Modified : /trunk/CProject/cpScriptTest/main.c
+Modified : /trunk/CProject/libCpScriptAsm/include/CpLib.h
+Modified : /trunk/CProject/libCpScriptAsm/include/InternalTypes.h
+Modified : /trunk/CProject/libCpScriptAsm/include/LabelDef.h
+Modified : /trunk/CProject/libCpScriptAsm/include/List.h
+Modified : /trunk/CProject/libCpScriptAsm/include/MemoryBlock.h
+Modified : /trunk/CProject/libCpScriptAsm/include/Stack.h
+Modified : /trunk/CProject/libCpScriptAsm/include/State.h
+Modified : /trunk/CProject/libCpScriptAsm/include/Token.h
+Modified : /trunk/CProject/libCpScriptAsm/include/Util.h
+Added : /trunk/CProject/libCpScriptAsm/include/libCpScriptAsm.h
+Modified : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+Modified : /trunk/CProject/libCpScriptAsm/src/CpLib.c
+Modified : /trunk/CProject/libCpScriptAsm/src/LabelDef.c
+Modified : /trunk/CProject/libCpScriptAsm/src/State.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Token.c
+Modified : /trunk/CProject/libCpScriptAsm/src/Util.c
+
+Revision: 18
+Author: jdoyle
+Date: Monday, May 21, 2012 9:57:57 AM
+Message:
+Working on Cross-Platform C version of assembly parser.
+----
+Added : /trunk/CProject
+Added : /trunk/CProject/StdLib
+Added : /trunk/CProject/StdLib/ConsoleIO
+Added : /trunk/CProject/StdLib/ConsoleIO/ConsoleIO.cbp
+Added : /trunk/CProject/StdLib/ConsoleIO/lib.c
+Added : /trunk/CProject/cpScript.workspace
+Added : /trunk/CProject/cpScriptTest
+Added : /trunk/CProject/cpScriptTest/cpScriptTest.cbp
+Added : /trunk/CProject/cpScriptTest/main.c
+Added : /trunk/CProject/libCpScriptAsm
+Added : /trunk/CProject/libCpScriptAsm/include
+Added : /trunk/CProject/libCpScriptAsm/include/CpLib.h
+Added : /trunk/CProject/libCpScriptAsm/include/IScriptLib.h
+Added : /trunk/CProject/libCpScriptAsm/include/InternalTypes.h
+Added : /trunk/CProject/libCpScriptAsm/include/LabelDef.h
+Added : /trunk/CProject/libCpScriptAsm/include/List.h
+Added : /trunk/CProject/libCpScriptAsm/include/MemoryBlock.h
+Added : /trunk/CProject/libCpScriptAsm/include/Stack.h
+Added : /trunk/CProject/libCpScriptAsm/include/State.h
+Added : /trunk/CProject/libCpScriptAsm/include/Token.h
+Added : /trunk/CProject/libCpScriptAsm/include/Util.h
+Added : /trunk/CProject/libCpScriptAsm/libCpScriptAsm.cbp
+Added : /trunk/CProject/libCpScriptAsm/src
+Added : /trunk/CProject/libCpScriptAsm/src/CpLib.c
+Added : /trunk/CProject/libCpScriptAsm/src/LabelDef.c
+Added : /trunk/CProject/libCpScriptAsm/src/List.c
+Added : /trunk/CProject/libCpScriptAsm/src/MemoryBlock.c
+Added : /trunk/CProject/libCpScriptAsm/src/Stack.c
+Added : /trunk/CProject/libCpScriptAsm/src/State.c
+Added : /trunk/CProject/libCpScriptAsm/src/Token.c
+Added : /trunk/CProject/libCpScriptAsm/src/Util.c
+
+Revision: 17
+Author: jdoyle
+Date: Thursday, May 17, 2012 3:59:18 PM
+Message:
+Updated FileIO library to support binary operations.
+----
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/FileIO.obh
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/ObjectBasicLib.cs
+
+Revision: 16
+Author: jdoyle
+Date: Thursday, May 17, 2012 1:01:06 PM
+Message:
+Moved header files to library projects.
+----
+Deleted : /trunk/Build/Debug/Lib/ConsoleIO.obh
+Deleted : /trunk/Build/Debug/Lib/FileIO.obh
+Deleted : /trunk/Build/Debug/Lib/Math.obh
+Deleted : /trunk/Build/Release/Lib/ConsoleIO.obh
+Deleted : /trunk/Build/Release/Lib/FileIO.obh
+Deleted : /trunk/Build/Release/Lib/Math.obh
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/ConsoleIO.obh
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO.csproj
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/FileIO.obh
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/libCpScript.Net.ObjectBasic.StdLib.FileIO.csproj
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/Math.obh
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/libCpScript.Net.ObjectBasic.StdLib.Math.csproj
+
+Revision: 15
+Author: jdoyle
+Date: Thursday, May 17, 2012 12:23:08 PM
+Message:
+updates for testing.
+----
+Modified : /trunk/Build/Debug/TestScript.cps
+
+Revision: 14
+Author: jdoyle
+Date: Thursday, May 17, 2012 12:13:16 PM
+Message:
+Moved build environment, added interpreter / compiler.
+----
+Added : /trunk/Build
+Added : /trunk/Build/Debug
+Added : /trunk/Build/Debug/Lib
+Added : /trunk/Build/Debug/Lib/ConsoleIO.obh
+Added : /trunk/Build/Debug/Lib/FileIO.obh
+Added : /trunk/Build/Debug/Lib/Math.obh
+Added : /trunk/Build/Debug/TestScript.cps
+Added : /trunk/Build/Release
+Added : /trunk/Build/Release/Lib
+Added : /trunk/Build/Release/Lib/ConsoleIO.obh
+Added : /trunk/Build/Release/Lib/FileIO.obh
+Added : /trunk/Build/Release/Lib/Math.obh
+Added : /trunk/Build/Release/TestScript.cps
+Added : /trunk/cpInt
+Added : /trunk/cpInt/Program.cs
+Added : /trunk/cpInt/Properties
+Added : /trunk/cpInt/Properties/AssemblyInfo.cs
+Added : /trunk/cpInt/cpInt.csproj
+Added : /trunk/cpObjCmp
+Added : /trunk/cpObjCmp/Program.cs
+Added : /trunk/cpObjCmp/Properties
+Added : /trunk/cpObjCmp/Properties/AssemblyInfo.cs
+Added : /trunk/cpObjCmp/cpObjCmp.csproj
+Modified : /trunk/cpScript.sln
+Modified : /trunk/cpScriptTest.Net/cpScriptTest.Net.csproj
+Added : /trunk/libCpScript.Net.Asm/IScriptLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Evaluator.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/libCpScript.Net.ObjectBasic.StdLib.FileIO.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/libCpScript.Net.ObjectBasic.StdLib.Math.csproj
+
+Revision: 13
+Author: jdoyle
+Date: Thursday, May 17, 2012 11:35:02 AM
+Message:
+Updated documentation.
+----
+Modified : /trunk/AsmDoc.txt
+Modified : /trunk/ObjectBasicDoc.txt
+
+Revision: 12
+Author: jdoyle
+Date: Thursday, May 17, 2012 11:12:44 AM
+Message:
+Fixed negation error in Evaluator, now supports negative numbers.
+----
+Modified : /trunk/AsmDoc.txt
+Modified : /trunk/ObjectBasicDoc.txt
+Modified : /trunk/cpScriptTest.Net/bin/Debug/TestScript.cps
+Modified : /trunk/libCpScript.Net.Asm/Parser.cs
+Modified : /trunk/libCpScript.Net.Asm/State.cs
+Modified : /trunk/libCpScript.Net.Asm/Token.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Evaluator.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/ObjectBasicScript.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Token.cs
+
+Revision: 11
+Author: jdoyle
+Date: Wednesday, May 16, 2012 11:27:10 PM
+Message:
+More doc updates
+----
+Modified : /trunk/AsmDoc.txt
+Added : /trunk/ObjectBasicDoc.txt
+Modified : /trunk/libCpScript.Net.Asm/LabelDef.cs
+
+Revision: 10
+Author: jdoyle
+Date: Wednesday, May 16, 2012 8:28:36 PM
+Message:
+Updated library to bind to ASM only.  This will allow libraries to be used for other languages that may be built on top of the ASM.
+
+Began writing simple ASM documentation.
+----
+Added : /trunk/AsmDoc.txt
+Added : /trunk/cpScriptTest.Net/bin/Debug/Lib/ConsoleIO.obh
+Added : /trunk/cpScriptTest.Net/bin/Debug/Lib/FileIO.obh
+Added : /trunk/cpScriptTest.Net/bin/Debug/Lib/Math.obh
+Modified : /trunk/cpScriptTest.Net/bin/Debug/TestScript.cps
+Modified : /trunk/libCpScript.Net.Asm/LabelDef.cs
+Modified : /trunk/libCpScript.Net.Asm/Parser.cs
+Modified : /trunk/libCpScript.Net.Asm/State.cs
+Modified : /trunk/libCpScript.Net.Asm/Token.cs
+Modified : /trunk/libCpScript.Net.Asm/libCpScript.Net.Asm.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic/Function.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/IObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/ObjectBasicScript.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/ObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/ObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/libCpScript.Net.ObjectBasic.StdLib.FileIO.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/ObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/libCpScript.Net.ObjectBasic.StdLib.Math.csproj
+
+Revision: 9
+Author: jdoyle
+Date: Tuesday, May 15, 2012 12:24:19 PM
+Message:
+Updates to libraries.
+Discovered bug in evaluator code, will not recognize negative numbers.
+Need to fix before production use.
+----
+Modified : /trunk/cpScript.sln
+Modified : /trunk/cpScriptTest.Net/bin/Debug/TestScript.cps
+Modified : /trunk/libCpScript.Net.Asm/Parser.cs
+Modified : /trunk/libCpScript.Net.Asm/State.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/ClassDef.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Function.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/ObjectBasicScript.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Token.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/ObjectBasicLib.cs
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/ObjectBasicLib.cs
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/Properties
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/Properties/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.Math/libCpScript.Net.ObjectBasic.StdLib.Math.csproj
+
+Revision: 8
+Author: jdoyle
+Date: Monday, April 23, 2012 12:48:43 PM
+Message:
+file IO updates
+----
+Modified : /trunk/cpScriptTest.Net/bin/Debug/TestScript.cps
+
+Revision: 7
+Author: jdoyle
+Date: Monday, April 23, 2012 12:48:14 PM
+Message:
+File IO updates
+
+----
+Modified : /trunk/cpScriptTest.Net/Main.cs
+Modified : /trunk/cpScriptTest.Net/cpScriptTest.Net.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic/ClassDef.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Function.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/ObjectBasicScript.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/Token.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/ObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/ObjectBasicLib.cs
+
+Revision: 6
+Author: jdoyle
+Date: Sunday, April 22, 2012 10:17:42 AM
+Message:
+Removed outdated directories / updated test scripts.
+----
+Added : /trunk/cpScriptTest.Net/bin/Debug/Lib
+Modified : /trunk/cpScriptTest.Net/bin/Debug/TestScript.cps
+Added : /trunk/cpScriptTest.Net/bin/Release/Lib
+Deleted : /trunk/libCpScript.Net
+Deleted : /trunk/libCpScript.Net.Asm.StdLib
+Deleted : /trunk/libCpScriptAsm.Net
+Deleted : /trunk/libCpScriptUtils.Net
+
+Revision: 5
+Author: jdoyle
+Date: Sunday, April 22, 2012 10:16:20 AM
+Message:
+Updated output path of Standard Libraries to Debug / Release Dirs of test app.
+
+----
+Modified : /trunk/cpScript.sln
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO.csproj
+Modified : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/libCpScript.Net.ObjectBasic.StdLib.FileIO.csproj
+
+Revision: 4
+Author: jdoyle
+Date: Sunday, April 22, 2012 10:08:33 AM
+Message:
+Moved libraries into dymanic loading.  This will allow external libraries to be built.
+
+----
+Modified : /trunk/cpScript.sln
+Modified : /trunk/cpScriptTest.Net/Main.cs
+Modified : /trunk/cpScriptTest.Net/cpScriptTest.Net.csproj
+Modified : /trunk/libCpScript.Net.Asm/State.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/IObjectBasicLib.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/ObjectBasicScript.cs
+Modified : /trunk/libCpScript.Net.ObjectBasic/libCpScript.Net.ObjectBasic.csproj
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/ObjectBasicLib.cs
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/Properties
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/Properties/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO/libCpScript.Net.ObjectBasic.StdLib.ConsoleIO.csproj
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/ObjectBasicLib.cs
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/Properties
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/Properties/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net.ObjectBasic.StdLib.FileIO/libCpScript.Net.ObjectBasic.StdLib.FileIO.csproj
+
+Revision: 3
+Author: jdoyle
+Date: Friday, April 20, 2012 2:55:13 PM
+Message:
+Updated test script
+----
+Modified : /trunk/cpScriptTest.Net/bin/Debug/TestScript.cps
+
+Revision: 2
+Author: jdoyle
+Date: Friday, April 20, 2012 2:53:20 PM
+Message:
+Fixed compilation bug
+
+----
+Modified : /trunk/cpScriptTest.Net/Main.cs
+Modified : /trunk/libCpScript.Net.Asm/State.cs
+
+Revision: 1
+Author: jdoyle
+Date: Friday, April 20, 2012 2:46:04 PM
+Message:
+Initial SVN import
+----
+Added : /branches
+Added : /tags
+Added : /trunk
+Added : /trunk/cpScript.sln
+Added : /trunk/cpScriptTest.Net
+Added : /trunk/cpScriptTest.Net/AssemblyInfo.cs
+Added : /trunk/cpScriptTest.Net/Main.cs
+Added : /trunk/cpScriptTest.Net/bin
+Added : /trunk/cpScriptTest.Net/bin/Debug
+Added : /trunk/cpScriptTest.Net/bin/Debug/TestScript.casm
+Added : /trunk/cpScriptTest.Net/bin/Debug/TestScript.cps
+Added : /trunk/cpScriptTest.Net/bin/Release
+Added : /trunk/cpScriptTest.Net/bin/Release/TestScript.cps
+Added : /trunk/cpScriptTest.Net/cpScriptTest.Net.csproj
+Added : /trunk/libCpScript.Net
+Added : /trunk/libCpScript.Net/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net/Loader
+Added : /trunk/libCpScript.Net/Loader/BlockBuilder.cs
+Added : /trunk/libCpScript.Net/Parser
+Added : /trunk/libCpScript.Net/Parser/Evaluator.cs
+Added : /trunk/libCpScript.Net/Parser/Tokenizer.cs
+Added : /trunk/libCpScript.Net/State
+Added : /trunk/libCpScript.Net/State/FunctionDef.cs
+Added : /trunk/libCpScript.Net/State/Scope.cs
+Added : /trunk/libCpScript.Net/State/ScriptState.cs
+Added : /trunk/libCpScript.Net/State/Variable.cs
+Added : /trunk/libCpScript.Net/State/VariableManager.cs
+Added : /trunk/libCpScript.Net/StdLib
+Added : /trunk/libCpScript.Net/StdLib/StdLib.cs
+Added : /trunk/libCpScript.Net/Utilities
+Added : /trunk/libCpScript.Net/Utilities/Extensions.cs
+Added : /trunk/libCpScript.Net/libCpScript.Net.csproj
+Added : /trunk/libCpScript.Net.Asm
+Added : /trunk/libCpScript.Net.Asm/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net.Asm/LabelDef.cs
+Added : /trunk/libCpScript.Net.Asm/MemoryBlock.cs
+Added : /trunk/libCpScript.Net.Asm/Parser.cs
+Added : /trunk/libCpScript.Net.Asm/State.cs
+Added : /trunk/libCpScript.Net.Asm/Token.cs
+Added : /trunk/libCpScript.Net.Asm/libCpScript.Net.Asm.csproj
+Added : /trunk/libCpScript.Net.Asm.StdLib
+Added : /trunk/libCpScript.Net.Asm.StdLib/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net.Asm.StdLib/ConsoleIO.cs
+Added : /trunk/libCpScript.Net.Asm.StdLib/FileIO.cs
+Added : /trunk/libCpScript.Net.Asm.StdLib/Installer.cs
+Added : /trunk/libCpScript.Net.Asm.StdLib/libCpScript.Net.Asm.StdLib.csproj
+Added : /trunk/libCpScript.Net.ObjectBasic
+Added : /trunk/libCpScript.Net.ObjectBasic/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/BlockBuilder.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/ClassDef.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/Evaluator.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/Function.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/ObjectBasicScript.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/Token.cs
+Added : /trunk/libCpScript.Net.ObjectBasic/libCpScript.Net.ObjectBasic.csproj
+Added : /trunk/libCpScript.Net.Utils
+Added : /trunk/libCpScript.Net.Utils/AssemblyInfo.cs
+Added : /trunk/libCpScript.Net.Utils/Extensions.cs
+Added : /trunk/libCpScript.Net.Utils/libCpScript.Net.Utils.csproj
+Added : /trunk/libCpScriptAsm.Net
+Added : /trunk/libCpScriptAsm.Net/AsmParser.cs
+Added : /trunk/libCpScriptAsm.Net/AsmState.cs
+Added : /trunk/libCpScriptAsm.Net/AsmToken.cs
+Added : /trunk/libCpScriptAsm.Net/AssemblyInfo.cs
+Added : /trunk/libCpScriptAsm.Net/LabelDef.cs
+Added : /trunk/libCpScriptAsm.Net/MemoryBlock.cs
+Added : /trunk/libCpScriptAsm.Net/libCpScriptAsm.Net.csproj
+Added : /trunk/libCpScriptUtils.Net
+Added : /trunk/libCpScriptUtils.Net/AssemblyInfo.cs
+Added : /trunk/libCpScriptUtils.Net/Extensions.cs
+Added : /trunk/libCpScriptUtils.Net/libCpScriptUtils.Net.csproj
+
