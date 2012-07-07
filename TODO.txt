@@ -1,0 +1,5 @@
+TODO:
+
+Code documentation - There are no comments in the code currently.  These will be added soon.
+Scripting documentation - There are some short documents, but they need to be expanded on.
+Arrays - Arrays are not implemented in the Object Basic Script
