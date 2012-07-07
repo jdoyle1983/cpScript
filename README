@@ -1,25 +1,19 @@
 
-
 The Repo Contains 8 Linked, but Distict Projects
 
-libCpScript.Net.Asm			     -  Assemmbly like scripting language.
-libCpScript.Net.ObjectBasic      -  BASIC like scripting language, compiles into lipCpScript.Net.Asm
-libCpScript.Net.StdLib.ConsoleIO -  Basic console functions that can be included in scripts
-libCpScript.Net.StdLib.FileIO    -  Basic file functions that can be included in scripts
-libCpScript.Net.StdLib.Math      -  Basic math functions that can be included in scripts
-cpScriptTest.Net				 -  Test application for libCpScript.Net libraries
-cpObjCmp                         -  Compiles Object Basic script into Asm Script
-cpInt                            -  Asm script runtime
-
-
-
-
-TODO:
-
-Code documentation - There are no comments in the code currently.  These will be added soon.
-Scripting documentation - There are some short documents, but they need to be expanded on.
-
-
-
-KNOWN BUGS:
-The object basic - (Negative) parsing is still incorrect.
+libCpScript.Net.Asm		 
+-  Assemmbly like scripting language.
+libCpScript.Net.ObjectBasic      
+-  BASIC like scripting language, compiles into lipCpScript.Net.Asm
+libCpScript.Net.StdLib.ConsoleIO 
+-  Basic console functions that can be included in scripts
+libCpScript.Net.StdLib.FileIO    
+-  Basic file functions that can be included in scripts
+libCpScript.Net.StdLib.Math      
+-  Basic math functions that can be included in scripts
+cpScriptTest.Net		
+-  Test application for libCpScript.Net libraries
+cpObjCmp                         
+-  Compiles Object Basic script into Asm Script
+cpInt                            
+-  Asm script runtime
