@@ -36,11 +36,33 @@ namespace cpInt
             }
             else
             {
-                string fullScript = "";
-                foreach (string s in args)
-                    fullScript += System.IO.File.ReadAllText(s) + "\n";
-                libCpScript.Net.Asm.State State = new libCpScript.Net.Asm.State(fullScript);
-                State.RunFromMethod("Main");
+				bool shouldLoad = true;
+				libCpScript.Net.Asm.State State = null;
+				
+				if(args.Length == 1) //Compiled scripts will be compiled into a single file
+				{
+					try
+					{
+						State = new libCpScript.Net.Asm.State(System.IO.File.ReadAllBytes(args[0]));
+					}
+					catch{}
+					if(State != null && State.ScriptLoaded) //If we loaded binary, don't attempt to load it a script
+						shouldLoad = false;
+				}
+				
+				if(shouldLoad) //If this flag is set, it means it wasn't binary and / or there are multiple input files
+				{
+	                string fullScript = "";
+	                foreach (string s in args)
+	                    fullScript += System.IO.File.ReadAllText(s) + "\n";
+					try
+					{
+	                	State = new libCpScript.Net.Asm.State(fullScript);
+					} catch{}
+				}
+				
+				if(State != null && State.ScriptLoaded)
+                	State.RunFromMethod("Main");
             }
         }
     }

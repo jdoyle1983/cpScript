@@ -33,10 +33,12 @@ namespace cpObjCmp
             if (args.Length < 3)
             {
                 Console.WriteLine("No Input File(s) / Output File Specified");
-                Console.WriteLine("cpObjCmp [input] [input] -o [output]");
+                Console.WriteLine("cpObjCmp [input] [input] -c -o [output]");
+				Console.WriteLine("If the -c option is passed, a compiled asm script will be output");
             }
             else
             {
+				bool shouldCompile = false;
                 List<string> inputFiles = new List<string>();
                 string outputFile = "";
                 for (int i = 0; i < args.Length; i++)
@@ -46,6 +48,8 @@ namespace cpObjCmp
                         i++;
                         outputFile = args[i];
                     }
+					else if(args[i] == "-c")
+						shouldCompile = true;
                     else
                         inputFiles.Add(args[i]);
                 }
@@ -57,7 +61,10 @@ namespace cpObjCmp
                     fullScript += System.IO.File.ReadAllText(s) + "\n";
                 libCpScript.Net.ObjectBasic.ObjectBasicScript obj = new libCpScript.Net.ObjectBasic.ObjectBasicScript();
                 obj.LoadScript(fullScript);
-                System.IO.File.WriteAllText(outputFile, obj.AsmScript);
+				if(!shouldCompile)
+                	System.IO.File.WriteAllText(outputFile, obj.AsmScript);
+				else
+					System.IO.File.WriteAllBytes(outputFile, obj.Compile());
             }
         }
     }

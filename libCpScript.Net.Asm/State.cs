@@ -42,10 +42,16 @@ namespace libCpScript.Net.Asm
 		internal Stack<List<MemoryBlockHeader>> _Headers = new Stack<List<MemoryBlockHeader>>();                //Scopable Memory Block Headers
 		internal Stack<List<MemoryBlockSetHeader>> _BlockHeaders = new Stack<List<MemoryBlockSetHeader>>();     //Socpable Memory Block Set Headers
 		
+		internal List<AssemblyToken> _LibTokens = new List<AssemblyToken>();
 		internal AssemblyToken[] _Tokens = null;                                                                //This scripts tokens
 		
-		internal int _Offset = -1;                                                                              //Current script offset
-
+		internal int _Offset = -1;      
+		
+		                                                                                                                                                //Current script offset
+		
+		public bool ScriptLoaded { get { return _ScriptLoaded; } }
+		internal bool _ScriptLoaded = false;
+		
         //Compress the buffer
         internal byte[] Compress(byte[] buffer)
         {
@@ -87,6 +93,8 @@ namespace libCpScript.Net.Asm
             {
                 if (_Tokens[i].Tok == Token.Lib && _Tokens[i + 1].Tok == Token.QuotedLiteral)
                 {
+					_LibTokens.Add (_Tokens[i]);
+					_LibTokens.Add (_Tokens[i + 1]);
                     i++;
                     string libFile = _Tokens[i].Val;
                     Assembly a = Assembly.LoadFrom(AppDomain.CurrentDomain.BaseDirectory + System.IO.Path.DirectorySeparatorChar + libFile);
@@ -129,6 +137,7 @@ namespace libCpScript.Net.Asm
 		{
 			_Tokens = Parser.Parse(AssemblyScript);
 			DoInit ();
+			_ScriptLoaded = true;
 		}
 		
 		#region BinaryFormat
@@ -151,7 +160,7 @@ namespace libCpScript.Net.Asm
 					short srcTok = BitConverter.ToInt16(_src, currentOffset);
 					currentOffset += shortLen;
                     string val = "";
-                    if ((Token)srcTok == Token.Literal || (Token)srcTok == Token.QuotedLiteral || (Token)srcTok == Token.Register || (Token)srcTok == Token.MemoryVar)
+                    if ((Token)srcTok == Token.Literal || (Token)srcTok == Token.QuotedLiteral || (Token)srcTok == Token.Register || (Token)srcTok == Token.MemoryVar )
                     {
                         int valLen = BitConverter.ToInt32(_src, currentOffset);
                         currentOffset += intLen;
@@ -163,6 +172,7 @@ namespace libCpScript.Net.Asm
 				}
                 _Tokens = _Toks.ToArray();
 				DoInit();
+				_ScriptLoaded = true;
 			}
 		}
 		
@@ -177,6 +187,24 @@ namespace libCpScript.Net.Asm
 			_SrcBytes.Add((byte)'i');
 			_SrcBytes.Add((byte)'P');
 			_SrcBytes.Add((byte)'t');
+			
+			for(int i = 0; i < _LibTokens.Count; i++)
+			{
+				short thisToken = (short)_LibTokens[i].Tok;
+				byte[] thisTokenb = BitConverter.GetBytes(thisToken);
+				_SrcBytes.AddRange(thisTokenb);
+				
+				i++;
+				
+				thisToken = (short)_LibTokens[i].Tok;
+				thisTokenb = BitConverter.GetBytes (thisToken);
+				_SrcBytes.AddRange(thisTokenb);
+				byte[] thisValb = System.Text.Encoding.UTF8.GetBytes(_LibTokens[i].Val);
+				byte[] thisValLengthb = BitConverter.GetBytes(thisValb.Length);
+				_SrcBytes.AddRange(thisValLengthb);
+				_SrcBytes.AddRange(thisValb);
+			}
+			
 			for(int i = 0; i < _Tokens.Length; i++)
 			{
 				short thisToken = (short)_Tokens[i].Tok;
