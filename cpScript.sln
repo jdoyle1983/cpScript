@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.StdLib.File
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.StdLib.Math", "libCpScript.Net.StdLib.Math\libCpScript.Net.StdLib.Math.csproj", "{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.StdLib.Utilities", "libCpScript.Net.StdLib.Utilities\libCpScript.Net.StdLib.Utilities.csproj", "{CEE6D384-1AAF-430F-884C-6A7E9082972E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEE6D384-1AAF-430F-884C-6A7E9082972E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEE6D384-1AAF-430F-884C-6A7E9082972E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEE6D384-1AAF-430F-884C-6A7E9082972E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEE6D384-1AAF-430F-884C-6A7E9082972E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -74,6 +80,7 @@ Global
 		{AE83D7B3-B7B8-4B7E-AEEE-92B35727B072} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
 		{0080B553-277D-4183-8D51-D3976D52357D} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
 		{F6D17BDC-F1D7-4279-980F-80BF1DB6110E} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
+		{CEE6D384-1AAF-430F-884C-6A7E9082972E} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = cpInt\cpInt.csproj

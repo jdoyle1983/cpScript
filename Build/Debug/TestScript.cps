@@ -1,6 +1,7 @@
 #include Lib/ConsoleIO.obh
 #include Lib/FileIO.obh
 #include Lib/Math.obh
+#include Lib/Utilities.obh
 
 CLASS BaseObject
 	PROP ObjectId
@@ -94,4 +95,20 @@ FUNCTION Main()
 	
 	VAR myVar3 = 125 * ((4 + 3) * (-(28 - 4) * 5) + 88)
 	Console.WriteLine(myVar3)
+
+	Array ar1
+	ar1.Alloc(5)
+	ar1.SetItem(0, "Idx 0")
+	ar1.SetItem(1, "Idx 1")
+	ar1.SetItem(2, "Idx 2")
+	ar1.SetItem(3, "Idx 3")
+	ar1.SetItem(4, "Idx 4")
+
+	VAR c = 0
+	VAR s = ar1.Size() - 1
+	FOR c = 0 to s
+		Console.WriteLine(c .. " - " .. ar1.GetItem(c))
+	NEXT
+
+	ar1.Free()
 END FUNCTION
