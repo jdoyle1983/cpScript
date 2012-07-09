@@ -28,6 +28,8 @@ void List_RemoveAt(List* list, int idx);
 #define List_MemoryBlockHeaderAtIndex(l, i) 	(MemoryBlockHeader*)List_AtIndex(l, i)
 #define List_MemoryBlockSetHeaderAtIndex(l, i) 	(MemoryBlockSetHeader*)List_AtIndex(l, i)
 #define List_AssemblyTokenAtIndex(l, i) 		(AssemblyToken*)List_AtIndex(l, i)
+#define List_LibraryAtIndex(l, i)               (Library*)List_AtIndex(l, i)
+#define List_ListAtIndex(l, i)                  (List*)List_AtIndex(l, i)
 #define List_IntAtIndex(l, i)                   (int)List_AtIndex(l, i)
 
 #define List_AddInt(l, i)                       List_Add(l, (void*)i)

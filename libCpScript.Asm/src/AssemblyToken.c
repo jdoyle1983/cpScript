@@ -5,7 +5,7 @@
 AssemblyToken* AssemblyToken_New(short Tok, const char* Val)
 {
 	AssemblyToken* t = (AssemblyToken*)malloc(sizeof(AssemblyToken));
-	t->Token = Tok;
+	t->Tok = Tok;
 	t->Val = NULL;
 	if(Val != NULL)
 	{

@@ -3,7 +3,7 @@
 
 typedef struct
 {
-	short Token;
+	short Tok;
 	char* Val;
 } AssemblyToken;
 

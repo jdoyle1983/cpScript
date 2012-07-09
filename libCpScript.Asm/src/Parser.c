@@ -23,7 +23,7 @@ List* Parse(char* Input)
 
         if(inQuotes == 0)
         {
-            if(strcmp(tVal, "") == 0 && Toks->Count > 0 && (List_AssemblyTokenAtIndex(Toks, Toks->Count - 1))->Token == tLiteral && strcmp(s, "\n") != 0 && strcmp(s, "\r") != 0)
+            if(strcmp(tVal, "") == 0 && Toks->Count > 0 && (List_AssemblyTokenAtIndex(Toks, Toks->Count - 1))->Tok == tLiteral && strcmp(s, "\n") != 0 && strcmp(s, "\r") != 0)
             {
                 char* tStr = (List_AssemblyTokenAtIndex(Toks, Toks->Count - 1))->Val;
                 char* NewStr = (char*)malloc(sizeof(char) * (strlen(tStr) + strlen(s) + 1));

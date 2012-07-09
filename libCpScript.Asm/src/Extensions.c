@@ -106,3 +106,63 @@ List* SplitAndKeep(char* SrcStr, char* DelimChars)
 		List_Add(r, SubStr(SrcStr, start, strlen(SrcStr) - 1));
 	return r;
 };
+
+short CanConvertToInt(char* Src)
+{
+    short rValue = 1;
+    char* t = StrTrim(Src);
+
+    int i = 0;
+    for(i = 0; i < strlen(t) && rValue == 1; i++)
+    {
+        if( t[i] == '-' && i != 0)
+            rValue = 0;
+        else if( t[i] != '0' && t[i] != '1' && t[i] != '2' && t[i] != '3' && t[i] != '4' && t[i] != '5' && t[i] != '6' && t[i] != '7' && t[i] != '8' && t[i] != '9')
+            rValue = 0;
+    }
+
+    free(t);
+    return rValue;
+};
+
+short CanConvertToBool(char* Src)
+{
+    short rValue = 1;
+    char* t = StrTrim(Src);
+
+    int i = 0;
+    for(i = 0; i < strlen(t) && rValue == 1; i++)
+    {
+        if( t[i] != '0' && t[i] != '1')
+            rValue = 0;
+    }
+
+    free(t);
+    return rValue;
+};
+
+short CanConvertToDouble(char* Src)
+{
+    short rValue = 1;
+    char* t = StrTrim(Src);
+
+    int i = 0;
+    int d = 0;
+    for(i = 0; i < strlen(t) && rValue == 1; i++)
+    {
+        if( t[i] == '-' && i != 0)
+            rValue = 0;
+        else if(t[i] == '.')
+        {
+            if(d == 0)
+                d++;
+            else
+                rValue = 0;
+        }
+        else if( t[i] != '0' && t[i] != '1' && t[i] != '2' && t[i] != '3' && t[i] != '4' && t[i] != '5' && t[i] != '6' && t[i] != '7' && t[i] != '8' && t[i] != '9')
+            rValue = 0;
+    }
+
+    free(t);
+    return rValue;
+};

@@ -11,4 +11,8 @@ char* SubStr(char* Src, int Start, int End);
 List* SplitAndKeep(char* SrcStr, char* DelimChars);
 char* StrToLower(char* SrcStr);
 
+short CanConvertToInt(char* Src);
+short CanConvertToBool(char* Src);
+short CanConvertToDouble(char* Src);
+
 #endif
