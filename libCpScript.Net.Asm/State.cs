@@ -751,6 +751,7 @@ namespace libCpScript.Net.Asm
 				{
 					_Registers.Push(new List<string>());
 					_Headers.Push(new List<MemoryBlockHeader>());
+					_BlockHeaders.Push(new List<MemoryBlockSetHeader>());
 					_Offset++;
 					string val = _Tokens[_Offset].Val;
 					_Offset++;
@@ -785,6 +786,7 @@ namespace libCpScript.Net.Asm
 				{
 					_Registers.Push(new List<string>());
 					_Headers.Push(new List<MemoryBlockHeader>());
+					_BlockHeaders.Push(new List<MemoryBlockSetHeader>());
 					_Offset++;
 					string labelTitle = _Tokens[_Offset].Val;
 					_Offset++;
@@ -813,6 +815,7 @@ namespace libCpScript.Net.Asm
 					else
 					{
 						_Registers.Pop();
+						_BlockHeaders.Pop();
 						_Offset = _CursorStack.Pop();
 					}
 				}break;
