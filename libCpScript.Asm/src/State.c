@@ -476,68 +476,55 @@ void* State_New(char* ScriptText)
 
 void State_Delete(void* S)
 {
-    printf("Delete_Start\n");
     State* state = (State*)S;
     int i = 0;
     int e = 0;
 
-    printf("Cleaning Up %d Library Tokens\n", state->_LibTokens->Count);
     for(i = 0; i < state->_LibTokens->Count; i++)
         AssemblyToken_Delete(List_AssemblyTokenAtIndex(state->_LibTokens, i));
     List_Delete(state->_LibTokens);
 
-    printf("Cleaning Up %d Tokens\n", state->_Tokens->Count);
     for(i = 0; i < state->_Tokens->Count; i++)
         AssemblyToken_Delete(List_AssemblyTokenAtIndex(state->_Tokens, i));
     List_Delete(state->_Tokens);
 
-    printf("Cleaning Up %d Libraries\n", state->_Libraries->Count);
     for(i = 0; i < state->_Libraries->Count; i++)
         Library_Free(List_LibraryAtIndex(state->_Libraries, i));
     List_Delete(state->_Libraries);
 
-    printf("Cleaning Up %d Stack Items\n", state->_Stack->Count);
     for(i = 0; i < state->_Stack->Count; i++)
         free(List_StringAtIndex(state->_Stack, i));
     List_Delete(state->_Stack);
 
-    printf("Cleaning Up %d Memory Items\n", state->_Memory->Count);
     for(i = 0; i < state->_Memory->Count; i++)
         MemoryBlock_Delete(List_MemoryBlockAtIndex(state->_Memory, i));
     List_Delete(state->_Memory);
 
-    printf("Cleaning Up %d Labels\n", state->_Labels->Count);
     for(i = 0; i < state->_Labels->Count; i++)
         LabelDef_Delete(List_LabelDefAtIndex(state->_Labels, i));
     List_Delete(state->_Labels);
 
-    printf("Cleaning Up %d Register Stacks\n", state->_Registers->Count);
     for(i = 0; i < state->_Registers->Count; i++)
     {
         List* rList = List_ListAtIndex(state->_Registers, i);
-        printf("    Cleaning Up %d Register Entries\n", rList->Count);
         for(e = 0; e < rList->Count; e++)
             free(List_StringAtIndex(rList, e));
         List_Delete(rList);
     }
     List_Delete(state->_Registers);
 
-    printf("Cleaning Up %d Block Header Stacks\n", state->_Headers->Count);
     for(i = 0; i < state->_Headers->Count; i++)
     {
         List* hList = List_ListAtIndex(state->_Headers, i);
-        printf("    Cleaning Up %d Block Header Entries\n", hList->Count);
         for(e = 0; e < hList->Count; e++)
             MemoryBlockHeader_Delete(List_MemoryBlockHeaderAtIndex(hList, e));
         List_Delete(hList);
     }
     List_Delete(state->_Headers);
 
-    printf("Cleaning Up %d Block Set Header Stacks\n", state->_BlockHeaders->Count);
     for(i = 0; i < state->_BlockHeaders->Count; i++)
     {
         List* hList = List_ListAtIndex(state->_BlockHeaders, i);
-        printf("    Cleaning Up %d Block Set Header Entries\n", hList->Count);
         for(e = 0; e < hList->Count; e++)
             MemoryBlockSetHeader_Delete(List_MemoryBlockSetHeaderAtIndex(hList, e));
         List_Delete(hList);
