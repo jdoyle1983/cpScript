@@ -321,7 +321,7 @@ namespace libCpScript.Net.ObjectBasic
 			EvaluateExpression(1);
 			AsmResult.AppendLine("POP @" + CmpReg.ToString());
 			long SkipId = NextLabelId;
-			AsmResult.AppendLine("JN @" + CmpReg.ToString() + ", True, _Skip" + SkipId.ToString());
+			AsmResult.AppendLine("JN @" + CmpReg.ToString() + ", 1, _Skip" + SkipId.ToString());
 			currentBlock++;
 			while(currentFunction._Blocks[currentBlock].Tokens[0].Type != TokenType.ExEndIf)
 			{
@@ -332,7 +332,7 @@ namespace libCpScript.Net.ObjectBasic
 					EvaluateExpression(1);
 					AsmResult.AppendLine("POP @" + CmpReg.ToString());
 					SkipId = NextLabelId;
-					AsmResult.AppendLine("JN @" + CmpReg.ToString() + ", True, _Skip" + SkipId.ToString());
+					AsmResult.AppendLine("JN @" + CmpReg.ToString() + ", 1, _Skip" + SkipId.ToString());
 					currentBlock++;
 				}
 				else if(currentFunction._Blocks[currentBlock].Tokens[0].Type == TokenType.ExElse)
@@ -430,7 +430,7 @@ namespace libCpScript.Net.ObjectBasic
 			AsmResult.AppendLine("LBL _WhileTestStart" + whileId.ToString());
 			EvaluateExpression(1);
 			AsmResult.AppendLine("POP @" + CmpReg.ToString());
-			AsmResult.AppendLine("JN @" + CmpReg.ToString() + ", True, _WhileEnd" + whileId.ToString());
+			AsmResult.AppendLine("JN @" + CmpReg.ToString() + ", 1, _WhileEnd" + whileId.ToString());
 			currentBlock++;
 			while(currentFunction._Blocks[currentBlock].Tokens[0].Type != TokenType.ExLoop)
 				ParseBlock();

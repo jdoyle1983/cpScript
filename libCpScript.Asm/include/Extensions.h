@@ -15,4 +15,8 @@ short CanConvertToInt(char* Src);
 short CanConvertToBool(char* Src);
 short CanConvertToDouble(char* Src);
 
+short ShouldMakeDoubletToInt(double v);
+
+char* IntToStr(int v);
+
 #endif

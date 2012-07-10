@@ -8,8 +8,8 @@
 		<Build>
 			<Target title="Debug Linux">
 				<Option platforms="Unix;Mac;" />
-				<Option output="bin/Debug/libCpScript" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
+				<Option output="bin\Debug\libCpScript" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -23,8 +23,8 @@
 			</Target>
 			<Target title="Release Linux">
 				<Option platforms="Unix;Mac;" />
-				<Option output="bin/Release/libCpScript" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
+				<Option output="bin\Release\libCpScript" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -38,27 +38,30 @@
 			</Target>
 			<Target title="Debug Windows">
 				<Option platforms="Windows;" />
-				<Option output="bin/Debug/libCpScript" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
+				<Option output="bin\Debug\libCpScript" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-pg" />
+					<Add option="-g" />
 					<Add option="-DWINDOWS" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
+					<Add option="-pg -lgmon" />
 				</Linker>
 			</Target>
 			<Target title="Release Windows">
 				<Option platforms="Windows;" />
-				<Option output="bin/Release/libCpScript" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
+				<Option output="bin\Release\libCpScript" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-DWINDOWS" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -68,53 +71,53 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="include/AssemblyToken.h" />
-		<Unit filename="include/Extensions.h" />
-		<Unit filename="include/IScriptLib.h" />
-		<Unit filename="include/LabelDef.h" />
-		<Unit filename="include/List.h" />
-		<Unit filename="include/MemoryBlock.h" />
-		<Unit filename="include/MemoryBlockHeader.h" />
-		<Unit filename="include/MemoryBlockSetHeader.h" />
-		<Unit filename="include/Parser.h" />
-		<Unit filename="include/Stack.h" />
-		<Unit filename="include/State.h" />
-		<Unit filename="include/Token.h" />
-		<Unit filename="include/libCpScript.Asm.h" />
-		<Unit filename="src/AssemblyToken.c">
+		<Unit filename="include\AssemblyToken.h" />
+		<Unit filename="include\Extensions.h" />
+		<Unit filename="include\IScriptLib.h" />
+		<Unit filename="include\LabelDef.h" />
+		<Unit filename="include\List.h" />
+		<Unit filename="include\MemoryBlock.h" />
+		<Unit filename="include\MemoryBlockHeader.h" />
+		<Unit filename="include\MemoryBlockSetHeader.h" />
+		<Unit filename="include\Parser.h" />
+		<Unit filename="include\Stack.h" />
+		<Unit filename="include\State.h" />
+		<Unit filename="include\Token.h" />
+		<Unit filename="include\libCpScript.Asm.h" />
+		<Unit filename="src\AssemblyToken.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/Extensions.c">
+		<Unit filename="src\Extensions.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/IScriptLib.c">
+		<Unit filename="src\IScriptLib.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/LabelDef.c">
+		<Unit filename="src\LabelDef.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/List.c">
+		<Unit filename="src\List.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/MemoryBlock.c">
+		<Unit filename="src\MemoryBlock.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/MemoryBlockHeader.c">
+		<Unit filename="src\MemoryBlockHeader.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/MemoryBlockSetHeader.c">
+		<Unit filename="src\MemoryBlockSetHeader.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/Parser.c">
+		<Unit filename="src\Parser.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/Stack.c">
+		<Unit filename="src\Stack.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/State.c">
+		<Unit filename="src\State.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/test.c">
+		<Unit filename="src\test.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

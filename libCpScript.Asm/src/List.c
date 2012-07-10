@@ -54,3 +54,10 @@ void List_RemoveAt(List* list, int idx)
 		list->Items = (void**)realloc(list->Items, sizeof(void*) * list->Count);
 	}
 };
+
+void List_Clear(List* list)
+{
+    list->Count = 0;
+    free(list->Items);
+    list->Items = (void**)malloc(0);
+};

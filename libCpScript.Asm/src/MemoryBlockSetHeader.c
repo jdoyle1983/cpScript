@@ -24,6 +24,11 @@ void MemoryBlockSetHeader_SetOffset(MemoryBlockSetHeader* Header, int Idx, int O
     Header->IndexOffset->Items[Idx] = (void*)Offset;
 };
 
+int MemoryBlockSetHeader_GetOffset(MemoryBlockSetHeader* Header, int Idx)
+{
+    return (int)Header->IndexOffset->Items[Idx];
+};
+
 void MemoryBlockSetHeader_Delete(MemoryBlockSetHeader* Header)
 {
     List_Delete(Header->IndexOffset);

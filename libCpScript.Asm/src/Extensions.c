@@ -150,6 +150,7 @@ short CanConvertToDouble(char* Src)
     int d = 0;
     for(i = 0; i < strlen(t) && rValue == 1; i++)
     {
+        //printf("%c", t[i]);
         if( t[i] == '-' && i != 0)
             rValue = 0;
         else if(t[i] == '.')
@@ -162,7 +163,43 @@ short CanConvertToDouble(char* Src)
         else if( t[i] != '0' && t[i] != '1' && t[i] != '2' && t[i] != '3' && t[i] != '4' && t[i] != '5' && t[i] != '6' && t[i] != '7' && t[i] != '8' && t[i] != '9')
             rValue = 0;
     }
-
+    //printf("\n");
     free(t);
     return rValue;
+};
+
+short ShouldMakeDoubletToInt(double v)
+{
+    char* Src = (char*)malloc(sizeof(char) * 3000);
+    sprintf(Src, "%f", v);
+
+    short rValue = 1;
+    if(CanConvertToDouble(Src) == 0)
+        rValue = 0;
+    int i = 0;
+    int d = -1;
+    for(i = 0; i < strlen(Src) && d == -1; i++)
+        if(Src[i] == '.')
+            d = i;
+    if(d != -1)
+    {
+        char* s1 = SubStr(Src, 0, d - 1);
+        char* s2 = SubStr(Src, d + 1, strlen(Src) - 1);
+        if(atoi(s2) > 0)
+            rValue = 0;
+        free(s1);
+        free(s2);
+    }
+    free(Src);
+    return rValue;
+}
+
+char* IntToStr(int v)
+{
+    char* Str = (char*)malloc(sizeof(char) * 3000);
+    sprintf(Str, "%d", v);
+    char* r = (char*)malloc(sizeof(char) * (strlen(Str) + 1));
+    strcpy(r, Str);
+    free(Str);
+    return r;
 };

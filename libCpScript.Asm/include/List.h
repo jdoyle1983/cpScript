@@ -22,6 +22,8 @@ void* List_AtIndex(List* list, int idx);
 void List_Remove(List* list, void* item);
 void List_RemoveAt(List* list, int idx);
 
+void List_Clear(List* list);
+
 #define List_StringAtIndex(l, i) 				(char*)List_AtIndex(l, i)
 #define List_MemoryBlockAtIndex(l, i) 			(MemoryBlock*)List_AtIndex(l, i)
 #define List_LabelDefAtIndex(l, i) 				(LabelDef*)List_AtIndex(l, i)
