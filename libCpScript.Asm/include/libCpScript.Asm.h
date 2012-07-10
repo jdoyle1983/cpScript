@@ -7,7 +7,6 @@ void State_RegisterFunction(void* State, char* Name, void (*UserFunction)(void*)
 short State_Iterate(void* State);
 void State_RunFromMethod(void* State, char* Name);
 void State_LoadMethod(void* State, char* Name);
-void State_ResetState(void* State);
 
 int State_PopInt(void* State);
 double State_PopDouble(void* State);

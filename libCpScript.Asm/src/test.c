@@ -11,7 +11,9 @@ void ConsoleWriteLine(void* State)
 
 int main(int argc, char* argv[])
 {
-    FILE* f = fopen("FibTest.asm", "rb");
+    if(argc < 2)
+        return -1;
+    FILE* f = fopen(argv[1], "rb");
     if(f == NULL)
     {
         return -1;

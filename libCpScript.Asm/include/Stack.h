@@ -11,6 +11,8 @@ void* Stack_Peek(Stack* stack);
 void* Stack_Pop(Stack* stack);
 void Stack_Push(Stack* stack, void* item);
 
+#define Stack_PushInt(s, i) Stack_Push(s, (void*)i)
+
 #define Stack_PeekInt(s) 	(int)Stack_Peek(s)
 #define Stack_PeekString(s) (char*)Stack_Peek(s)
 #define Stack_PeekList(s) 	(List*)Stack_Peek(s)

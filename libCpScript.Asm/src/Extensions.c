@@ -3,6 +3,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 char* StrToLowTrim(char* SrcStr)
 {

@@ -28,8 +28,6 @@ typedef struct
     List* _Tokens;
     List* _Libraries;
     int _Offset;
-
-    char* OrigScript;
 } State;
 
 short ptMemoryBlockVar(char* Val)
@@ -471,9 +469,6 @@ void* State_New(char* ScriptText)
     state->_LibTokens = List_New();
     state->_Libraries = List_New();
     state->_Offset = -1;
-    state->OrigScript = (char*)malloc(sizeof(char) * (strlen(ScriptText) + 1));
-    strcpy(state->OrigScript, ScriptText);
-
     state->_Tokens = Parse(ScriptText);
     State_DoInit(state);
     return state;
@@ -481,52 +476,74 @@ void* State_New(char* ScriptText)
 
 void State_Delete(void* S)
 {
+    printf("Delete_Start\n");
     State* state = (State*)S;
     int i = 0;
     int e = 0;
 
+    printf("Cleaning Up %d Library Tokens\n", state->_LibTokens->Count);
     for(i = 0; i < state->_LibTokens->Count; i++)
         AssemblyToken_Delete(List_AssemblyTokenAtIndex(state->_LibTokens, i));
     List_Delete(state->_LibTokens);
+
+    printf("Cleaning Up %d Tokens\n", state->_Tokens->Count);
     for(i = 0; i < state->_Tokens->Count; i++)
         AssemblyToken_Delete(List_AssemblyTokenAtIndex(state->_Tokens, i));
     List_Delete(state->_Tokens);
+
+    printf("Cleaning Up %d Libraries\n", state->_Libraries->Count);
     for(i = 0; i < state->_Libraries->Count; i++)
         Library_Free(List_LibraryAtIndex(state->_Libraries, i));
     List_Delete(state->_Libraries);
+
+    printf("Cleaning Up %d Stack Items\n", state->_Stack->Count);
     for(i = 0; i < state->_Stack->Count; i++)
         free(List_StringAtIndex(state->_Stack, i));
     List_Delete(state->_Stack);
+
+    printf("Cleaning Up %d Memory Items\n", state->_Memory->Count);
     for(i = 0; i < state->_Memory->Count; i++)
         MemoryBlock_Delete(List_MemoryBlockAtIndex(state->_Memory, i));
     List_Delete(state->_Memory);
+
+    printf("Cleaning Up %d Labels\n", state->_Labels->Count);
     for(i = 0; i < state->_Labels->Count; i++)
         LabelDef_Delete(List_LabelDefAtIndex(state->_Labels, i));
     List_Delete(state->_Labels);
+
+    printf("Cleaning Up %d Register Stacks\n", state->_Registers->Count);
     for(i = 0; i < state->_Registers->Count; i++)
     {
         List* rList = List_ListAtIndex(state->_Registers, i);
+        printf("    Cleaning Up %d Register Entries\n", rList->Count);
         for(e = 0; e < rList->Count; e++)
             free(List_StringAtIndex(rList, e));
         List_Delete(rList);
     }
     List_Delete(state->_Registers);
+
+    printf("Cleaning Up %d Block Header Stacks\n", state->_Headers->Count);
     for(i = 0; i < state->_Headers->Count; i++)
     {
         List* hList = List_ListAtIndex(state->_Headers, i);
+        printf("    Cleaning Up %d Block Header Entries\n", hList->Count);
         for(e = 0; e < hList->Count; e++)
             MemoryBlockHeader_Delete(List_MemoryBlockHeaderAtIndex(hList, e));
         List_Delete(hList);
     }
     List_Delete(state->_Headers);
+
+    printf("Cleaning Up %d Block Set Header Stacks\n", state->_BlockHeaders->Count);
     for(i = 0; i < state->_BlockHeaders->Count; i++)
     {
         List* hList = List_ListAtIndex(state->_BlockHeaders, i);
+        printf("    Cleaning Up %d Block Set Header Entries\n", hList->Count);
         for(e = 0; e < hList->Count; e++)
             MemoryBlockSetHeader_Delete(List_MemoryBlockSetHeaderAtIndex(hList, e));
         List_Delete(hList);
     }
     List_Delete(state->_BlockHeaders);
+
     List_Delete(state->_CursorStack);
 
     free(state);
@@ -585,6 +602,36 @@ char* GetActualVal(State* state, char* Src)
     else
         rVal = Src;
     return rVal;
+};
+
+void StatePush(State* state)
+{
+    Stack_Push(state->_Registers, List_New());
+    Stack_Push(state->_Headers, List_New());
+    Stack_Push(state->_BlockHeaders, List_New());
+    Stack_PushInt(state->_CursorStack, state->_Offset);
+};
+
+void StatePop(State* state)
+{
+    List* OldRegister = Stack_PopList(state->_Registers);
+    List* OldHeaders = Stack_PopList(state->_Headers);
+    List* OldBlockHeaders = Stack_PopList(state->_BlockHeaders);
+    state->_Offset = Stack_PopInt(state->_CursorStack);
+
+    int i = 0;
+
+    for(i = 0; i < OldRegister->Count; i++)
+        free(List_StringAtIndex(OldRegister, i));
+    List_Delete(OldRegister);
+
+    for(i = 0; i < OldHeaders->Count; i++)
+        MemoryBlockHeader_Delete(List_MemoryBlockHeaderAtIndex(OldHeaders, i));
+    List_Delete(OldHeaders);
+
+    for(i = 0; i < OldBlockHeaders->Count; i++)
+        MemoryBlockSetHeader_Delete(List_MemoryBlockSetHeaderAtIndex(OldBlockHeaders, i));
+    List_Delete(OldBlockHeaders);
 };
 
 short State_Iterate(void* S)
@@ -847,13 +894,10 @@ short State_Iterate(void* S)
 
             case tJumpOffset:
             {
-                Stack_Push(state->_Registers, List_New());
-                Stack_Push(state->_Headers, List_New());
-                Stack_Push(state->_BlockHeaders, List_New());
                 state->_Offset++;
                 char* val = CurrentTok(state)->Val;
                 state->_Offset++;
-                Stack_Push(state->_CursorStack, (void*)state->_Offset);
+                StatePush(state);
                 int newOffset = -1;
                 char* rVal = GetActualVal(state, val);
                 if(CanConvertToInt(rVal) == 0)
@@ -866,13 +910,10 @@ short State_Iterate(void* S)
 
             case tJump:
             {
-                Stack_Push(state->_Registers, List_New());
-                Stack_Push(state->_Headers, List_New());
-                Stack_Push(state->_BlockHeaders, List_New());
                 state->_Offset++;
                 char* labelTitle = CurrentTok(state)->Val;
                 state->_Offset++;
-                Stack_Push(state->_CursorStack, (void*)state->_Offset);
+                StatePush(state);
                 LabelDef* l = NULL;
                 int c = 0;
                 for(c = 0; c < state->_Labels->Count; c++)
@@ -888,10 +929,7 @@ short State_Iterate(void* S)
                 if(l->UserFunction != NULL)
                 {
                     l->UserFunction(state);
-                    Stack_PopList(state->_CursorStack);
-                    List_Delete(Stack_PopList(state->_BlockHeaders));
-                    List_Delete(Stack_PopList(state->_Registers));
-                    List_Delete(Stack_PopList(state->_Headers));
+                    StatePop(state);
                 }
                 else
                     state->_Offset = l->Offset;
@@ -899,25 +937,10 @@ short State_Iterate(void* S)
 
             case tReturn:
             {
-                List* OldHeaders = Stack_PopList(state->_Headers);
-                if(state->_Headers->Count < 1)
+                if(state->_CursorStack->Count == 0)
                     state->_Offset = -1;
                 else
-                {
-                    List* OldBlockHeaders = Stack_PopList(state->_BlockHeaders);
-                    List* OldRegisters = Stack_PopList(state->_Registers);
-                    state->_Offset = Stack_PopInt(state->_CursorStack);
-                    int c = 0;
-                    for(c = 0; c < OldHeaders->Count; c++)
-                        MemoryBlockHeader_Delete(List_MemoryBlockHeaderAtIndex(OldHeaders, c));
-                    List_Delete(OldHeaders);
-                    for(c = 0; c < OldBlockHeaders->Count; c++)
-                        MemoryBlockSetHeader_Delete(List_MemoryBlockSetHeaderAtIndex(OldBlockHeaders, c));
-                    List_Delete(OldBlockHeaders);
-                    for(c = 0; c < OldRegisters->Count; c++)
-                        free(List_StringAtIndex(OldRegisters, c));
-                    List_Delete(OldRegisters);
-                }
+                    StatePop(state);
             } break;
 
             case tLongJumpOffset:
@@ -1178,16 +1201,6 @@ void State_LoadMethod(void* S, char* Name)
         if(strcmp(l->Label, Name) == 0 && l->Offset >= 0)
             state->_Offset = l->Offset;
     }
-};
-
-void State_ResetState(void* S)
-{
-    State* state = (State*)S;
-    char* oScript = (char*)malloc(sizeof(char) * (strlen(state->OrigScript) + 1));
-    strcpy(oScript, state->OrigScript);
-    State_Delete(state);
-    state = State_New(oScript);
-    free(oScript);
 };
 
 int State_PopInt(void* S)
