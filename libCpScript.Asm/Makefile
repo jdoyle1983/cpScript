@@ -3,7 +3,7 @@ CFLAGS=-c -Iinclude
 BIN=bin/libCpScriptAsmTest
 BINOBJ=obj/test.o
 LIB=lib/libCpScriptAsm.a
-LIBOBJ=obj/AssemblyToken.o obj/Extensions.o obj/IScriptLib.o obj/LabelDef.o obj/List.o obj/MemoryBlock.o obj/MemoryBlockHeader.o obj/MemoryBlockSetHeader.o obj/Parser.o obj/Stack.o obj/State.o
+LIBOBJ=obj/AssemblyToken.o obj/Extensions.o obj/LabelDef.o obj/List.o obj/MemoryBlock.o obj/MemoryBlockHeader.o obj/MemoryBlockSetHeader.o obj/Parser.o obj/Stack.o obj/State.o
 
 all: $(LIB) $(BIN)
 
@@ -21,9 +21,6 @@ obj/AssemblyToken.o: src/AssemblyToken.c
 
 obj/Extensions.o: src/Extensions.c
 	$(CC) $(CFLAGS) src/Extensions.c -o obj/Extensions.o
-
-obj/IScriptLib.o: src/IScriptLib.c
-	$(CC) $(CFLAGS) src/IScriptLib.c -o obj/IScriptLib.o
 
 obj/LabelDef.o: src/LabelDef.c
 	$(CC) $(CFLAGS) src/LabelDef.c -o obj/LabelDef.o

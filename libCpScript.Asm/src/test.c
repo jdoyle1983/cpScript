@@ -29,6 +29,14 @@ int main(int argc, char* argv[])
     State_RegisterFunction(State, "WriteLine", &ConsoleWriteLine, 0);
     State_RunFromMethod(State, "Main");
     State_Delete(State);
+
+    State = State_New(result);
+    State_RegisterFunction(State, "WriteLine", &ConsoleWriteLine, 0);
+    State_PushString(State, "String 2");
+    State_PushString(State, "String 1");
+    State_RunFromMethod(State, "WriteStrings");
+    State_Delete(State);
+
     free(result);
 	return 0;
 };

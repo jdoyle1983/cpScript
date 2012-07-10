@@ -1,3 +1,15 @@
+LBL WriteStrings
+POP @2
+POP @1
+PUSH "String 1: "
+PUSH @2
+CAT
+JMP WriteLine
+PUSH "String 2: "
+PUSH @1
+CAT
+JMP WriteLine
+RTN
 LBL Main
 AB %fibMax
 PUSH 10

@@ -6,7 +6,6 @@
 #include <Stack.h>
 #include <AssemblyToken.h>
 #include <Extensions.h>
-#include <IScriptLib.h>
 #include <LabelDef.h>
 #include <List.h>
 #include <MemoryBlock.h>
@@ -24,9 +23,7 @@ typedef struct
     Stack* _Registers;
     Stack* _Headers;
     Stack* _BlockHeaders;
-    List* _LibTokens;
     List* _Tokens;
-    List* _Libraries;
     int _Offset;
 } State;
 
@@ -409,32 +406,7 @@ void FreeMemoryBlock(State* state, char* Id)
 
 void State_DoInit(State* state)
 {
-    List* _NewToks = List_New();
     int i = 0;
-    for(i = 0; i < state->_Tokens->Count; i++)
-    {
-        AssemblyToken* aTok = List_AssemblyTokenAtIndex(state->_Tokens, i);
-        AssemblyToken* nTok = NULL;
-        if((i + 1) < state->_Tokens->Count)
-            nTok = List_AssemblyTokenAtIndex(state->_Tokens, i + 1);
-        if(aTok->Tok == tLib && nTok != NULL && nTok->Tok == tQuotedLiteral)
-        {
-            List_Add(state->_LibTokens, aTok);
-            List_Add(state->_LibTokens, nTok);
-            i++;
-            Library* lib = Library_Load(nTok->Val);
-            if(lib != NULL)
-            {
-                List_Add(state->_Libraries, lib);
-                lib->Init(state);
-            }
-        }
-        else
-            List_Add(_NewToks, aTok);
-    }
-
-    List_Delete(state->_Tokens);
-    state->_Tokens = _NewToks;
 
     for(i = 0; i < state->_Tokens->Count; i++)
     {
@@ -466,8 +438,6 @@ void* State_New(char* ScriptText)
     state->_Registers = Stack_New();
     state->_Headers = Stack_New();
     state->_BlockHeaders = Stack_New();
-    state->_LibTokens = List_New();
-    state->_Libraries = List_New();
     state->_Offset = -1;
     state->_Tokens = Parse(ScriptText);
     State_DoInit(state);
@@ -480,17 +450,9 @@ void State_Delete(void* S)
     int i = 0;
     int e = 0;
 
-    for(i = 0; i < state->_LibTokens->Count; i++)
-        AssemblyToken_Delete(List_AssemblyTokenAtIndex(state->_LibTokens, i));
-    List_Delete(state->_LibTokens);
-
     for(i = 0; i < state->_Tokens->Count; i++)
         AssemblyToken_Delete(List_AssemblyTokenAtIndex(state->_Tokens, i));
     List_Delete(state->_Tokens);
-
-    for(i = 0; i < state->_Libraries->Count; i++)
-        Library_Free(List_LibraryAtIndex(state->_Libraries, i));
-    List_Delete(state->_Libraries);
 
     for(i = 0; i < state->_Stack->Count; i++)
         free(List_StringAtIndex(state->_Stack, i));
