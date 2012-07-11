@@ -73,7 +73,6 @@
 		</Compiler>
 		<Unit filename="include\AssemblyToken.h" />
 		<Unit filename="include\Extensions.h" />
-		<Unit filename="include\IScriptLib.h" />
 		<Unit filename="include\LabelDef.h" />
 		<Unit filename="include\List.h" />
 		<Unit filename="include\MemoryBlock.h" />
@@ -88,9 +87,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\Extensions.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="src\IScriptLib.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src\LabelDef.c">
