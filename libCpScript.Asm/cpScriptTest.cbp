@@ -16,6 +16,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-lCpScript.Asmd" />
+					<Add option="-lCpStdLibd" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -29,6 +30,7 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-lCpScript.Asm" />
+					<Add option="-lCpStdLib" />
 				</Linker>
 			</Target>
 		</Build>
