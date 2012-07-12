@@ -2,31 +2,29 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="libCpScript.Asm" />
+		<Option title="libCpScript.Asm.Shared" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="lib\libCpScript.Asmd.a" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="" />
-				<Option object_output="obj\static\debug\" />
-				<Option type="2" />
+				<Option output="lib\libCpScript.Asm.Sharedd.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\shared\debug\" />
+				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="lib\libCpScript.Asm.a" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="" />
-				<Option object_output="obj\static\release\" />
-				<Option type="2" />
+				<Option output="lib\libCpScript.Asm.Shared.so" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\shared\release\" />
+				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
@@ -35,6 +33,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-Wall" />
 			<Add directory="include" />
 		</Compiler>
 		<Unit filename="include\AssemblyToken.h" />

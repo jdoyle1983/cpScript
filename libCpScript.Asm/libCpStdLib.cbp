@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="libCpStdLib" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="lib\libCpStdLibd.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj\cpstdlib\debug\" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="lib\libCpStdLib.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj\cpstdlib\release\" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="include" />
+		</Compiler>
+		<Unit filename="include\CpStdLib.h" />
+		<Unit filename="include\CpStdLib_ConsoleIO.h" />
+		<Unit filename="include\CpStdLib_FileIO.h" />
+		<Unit filename="include\CpStdLib_Math.h" />
+		<Unit filename="include\CpStdLib_Utilities.h" />
+		<Unit filename="src\CpStdLib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\CpStdLib_ConsoleIO.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\CpStdLib_FileIO.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\CpStdLib_Math.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src\CpStdLib_Utilities.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

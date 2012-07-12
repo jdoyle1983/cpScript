@@ -1,13 +1,7 @@
 #include <libCpScript.Asm.h>
+#include <CpStdLib.h>
 #include <stdio.h>
 #include <malloc.h>
-
-void ConsoleWriteLine(void* State)
-{
-    char* toPrint = State_PopString(State);
-    printf("%s\n", toPrint);
-    free(toPrint);
-};
 
 int main(int argc, char* argv[])
 {
@@ -26,17 +20,24 @@ int main(int argc, char* argv[])
     fclose(f);
     result[size] = '\0';
     void* State = State_New(result);
-    State_RegisterFunction(State, "WriteLine", &ConsoleWriteLine, 0);
+    CpStdLib_InstallConsoleIO(State);
+    CpStdLib_InstallFileIO(State);
+    CpStdLib_InstallMath(State);
+    CpStdLib_InstallUtilities(State);
     State_RunFromMethod(State, "Main");
     State_Delete(State);
 
+/*
     State = State_New(result);
-    State_RegisterFunction(State, "WriteLine", &ConsoleWriteLine, 0);
+    CpStdLib_InstallConsoleIO(State);
+    CpStdLib_InstallFileIO(State);
+    CpStdLib_InstallMath(State);
+    CpStdLib_InstallUtilities(State);
     State_PushString(State, "String 2");
     State_PushString(State, "String 1");
     State_RunFromMethod(State, "WriteStrings");
     State_Delete(State);
-
+*/
     free(result);
 	return 0;
 };

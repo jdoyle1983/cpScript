@@ -11,21 +11,13 @@ RTN
 LBL _Console_ReadLine
 JMP __StdLib__ConsoleIO__ReadLine
 RTN
-LBL WriteStrings
-POP @2
-POP @1
-PUSH "String 1: "
-PUSH @2
-CAT
-JMP _Console_WriteLine
-PUSH "String 2: "
-PUSH @1
-CAT
-JMP _Console_WriteLine
-RTN
 LBL Main
+PUSH " "
+JMP _Console_WriteLine
+PUSH "Enter Fibonacci Sequence Iteration Count: "
+JMP _Console_Write
 AB %fibMax
-PUSH 10
+JMP _Console_ReadLine
 POP %fibMax
 AB %f1
 PUSH 0
