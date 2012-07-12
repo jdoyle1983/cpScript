@@ -21,16 +21,23 @@ int main(int argc, char* argv[])
     result[size] = '\0';
     void* State = State_New(result);
     CpStdLib_InstallConsoleIO(State);
+    CpStdLib_InstallFileIO(State);
+    CpStdLib_InstallMath(State);
+    CpStdLib_InstallUtilities(State);
     State_RunFromMethod(State, "Main");
     State_Delete(State);
 
+/*
     State = State_New(result);
     CpStdLib_InstallConsoleIO(State);
+    CpStdLib_InstallFileIO(State);
+    CpStdLib_InstallMath(State);
+    CpStdLib_InstallUtilities(State);
     State_PushString(State, "String 2");
     State_PushString(State, "String 1");
     State_RunFromMethod(State, "WriteStrings");
     State_Delete(State);
-
+*/
     free(result);
 	return 0;
 };
