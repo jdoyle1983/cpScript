@@ -1219,3 +1219,8 @@ void State_PushString(void* S, char* v)
     strcpy(toPush, v);
     Stack_Push(state->_Stack, toPush);
 };
+
+void InteropFreeString(char* str)
+{
+    free(str);
+};

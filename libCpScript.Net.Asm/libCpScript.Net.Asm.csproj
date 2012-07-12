@@ -37,13 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="IScriptLib.cs" />
-    <Compile Include="Parser.cs" />
     <Compile Include="State.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="MemoryBlock.cs" />
-    <Compile Include="LabelDef.cs" />
+    <Compile Include="NativeState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

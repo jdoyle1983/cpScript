@@ -18,4 +18,6 @@ void State_PushDouble(void* State, double v);
 void State_PushBool(void* State, short v);
 void State_PushString(void* State, char* v);
 
+void InteropFreeString(char* str);
+
 #endif

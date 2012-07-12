@@ -28,6 +28,13 @@ namespace cpInt
 {
     class Program
     {
+		static void ConsoleWriteLine (IntPtr StatePtr)
+		{
+			libCpScript.Net.Asm.State State = new libCpScript.Net.Asm.State(StatePtr);
+			string toPrint = State.PopString();
+			Console.WriteLine(toPrint);
+		}
+
         static void Main(string[] args)
         {
             if (args.Length < 1)
@@ -36,9 +43,13 @@ namespace cpInt
             }
             else
             {
-				bool shouldLoad = true;
+				//bool shouldLoad = true;
 				libCpScript.Net.Asm.State State = null;
-				
+				State = new libCpScript.Net.Asm.State(args[0]);
+				State.RegisterFunction("WriteLine", ConsoleWriteLine, false);
+				State.RunFromMethod("Main");
+				State.Delete();
+				/*
 				if(args.Length == 1) //Compiled scripts will be compiled into a single file
 				{
 					try
@@ -62,7 +73,7 @@ namespace cpInt
 				}
 				
 				if(State != null && State.ScriptLoaded)
-                	State.RunFromMethod("Main");
+                	State.RunFromMethod("Main");*/
             }
         }
     }

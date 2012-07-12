@@ -13,7 +13,7 @@ clean:
 
 $(LIB): $(LIBOBJ)
 	ar rcs $(LIB) $(LIBOBJ)
-	$(CC) -fPIC -shared $(LIBOBJ) -o $(SHAREDLIB)
+	$(CC) -shared $(LIBOBJ) -o $(SHAREDLIB)
 
 $(BIN): $(LIB) $(BINOBJ)
 	$(CC) $(BINOBJ) -Llib -lCpScriptAsm -lKernel32 -o $(BIN)
