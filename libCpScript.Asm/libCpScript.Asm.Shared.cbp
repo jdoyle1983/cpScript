@@ -45,7 +45,6 @@
 		<Unit filename="include\MemoryBlockSetHeader.h" />
 		<Unit filename="include\Parser.h" />
 		<Unit filename="include\Stack.h" />
-		<Unit filename="include\State.h" />
 		<Unit filename="include\Token.h" />
 		<Unit filename="include\libCpScript.Asm.h" />
 		<Unit filename="src\AssemblyToken.c">
