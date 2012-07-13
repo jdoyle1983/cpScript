@@ -7,7 +7,7 @@ typedef struct
     char* Value;
 } MemoryBlock;
 
-MemoryBlock* MemoryBlock_New();
+MemoryBlock* MemoryBlock_New(void);
 void MemoryBlock_Delete(MemoryBlock* block);
 void MemoryBlock_SetValue(MemoryBlock* block, char* Val);
 void MemoryBlock_Free(MemoryBlock* block);

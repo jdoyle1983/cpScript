@@ -11,7 +11,7 @@ typedef struct
 	void** Items;
 } List;
 
-List* List_New();
+List* List_New(void);
 void List_Delete(List* list);
 
 int List_Count(List* list);

@@ -39,7 +39,7 @@ short ptMemoryBlockVarIndex(char* Val)
     if(Val[0] == '$')
     {
         int i = 0;
-        for(i = 0; i < strlen(Val); i++)
+        for(i = 0; i < (int)strlen(Val); i++)
             if(Val[i] == ':')
                 return 1;
     }
@@ -58,7 +58,7 @@ short ptRegister(char* Val)
     if(Val[0] == '@')
     {
         char* tStr = SubStr(Val, 1, strlen(Val) - 1);
-        int r = 0;
+        short r = 0;
         if(CanConvertToInt(tStr) == 1)
             r = 1;
         free(tStr);
@@ -81,9 +81,10 @@ short ptLabel(State* state, char* Val)
 
 short ptIntegerNonNegative(char* Val)
 {
+	int v = -1;
     if(CanConvertToInt(Val) == 0)
         return 0;
-    int v = atoi(Val);
+    v = atoi(Val);
     if(v >= 0)
         return 1;
     return 0;
@@ -173,6 +174,7 @@ char* ReadRegister(State* state, int id)
 void AllocateMemoryBlockSet(State* state, char* Id, int Count)
 {
     MemoryBlockSetHeader* h = MemoryBlockSetHeader_New(Id, Count);
+	List* Headers = (List*)Stack_Peek(state->_BlockHeaders);
     int i = 0;
     for(i = 0; i < Count; i++)
     {
@@ -197,13 +199,13 @@ void AllocateMemoryBlockSet(State* state, char* Id, int Count)
         }
     }
 
-    List* Headers = Stack_Peek(state->_BlockHeaders);
     List_Add(Headers, h);
 };
 
 void AllocateMemoryBlock(State* state, char* Id)
 {
     MemoryBlockHeader* h = NULL;
+	List* Headers = Stack_PeekList(state->_Headers);
     short found = 0;
     int c = 0;
     for(c = 0; c < state->_Memory->Count; c++)
@@ -225,7 +227,6 @@ void AllocateMemoryBlock(State* state, char* Id)
         h = MemoryBlockHeader_New(Id, state->_Memory->Count - 1);
     }
 
-    List* Headers = Stack_PeekList(state->_Headers);
     List_Add(Headers, h);
 };
 
@@ -246,12 +247,13 @@ void ReferenceMemoryBlockSet(State* state, char* OrigId, char* NewId)
 
     if(hed2 != NULL)
     {
+		int i = 0;
         short shouldAdd = 1;
         if(hed == NULL)
             hed = MemoryBlockSetHeader_New(NewId, hed2->IndexOffset->Count);
         else
             shouldAdd = 0;
-        int i = 0;
+
         for(i = 0; i < hed2->IndexOffset->Count; i++)
             MemoryBlockSetHeader_SetOffset(hed, i, MemoryBlockSetHeader_GetOffset(hed2, i));
 
@@ -289,11 +291,23 @@ void ReferenceMemoryBlock(State* state, char* OrigId, char* NewId)
 
 void SetMemoryBlockSetIndex(State* state, char* Id, char* Value)
 {
-    List* Parts = SplitAndKeep(Id, ":");
-    char* Name = List_StringAtIndex(Parts, 0);
-    int Index = atoi(List_StringAtIndex(Parts, 2));
-    List* BlockHeaders = Stack_PeekList(state->_BlockHeaders);
-    int c = 0;
+	char* Name = NULL;
+	char* IndexChar = NULL;
+    int idx = -1;
+    int i = 0;
+	int Index = -1;
+	List* BlockHeaders = NULL;
+	int c = 0;
+
+    for(i = 0; i < strlen(Id); i++)
+        if(Id[i] == ':')
+            idx = i;
+    Name = SubStr(Id, 0, idx - 1);
+    IndexChar = SubStr(Id, idx + 1, strlen(Id) - 1);
+    Index = atoi(IndexChar);
+
+    BlockHeaders = (List*)Stack_Peek(state->_BlockHeaders);
+
     for(c = 0; c < BlockHeaders->Count; c++)
     {
         MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
@@ -304,9 +318,9 @@ void SetMemoryBlockSetIndex(State* state, char* Id, char* Value)
             MemoryBlock_SetValue(b, Value);
         }
     }
-    for(c = 0; c < Parts->Count; c++)
-        free(List_StringAtIndex(Parts, c));
-    List_Delete(Parts);
+
+    free(Name);
+    free(IndexChar);
 };
 
 void SetMemoryBlock(State* state, char* Id, char* Value)
@@ -327,11 +341,21 @@ void SetMemoryBlock(State* state, char* Id, char* Value)
 char* ReadMemoryBlockSetIndex(State* state, char* Id)
 {
     char* rValue = NULL;
-    List* Parts = SplitAndKeep(Id, ":");
-    char* Name = List_StringAtIndex(Parts, 0);
-    int Index = atoi(List_StringAtIndex(Parts, 2));
-    List* BlockHeaders = Stack_PeekList(state->_BlockHeaders);
-    int c = 0;
+	char* Name = NULL;
+	char* IndexChar = NULL;
+	int Index = -1;
+	List* BlockHeaders;
+	int c = 0;
+    int idx = -1;
+    int i = 0;
+    for(i = 0; i < strlen(Id); i++)
+        if(Id[i] == ':')
+            idx = i;
+    Name = SubStr(Id, 0, idx - 1);
+    IndexChar = SubStr(Id, idx + 1, strlen(Id) - 1);
+    Index = atoi(IndexChar);
+
+    BlockHeaders = Stack_PeekList(state->_BlockHeaders);
     for(c = 0; c < BlockHeaders->Count; c++)
     {
         MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
@@ -343,9 +367,8 @@ char* ReadMemoryBlockSetIndex(State* state, char* Id)
         }
     }
 
-    for(c = 0; c < Parts->Count; c++)
-        free(List_StringAtIndex(Parts, c));
-    List_Delete(Parts);
+    free(Name);
+    free(IndexChar);
 
     return rValue;
 };
@@ -563,12 +586,12 @@ void StatePush(State* state)
 
 void StatePop(State* state)
 {
+	int i = 0;
+
     List* OldRegister = Stack_PopList(state->_Registers);
     List* OldHeaders = Stack_PopList(state->_Headers);
     List* OldBlockHeaders = Stack_PopList(state->_BlockHeaders);
     state->_Offset = Stack_PopInt(state->_CursorStack);
-
-    int i = 0;
 
     for(i = 0; i < OldRegister->Count; i++)
         free(List_StringAtIndex(OldRegister, i));
@@ -591,20 +614,22 @@ short State_Iterate(void* S)
 
     if(state->_Offset > -1)
     {
-        //printf("**********DBG: '%s'\n", CurrentTok(state)->Val);
+        //printf("**********DBG: '%s' (Stack Count: %d)\n", CurrentTok(state)->Val, state->_Stack->Count);
         switch(CurrentTok(state)->Tok)
         {
             case tLabel: state->_Offset += 2; break;
 
             case tPushB:
             {
+				List* BlockHeaders = NULL;
+				int c = 0;
                 state->_Offset++;
                 if(ptMemoryBlockVar(CurrentTok(state)->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Expecting Memory Block Var)\n");
                 }
-                List* BlockHeaders = Stack_PeekList(state->_BlockHeaders);
-                int c = 0;
+                BlockHeaders = Stack_PeekList(state->_BlockHeaders);
+
                 for(c = 0; c < BlockHeaders->Count; c++)
                 {
                     MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
@@ -621,14 +646,17 @@ short State_Iterate(void* S)
 
             case tPushA:
             {
+				int targetOffset = -1;
+				List* Headers = NULL;
+				int c = 0;
                 state->_Offset++;
                 if(ptMemoryVar(CurrentTok(state)->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Expecting Memory Var)\n");
                 }
-                int targetOffset = -1;
-                List* Headers = Stack_PeekList(state->_Headers);
-                int c = 0;
+                
+                Headers = Stack_PeekList(state->_Headers);
+
                 for(c = 0; c < Headers->Count; c++)
                 {
                     MemoryBlockHeader* h = List_MemoryBlockHeaderAtIndex(Headers, c);
@@ -637,7 +665,7 @@ short State_Iterate(void* S)
                 }
                 if(targetOffset == -1)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Invalid Target Offset)\n");
                 }
                 State_PushInt(state, targetOffset);
                 state->_Offset++;
@@ -645,21 +673,28 @@ short State_Iterate(void* S)
 
             case tPopB:
             {
+				MemoryBlockSetHeader* hed = NULL;
+				List* BlockHeaders = NULL;
+				int c = 0;
+				short shouldAdd = 1;
+				int Count = -1;
+				int i = 0;
+
                 state->_Offset++;
                 if(ptMemoryBlockVar(CurrentTok(state)->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR\n");
                 }
-                MemoryBlockSetHeader* hed = NULL;
-                List* BlockHeaders = Stack_PeekList(state->_BlockHeaders);
-                int c = 0;
+                
+                BlockHeaders = Stack_PeekList(state->_BlockHeaders);
+                
                 for(c = 0; c < BlockHeaders->Count; c++)
                 {
                     MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
                     if(strcmp(h->Name, CurrentTok(state)->Val) == 0)
                         hed = h;
                 }
-                short shouldAdd = 1;
+                
                 if(hed == NULL)
                     hed = MemoryBlockSetHeader_New(CurrentTok(state)->Val, 0);
                 else
@@ -668,8 +703,8 @@ short State_Iterate(void* S)
                     shouldAdd = 0;
                 }
 
-                int Count = State_PopInt(state);
-                int i = 0;
+                Count = State_PopInt(state);
+                i = 0;
                 for(i = 0; i < Count; i++)
                     List_AddInt(hed->IndexOffset, -1);
                 for(i = Count - 1; i >= 0; i--)
@@ -682,14 +717,18 @@ short State_Iterate(void* S)
 
             case tPopA:
             {
+				short found = 0;
+				List* Headers = NULL;
+				int c = 0;
+
                 state->_Offset++;
                 if(ptMemoryVar(CurrentTok(state)->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR\n");
                 }
-                short found = 0;
-                List* Headers = Stack_PeekList(state->_Headers);
-                int c = 0;
+                
+                Headers = Stack_PeekList(state->_Headers);
+                
                 for(c = 0; c < Headers->Count; c++)
                 {
                     MemoryBlockHeader* h = List_MemoryBlockHeaderAtIndex(Headers, c);
@@ -711,27 +750,32 @@ short State_Iterate(void* S)
 
             case tMove:
             {
+				AssemblyToken* destTok;
+				AssemblyToken* commaTok;
+				AssemblyToken* srcTok;
+				char* sVal;
+
                 state->_Offset++;
-                AssemblyToken* destTok = CurrentTok(state);
+                destTok = CurrentTok(state);
                 state->_Offset++;
-                AssemblyToken* commaTok = CurrentTok(state);
+                commaTok = CurrentTok(state);
                 state->_Offset++;
-                AssemblyToken* srcTok = CurrentTok(state);
+                srcTok = CurrentTok(state);
 
                 if(pt4(state, destTok->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Incorrect dest)\n");
                 }
                 if(commaTok->Tok != tComma)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Expecting Comma)\n");
                 }
                 if(pt8(state, srcTok->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Incorrect src)\n");
                 }
 
-                char* sVal = GetActualVal(state, srcTok->Val);
+                sVal = GetActualVal(state, srcTok->Val);
                 if(ptRegister(destTok->Val) == 1)
                     SetRegister(state, GetRegisterIndex(destTok->Val), sVal);
                 else if(ptMemoryBlockVarIndex(destTok->Val) == 1)
@@ -744,12 +788,14 @@ short State_Iterate(void* S)
 
             case tPush:
             {
+				char* rVal;
+
                 state->_Offset++;
                 if(pt8(state, CurrentTok(state)->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Invalid Push Value)\n");
                 }
-                char* rVal = GetActualVal(state, CurrentTok(state)->Val);
+                rVal = GetActualVal(state, CurrentTok(state)->Val);
                 State_PushString(state, rVal);
 
                 state->_Offset++;
@@ -757,13 +803,14 @@ short State_Iterate(void* S)
 
             case tPop:
             {
+				char* Val;
                 state->_Offset++;
                 if(pt4(state, CurrentTok(state)->Val) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Invalid Pop Value)\n");
                 }
 
-                char* Val = State_PopString(state);
+                Val = State_PopString(state);
                 if(ptRegister(CurrentTok(state)->Val) == 1)
                     SetRegister(state, GetRegisterIndex(CurrentTok(state)->Val), Val);
                 else if(ptMemoryBlockVarIndex(CurrentTok(state)->Val) == 1)
@@ -782,16 +829,17 @@ short State_Iterate(void* S)
 
                 double v2 = 0;
                 double v1 = 0;
+				double v3 = 0;
 
-                if(CanConvertToDouble(s1) == 0 || CanConvertToDouble(s2) == 0)
+                short sv1 = CanConvertToDouble(s1);
+                short sv2 = CanConvertToDouble(s2);
+                if(sv1 == 0 || sv2 == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Cannot Convert To Double ('%s':%d - '%s':%d)\n", s1, sv1, s2, sv2);
                 }
 
                 v1 = (double)atof(s1);
                 v2 = (double)atof(s2);
-
-                double v3 = 0;
 
                 switch(CurrentTok(state)->Tok)
                 {
@@ -799,7 +847,7 @@ short State_Iterate(void* S)
                     case tSub: v3 = v2 - v1; break;
                     case tMul: v3 = v2 * v1; break;
                     case tDiv: v3 = v2 / v1; break;
-                    case tMod: v3 = v2 - (v1 * (v2 / v1)); break;
+                    case tMod: v3 = v2 - (((double)((int)v2 / (int)v1)) * v1); break;
                 }
                 State_PushDouble(state, v3);
 
@@ -832,7 +880,7 @@ short State_Iterate(void* S)
                 double v1 = 0;
                 if(CanConvertToDouble(s1) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Cannot Convert To Double 2)\n");
                 }
                 v1 = (double)atof(s1);
                 v1 = v1 * -1;
@@ -843,15 +891,19 @@ short State_Iterate(void* S)
 
             case tJumpOffset:
             {
+				char* val;
+				int newOffset = -1;
+				char* rVal;
+
                 state->_Offset++;
-                char* val = CurrentTok(state)->Val;
+                val = CurrentTok(state)->Val;
                 state->_Offset++;
                 StatePush(state);
-                int newOffset = -1;
-                char* rVal = GetActualVal(state, val);
+                
+                rVal = GetActualVal(state, val);
                 if(CanConvertToInt(rVal) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Cannot Convert To Double 3)\n");
                 }
                 newOffset = atoi(rVal);
                 state->_Offset = newOffset;
@@ -859,12 +911,16 @@ short State_Iterate(void* S)
 
             case tJump:
             {
+				char* labelTitle;
+				LabelDef* l = NULL;
+				int c = 0;
+
                 state->_Offset++;
-                char* labelTitle = CurrentTok(state)->Val;
+                labelTitle = CurrentTok(state)->Val;
+                //printf("----Label: %s\n", labelTitle);
                 state->_Offset++;
                 StatePush(state);
-                LabelDef* l = NULL;
-                int c = 0;
+
                 for(c = 0; c < state->_Labels->Count; c++)
                 {
                     LabelDef* d = List_LabelDefAtIndex(state->_Labels, c);
@@ -873,7 +929,7 @@ short State_Iterate(void* S)
                 }
                 if(l == NULL)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Failed to find label)\n");
                 }
                 if(l->UserFunction != NULL)
                 {
@@ -894,14 +950,18 @@ short State_Iterate(void* S)
 
             case tLongJumpOffset:
             {
+				char* val;
+				int newOffset = -1;
+				char* rVal;
+
                 state->_Offset++;
-                char* val = CurrentTok(state)->Val;
+                val = CurrentTok(state)->Val;
                 state->_Offset++;
-                int newOffset = -1;
-                char* rVal = GetActualVal(state, val);
+
+                rVal = GetActualVal(state, val);
                 if(CanConvertToInt(rVal) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Cannot Convert To Int)\n");
                 }
                 newOffset = atoi(rVal);
                 state->_Offset = newOffset;
@@ -909,12 +969,14 @@ short State_Iterate(void* S)
 
             case tLongJump:
             {
+				char* labelTitle;
+				LabelDef* l = NULL;
+				int c = 0;
+
                 state->_Offset++;
-                char* labelTitle = CurrentTok(state)->Val;
+                labelTitle = CurrentTok(state)->Val;
                 state->_Offset++;
 
-                LabelDef* l = NULL;
-                int c = 0;
                 for(c = 0; c < state->_Labels->Count; c++)
                 {
                     LabelDef* d = List_LabelDefAtIndex(state->_Labels, c);
@@ -923,7 +985,7 @@ short State_Iterate(void* S)
                 }
                 if(l == NULL)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Failed To Find Label 2)\n");
                 }
                 if(l->UserFunction != NULL)
                     l->UserFunction(state);
@@ -933,12 +995,13 @@ short State_Iterate(void* S)
 
             case tCmpI:
             {
+				short b = -1;
                 char* v = State_PopString(state);
                 if(CanConvertToBool(v) == 0)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Cannot Convert To Bool)\n");
                 }
-                short b = (short)atoi(v);
+                b = (short)atoi(v);
                 State_PushBool(state, !b);
                 free(v);
             } break;
@@ -957,7 +1020,7 @@ short State_Iterate(void* S)
 
                         if(CanConvertToBool(v1) == 0 || CanConvertToBool(v2) == 0)
                         {
-                            printf("ERROR\n");
+                            //printf("ERROR (Cannot Convert To Bool 2)\n");
                         }
                         b1 = (short)atoi(v1);
                         b2 = (short)atoi(v2);
@@ -979,7 +1042,7 @@ short State_Iterate(void* S)
                         double d2 = 0;
                         if(CanConvertToDouble(v1) == 0 || CanConvertToDouble(v2) == 0)
                         {
-                            printf("ERROR\n");
+                            //printf("ERROR (Cannot Convert To Double 4)\n");
                         }
                         d1 = (double)atof(v1);
                         d2 = (double)atof(v2);
@@ -1001,32 +1064,44 @@ short State_Iterate(void* S)
             case tJumpE: case tJumpN: case tJumpG: case tJumpGE: case tJumpL: case tJumpLE:
             {
                 short cmpTok = CurrentTok(state)->Tok;
+				AssemblyToken* p1;
+				AssemblyToken* c1;
+				AssemblyToken* p2;
+				AssemblyToken* c2;
+				AssemblyToken* p3;
+				char* val1;
+				char* val2;
+				int newOffset = -1;
+				int c = 0;
+				short didEval = 0;
+                short validDouble = 0;
+                double d1 = 0;
+                double d2 = 0;
+
                 state->_Offset++;
-                AssemblyToken* p1 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
+                p1 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
                 state->_Offset++;
-                AssemblyToken* c1 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
+                c1 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
                 state->_Offset++;
-                AssemblyToken* p2 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
+                p2 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
                 state->_Offset++;
-                AssemblyToken* c2 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
+                c2 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
                 state->_Offset++;
-                AssemblyToken* p3 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
+                p3 = List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset);
 
                 if(c1->Tok != tComma || c2->Tok != tComma)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Expecting Comma)\n");
                 }
 
                 if(pt8(state, p1->Val) != 1 || pt8(state, p2->Val) != 1 || pt3(state, p3->Val) != 1)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Invalid Parameters)\n");
                 }
 
-                char* val1 = GetActualVal(state, p1->Val);
-                char* val2 = GetActualVal(state, p2->Val);
-                int newOffset = -1;
-
-                int c = 0;
+                val1 = GetActualVal(state, p1->Val);
+                val2 = GetActualVal(state, p2->Val);
+                
                 for(c = 0; c < state->_Labels->Count; c++)
                 {
                     LabelDef* l = List_LabelDefAtIndex(state->_Labels, c);
@@ -1036,13 +1111,8 @@ short State_Iterate(void* S)
 
                 if(newOffset == -1)
                 {
-                    printf("ERROR\n");
+                    //printf("ERROR (Failed To Find New OFfset)\n");
                 }
-
-                short didEval = 0;
-                short validDouble = 0;
-                double d1 = 0;
-                double d2 = 0;
 
                 if(CanConvertToDouble(val1) == 1 && CanConvertToDouble(val2) == 1)
                 {
@@ -1078,31 +1148,37 @@ short State_Iterate(void* S)
 
             case tAllocBlockSet:
             {
+				char* BlockName;
+				int Count = -1;
                 state->_Offset++;
-                char* BlockName = (List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset))->Val;
+                BlockName = (List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset))->Val;
                 state->_Offset++;
                 state->_Offset++;
-                int Count = atoi(CurrentTok(state)->Val);
+                Count = atoi(CurrentTok(state)->Val);
                 AllocateMemoryBlockSet(state, BlockName, Count);
                 state->_Offset++;
             } break;
 
             case tRef:
             {
+				AssemblyToken* src;
+				AssemblyToken* dest;
                 state->_Offset++;
-                AssemblyToken* src = CurrentTok(state);
+                src = CurrentTok(state);
                 state->_Offset += 2;
-                AssemblyToken* dest = CurrentTok(state);
+                dest = CurrentTok(state);
                 ReferenceMemoryBlock(state, src->Val, dest->Val);
                 state->_Offset++;
             } break;
 
             case tRefBlockSet:
             {
+				AssemblyToken* src;
+				AssemblyToken* dest;
                 state->_Offset++;
-                AssemblyToken* src = CurrentTok(state);
+                src = CurrentTok(state);
                 state->_Offset += 2;
-                AssemblyToken* dest = CurrentTok(state);
+                dest = CurrentTok(state);
                 ReferenceMemoryBlockSet(state, src->Val, dest->Val);
                 state->_Offset++;
             } break;
@@ -1142,8 +1218,8 @@ void State_RunFromMethod(void* S, char* Name)
 void State_LoadMethod(void* S, char* Name)
 {
     State* state = (State*)S;
+	int i = 0;
     state->_Offset = -1;
-    int i = 0;
     for(i = 0; i < state->_Labels->Count && state->_Offset == -1; i++)
     {
         LabelDef* l = List_LabelDefAtIndex(state->_Labels, i);
@@ -1217,6 +1293,7 @@ void State_PushString(void* S, char* v)
     State* state = (State*)S;
     char* toPush = (char*)malloc(sizeof(char) * (strlen(v) + 1));
     strcpy(toPush, v);
+    //printf("PUSHING: '%s'\n", toPush);
     Stack_Push(state->_Stack, toPush);
 };
 

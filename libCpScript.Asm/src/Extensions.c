@@ -63,9 +63,9 @@ char* StrTrim(char* SrcStr)
 
 char* StrToLower(char* SrcStr)
 {
+	int i = 0;
     char* r = (char*)malloc(sizeof(char) * (strlen(SrcStr) + 1));
-    strcpy(r, SrcStr);
-    int i = 0;
+    strcpy(r, SrcStr);    
     for(i = 0; i < strlen(r); i++)
         r[i] = tolower(r[i]);
     return r;
@@ -151,9 +151,11 @@ short CanConvertToDouble(char* Src)
     int d = 0;
     for(i = 0; i < strlen(t) && rValue == 1; i++)
     {
-        //printf("%c", t[i]);
-        if( t[i] == '-' && i != 0)
-            rValue = 0;
+        if( t[i] == '-')
+        {
+            if(i != 0)
+                rValue = 0;
+        }
         else if(t[i] == '.')
         {
             if(d == 0)
@@ -171,14 +173,16 @@ short CanConvertToDouble(char* Src)
 
 short ShouldMakeDoubletToInt(double v)
 {
+	short rValue = 1;
+	int i = 0;
+    int d = -1;
+
     char* Src = (char*)malloc(sizeof(char) * 3000);
     sprintf(Src, "%f", v);
 
-    short rValue = 1;
     if(CanConvertToDouble(Src) == 0)
         rValue = 0;
-    int i = 0;
-    int d = -1;
+    
     for(i = 0; i < strlen(Src) && d == -1; i++)
         if(Src[i] == '.')
             d = i;
@@ -198,8 +202,9 @@ short ShouldMakeDoubletToInt(double v)
 char* IntToStr(int v)
 {
     char* Str = (char*)malloc(sizeof(char) * 3000);
+	char* r;
     sprintf(Str, "%d", v);
-    char* r = (char*)malloc(sizeof(char) * (strlen(Str) + 1));
+    r = (char*)malloc(sizeof(char) * (strlen(Str) + 1));
     strcpy(r, Str);
     free(Str);
     return r;

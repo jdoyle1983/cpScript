@@ -1,7 +1,8 @@
+#include <stdio.h>
 #include <malloc.h>
 #include <List.h>
 
-List* List_New()
+List* List_New(void)
 {
 	List* r = (List*)malloc(sizeof(List));
 	r->Count = 0;

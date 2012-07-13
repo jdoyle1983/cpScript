@@ -4,6 +4,8 @@
 
 MemoryBlockSetHeader* MemoryBlockSetHeader_New(char* Name, int Count)
 {
+	int i = 0;
+
     MemoryBlockSetHeader* header = (MemoryBlockSetHeader*)malloc(sizeof(MemoryBlockSetHeader));
     header->IndexOffset = List_New();
     header->Name = NULL;
@@ -13,7 +15,6 @@ MemoryBlockSetHeader* MemoryBlockSetHeader_New(char* Name, int Count)
         strcpy(header->Name, Name);
     }
 
-    int i = 0;
     for(i = 0; i < Count; i++)
         List_AddInt(header->IndexOffset, -1);
     return header;

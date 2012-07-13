@@ -35,6 +35,8 @@ char * Internal_GetLine()
             break;
     }
     *line = '\0';
+    if(linep[strlen(linep) - 1] == '\n')
+        linep[strlen(linep) - 1] = '\0';
     return linep;
 };
 

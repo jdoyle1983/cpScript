@@ -13,9 +13,16 @@ typedef struct
 
 void Utilities_Array_New(void* State)
 {
+    int Size = State_PopInt(State);
     CpArray* a = (CpArray*)malloc(sizeof(CpArray));
-    a->Items = malloc(0);
-    a->Count = 0;
+    a->Count = Size;
+    a->Items = (char**)malloc(sizeof(char*) * Size);
+    int i = 0;
+    for(i = 0; i < Size; i++)
+    {
+        a->Items[i] = (char*)malloc(sizeof(char) * 2);
+        strcpy(a->Items[i], "");
+    }
     State_PushInt(State, (int)a);
 };
 
@@ -37,16 +44,23 @@ void Utilities_Array_Count(void* State)
 
 void Utilities_Array_SetItem(void* State)
 {
-    char* toSet = State_PopString(State);
+    int ArrayIndex = State_PopInt(State);
+    char* ArrayValue = State_PopString(State);
     CpArray* a = (CpArray*)State_PopInt(State);
-    a->Count++;
-    a->Items = (char**)realloc(a->Items, sizeof(char*) * a->Count);
-    a->Items[a->Count - 1] = toSet;
+    if(ArrayIndex >= 0 && ArrayIndex < a->Count)
+    {
+        free(a->Items[ArrayIndex]);
+        a->Items[ArrayIndex] = (char*)malloc(sizeof(char) * (strlen(ArrayValue) + 1));
+        strcpy(a->Items[ArrayIndex], ArrayValue);
+    }
 };
 
 void Utilities_Array_GetItem(void* State)
 {
-    int idx = State_PopInt(State);
+    int ArrayIndex = State_PopInt(State);
     CpArray* a = (CpArray*)State_PopInt(State);
-    State_PushString(State, a->Items[idx]);
+    if(ArrayIndex >= 0 && ArrayIndex < a->Count)
+        State_PushString(State, a->Items[ArrayIndex]);
+    else
+        State_PushString(State, "");
 };

@@ -1,14 +1,18 @@
-#include <AssemblyToken.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <Token.h>
 #include <string.h>
 #include <malloc.h>
+#include <AssemblyToken.h>
 
 AssemblyToken* AssemblyToken_New(short Tok, const char* Val)
 {
 	AssemblyToken* t = (AssemblyToken*)malloc(sizeof(AssemblyToken));
+	short shouldAllocString = 1;
+
 	t->Tok = Tok;
 	t->Val = NULL;
-	short shouldAllocString = 0;
+	
 	if(Tok == tRegister || Tok == tMemoryVar || Tok == tLiteral || Tok == tQuotedLiteral)
         shouldAllocString = 1;
 	if(Val != NULL && shouldAllocString == 1)
