@@ -654,7 +654,7 @@ EXPORT short State_Iterate(void* S)
                 {
                     //printf("ERROR (Expecting Memory Var)\n");
                 }
-                
+
                 Headers = Stack_PeekList(state->_Headers);
 
                 for(c = 0; c < Headers->Count; c++)
@@ -685,16 +685,16 @@ EXPORT short State_Iterate(void* S)
                 {
                     //printf("ERROR\n");
                 }
-                
+
                 BlockHeaders = Stack_PeekList(state->_BlockHeaders);
-                
+
                 for(c = 0; c < BlockHeaders->Count; c++)
                 {
                     MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
                     if(strcmp(h->Name, CurrentTok(state)->Val) == 0)
                         hed = h;
                 }
-                
+
                 if(hed == NULL)
                     hed = MemoryBlockSetHeader_New(CurrentTok(state)->Val, 0);
                 else
@@ -726,9 +726,9 @@ EXPORT short State_Iterate(void* S)
                 {
                     //printf("ERROR\n");
                 }
-                
+
                 Headers = Stack_PeekList(state->_Headers);
-                
+
                 for(c = 0; c < Headers->Count; c++)
                 {
                     MemoryBlockHeader* h = List_MemoryBlockHeaderAtIndex(Headers, c);
@@ -899,7 +899,7 @@ EXPORT short State_Iterate(void* S)
                 val = CurrentTok(state)->Val;
                 state->_Offset++;
                 StatePush(state);
-                
+
                 rVal = GetActualVal(state, val);
                 if(CanConvertToInt(rVal) == 0)
                 {
@@ -1101,7 +1101,7 @@ EXPORT short State_Iterate(void* S)
 
                 val1 = GetActualVal(state, p1->Val);
                 val2 = GetActualVal(state, p2->Val);
-                
+
                 for(c = 0; c < state->_Labels->Count; c++)
                 {
                     LabelDef* l = List_LabelDefAtIndex(state->_Labels, c);

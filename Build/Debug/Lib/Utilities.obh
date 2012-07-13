@@ -1,12 +1,11 @@
-#Lib Lib/libCpScript.libUtilities.dll
-
-#HostFunction __Utilities__Array__New
-#HostFunction __Utilities__Array__Free
-#HostFunction __Utilities__Array__Count
-#HostFunction __Utilities__Array__SetItem
-#HostFunction __Utilities__Array__GetItem
+#HostFunction __StdLib__Utilities__Array__New
+#HostFunction __StdLib__Utilities__Array__Free
+#HostFunction __StdLib__Utilities__Array__Count
+#HostFunction __StdLib__Utilities__Array__SetItem
+#HostFunction __StdLib__Utilities__Array__GetItem
 
 CLASS Array
+
 	PROP ArrayId
 	
 	METHOD Init()
@@ -32,4 +31,5 @@ CLASS Array
 	METHOD GetItem(idx)
 		RETURN __Utilities__Array__GetItem(ArrayId, idx)
 	END METHOD
+
 END CLASS

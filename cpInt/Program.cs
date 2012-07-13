@@ -23,18 +23,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libCpScript.Net.Asm;
+using libCpScript.Net.StdLib;
 
 namespace cpInt
 {
     class Program
     {
-		static void ConsoleWriteLine (IntPtr StatePtr)
-		{
-			libCpScript.Net.Asm.State State = new libCpScript.Net.Asm.State(StatePtr);
-			string toPrint = State.PopString();
-			Console.WriteLine(toPrint);
-		}
-
         static void Main(string[] args)
         {
             if (args.Length < 1)
@@ -44,9 +39,13 @@ namespace cpInt
             else
             {
 				//bool shouldLoad = true;
-				libCpScript.Net.Asm.State State = null;
-				State = new libCpScript.Net.Asm.State(args[0]);
-				State.RegisterFunction("WriteLine", ConsoleWriteLine, false);
+				State State = null;
+				string ScriptText = System.IO.File.ReadAllText(args[0]);
+				State = new State(ScriptText);
+				CpStdLib.InstallConsoleIO(State.StatePtr);
+				CpStdLib.InstallFileIO(State.StatePtr);
+				CpStdLib.InstallMath(State.StatePtr);
+				CpStdLib.InstallUtilities(State.StatePtr);
 				State.RunFromMethod("Main");
 				State.Delete();
 				/*

@@ -54,6 +54,10 @@
       <Project>{3E22C42D-F84A-4466-932F-AF5326DFDBE2}</Project>
       <Name>libCpScript.Net.Asm</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libCpScript.Net.StdLib\libCpScript.Net.StdLib.csproj">
+      <Project>{C2D74C98-942E-404F-9A7F-3C67FAB962C3}</Project>
+      <Name>libCpScript.Net.StdLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

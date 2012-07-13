@@ -1,4 +1,3 @@
-﻿#Lib Lib/libCpScript.libMath.dll
 #HostFunction __StdLib__Math__Abs
 #HostFunction __StdLib__Math__Floor
 #HostFunction __StdLib__Math__Ceiling

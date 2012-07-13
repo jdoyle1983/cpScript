@@ -1,4 +1,3 @@
-﻿#Lib Lib/libCpScript.libConsoleIO.dll
 #HostFunction __StdLib__ConsoleIO__Write
 #HostFunction __StdLib__ConsoleIO__WriteLine
 #HostFunction __StdLib__ConsoleIO__ReadLine

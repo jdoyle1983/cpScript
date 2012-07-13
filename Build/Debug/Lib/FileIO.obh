@@ -1,4 +1,3 @@
-﻿#Lib Lib/libCpScript.libFileIO.dll
 #HostFunction __StdLib__FileIO__Open
 #HostFunction __StdLib__FileIO__WriteLine
 #HostFunction __StdLib__FileIO__ReadLine

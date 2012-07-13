@@ -43,6 +43,7 @@
     <Compile Include="Function.cs" />
     <Compile Include="ObjectBasicScript.cs" />
     <Compile Include="ClassDef.cs" />
+    <Compile Include="Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libCpScript.Net.Asm\libCpScript.Net.Asm.csproj">

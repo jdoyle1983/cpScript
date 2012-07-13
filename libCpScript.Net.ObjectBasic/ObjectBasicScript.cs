@@ -89,7 +89,7 @@ namespace libCpScript.Net.ObjectBasic
 		{
 		}
 
-        internal void MethodStub(libCpScript.Net.Asm.State State)
+        internal void MethodStub(IntPtr State)
         {
         }
 
@@ -683,7 +683,7 @@ namespace libCpScript.Net.ObjectBasic
 			return asmState.Iterate();
 		}
 
-        public void LoadScript(byte[] CompiledScript)
+        /*public void LoadScript(byte[] CompiledScript)
         {
             if (!ScriptLoaded)
             {
@@ -692,7 +692,7 @@ namespace libCpScript.Net.ObjectBasic
             }
             else
                 throw new Exception("Script Already Loaded.");
-        }
+        }*/
 		
 		public void LoadScript(string Script)
 		{
@@ -737,10 +737,10 @@ namespace libCpScript.Net.ObjectBasic
                 asmState.RegisterFunction(Name, Func, StubMethod);
 		}
 
-        public byte[] Compile()
+        /*public byte[] Compile()
         {
             return asmState.CompileScript();
-        }
+        }*/
 	}
 }
 

@@ -5,14 +5,14 @@
 #include <CpStdLib_Math.h>
 #include <CpStdLib_Utilities.h>
 
-void CpStdLib_InstallConsoleIO(void* State)
+EXPORT void CpStdLib_InstallConsoleIO(void* State)
 {
     State_RegisterFunction(State, "__StdLib__ConsoleIO__Write", &Console_Write, 0);
     State_RegisterFunction(State, "__StdLib__ConsoleIO__WriteLine", &Console_WriteLine, 0);
     State_RegisterFunction(State, "__StdLib__ConsoleIO__ReadLine", &Console_ReadLine, 0);
 };
 
-void CpStdLib_InstallFileIO(void* State)
+EXPORT void CpStdLib_InstallFileIO(void* State)
 {
     State_RegisterFunction(State, "__StdLib__FileIO__Open", &File_Open, 0);
     State_RegisterFunction(State, "__StdLib__FileIO__WriteLine", &File_WriteLine, 0);
@@ -29,14 +29,14 @@ void CpStdLib_InstallFileIO(void* State)
     State_RegisterFunction(State, "__StdLib__FileIO__WriteString", &File_WriteString, 0);
 };
 
-void CpStdLib_InstallMath(void* State)
+EXPORT void CpStdLib_InstallMath(void* State)
 {
     State_RegisterFunction(State, "__StdLib__Math__Abs", &Math_Abs, 0);
     State_RegisterFunction(State, "__StdLib__Math__Floor", &Math_Floor, 0);
     State_RegisterFunction(State, "__StdLib__Math__Ceiling", &Math_Ceiling, 0);
 };
 
-void CpStdLib_InstallUtilities(void* State)
+EXPORT void CpStdLib_InstallUtilities(void* State)
 {
     State_RegisterFunction(State, "__StdLib__Utilities__Array__New", &Utilities_Array_New, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__Free", &Utilities_Array_Free, 0);

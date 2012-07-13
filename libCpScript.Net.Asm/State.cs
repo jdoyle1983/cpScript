@@ -28,6 +28,8 @@ namespace libCpScript.Net.Asm
 	{
 
 		IntPtr _State;
+		
+		public IntPtr StatePtr { get { return _State; } }
 
 		public State(IntPtr StatePtr)
 		{
