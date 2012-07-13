@@ -1,23 +1,37 @@
 #ifndef __LIBCPSCRIPT_ASM_H__
 #define __LIBCPSCRIPT_ASM_H__
 
-void* State_New(char* ScriptText);
-void State_Delete(void* State);
-void State_RegisterFunction(void* State, char* Name, void (*UserFunction)(void*), short StubFunction);
-short State_Iterate(void* State);
-void State_RunFromMethod(void* State, char* Name);
-void State_LoadMethod(void* State, char* Name);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-int State_PopInt(void* State);
-double State_PopDouble(void* State);
-short State_PopBool(void* State);
-char* State_PopString(void* State);
+#ifdef _WINDLL
+#define EXPORT __declspec( dllexport )
+#else
+#define EXPORT
+#endif
 
-void State_PushInt(void* State, int v);
-void State_PushDouble(void* State, double v);
-void State_PushBool(void* State, short v);
-void State_PushString(void* State, char* v);
+EXPORT void* State_New(char* ScriptText);
+EXPORT void State_Delete(void* State);
+EXPORT void State_RegisterFunction(void* State, char* Name, void (*UserFunction)(void*), short StubFunction);
+EXPORT short State_Iterate(void* State);
+EXPORT void State_RunFromMethod(void* State, char* Name);
+EXPORT void State_LoadMethod(void* State, char* Name);
 
-void InteropFreeString(char* str);
+EXPORT int State_PopInt(void* State);
+EXPORT double State_PopDouble(void* State);
+EXPORT short State_PopBool(void* State);
+EXPORT char* State_PopString(void* State);
+
+EXPORT void State_PushInt(void* State, int v);
+EXPORT void State_PushDouble(void* State, double v);
+EXPORT void State_PushBool(void* State, short v);
+EXPORT void State_PushString(void* State, char* v);
+
+EXPORT void InteropFreeString(char* str);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

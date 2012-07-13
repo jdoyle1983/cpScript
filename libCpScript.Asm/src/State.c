@@ -451,7 +451,7 @@ void State_DoInit(State* state)
     Stack_Push(state->_BlockHeaders, List_New());
 };
 
-void* State_New(char* ScriptText)
+EXPORT void* State_New(char* ScriptText)
 {
     State* state = (State*)malloc(sizeof(State));
     state->_CursorStack = Stack_New();
@@ -467,7 +467,7 @@ void* State_New(char* ScriptText)
     return state;
 };
 
-void State_Delete(void* S)
+EXPORT void State_Delete(void* S)
 {
     State* state = (State*)S;
     int i = 0;
@@ -521,7 +521,7 @@ void State_Delete(void* S)
     free(state);
 };
 
-void State_RegisterFunction(void* S, char* Name, void (*UserFunction)(void*), short StubFunction)
+EXPORT void State_RegisterFunction(void* S, char* Name, void (*UserFunction)(void*), short StubFunction)
 {
     State* state = (State*)S;
     short wasFound = 0;
@@ -606,7 +606,7 @@ void StatePop(State* state)
     List_Delete(OldBlockHeaders);
 };
 
-short State_Iterate(void* S)
+EXPORT short State_Iterate(void* S)
 {
     State* state = (State*)S;
     if(state->_Offset >= state->_Tokens->Count)
@@ -1209,13 +1209,13 @@ short State_Iterate(void* S)
     return 0;
 };
 
-void State_RunFromMethod(void* S, char* Name)
+EXPORT void State_RunFromMethod(void* S, char* Name)
 {
     State_LoadMethod(S, Name);
     while(State_Iterate(S) == 1);
 };
 
-void State_LoadMethod(void* S, char* Name)
+EXPORT void State_LoadMethod(void* S, char* Name)
 {
     State* state = (State*)S;
 	int i = 0;
@@ -1228,7 +1228,7 @@ void State_LoadMethod(void* S, char* Name)
     }
 };
 
-int State_PopInt(void* S)
+EXPORT int State_PopInt(void* S)
 {
     char* v = State_PopString(S);
     int r = atoi(v);
@@ -1236,7 +1236,7 @@ int State_PopInt(void* S)
     return r;
 };
 
-double State_PopDouble(void* S)
+EXPORT double State_PopDouble(void* S)
 {
     char* v = State_PopString(S);
     double r = (double)atof(v);
@@ -1244,7 +1244,7 @@ double State_PopDouble(void* S)
     return r;
 };
 
-short State_PopBool(void* S)
+EXPORT short State_PopBool(void* S)
 {
     char* v = State_PopString(S);
     short r = (short)atoi(v);
@@ -1252,14 +1252,14 @@ short State_PopBool(void* S)
     return r;
 };
 
-char* State_PopString(void* S)
+EXPORT char* State_PopString(void* S)
 {
     State* state = (State*)S;
     char* r = Stack_PopString(state->_Stack);
     return r;
 };
 
-void State_PushInt(void* S, int v)
+EXPORT void State_PushInt(void* S, int v)
 {
     char* p = (char*)malloc(sizeof(char) * 3000);
     sprintf(p, "%d", v);
@@ -1267,7 +1267,7 @@ void State_PushInt(void* S, int v)
     free(p);
 };
 
-void State_PushDouble(void* S, double v)
+EXPORT void State_PushDouble(void* S, double v)
 {
     if(ShouldMakeDoubletToInt(v) == 1)
         State_PushInt(S, (int)v);
@@ -1280,7 +1280,7 @@ void State_PushDouble(void* S, double v)
     }
 };
 
-void State_PushBool(void* S, short v)
+EXPORT void State_PushBool(void* S, short v)
 {
     char* p = (char*)malloc(sizeof(char) * 100);
     sprintf(p, "%d", v);
@@ -1288,7 +1288,7 @@ void State_PushBool(void* S, short v)
     free(p);
 };
 
-void State_PushString(void* S, char* v)
+EXPORT void State_PushString(void* S, char* v)
 {
     State* state = (State*)S;
     char* toPush = (char*)malloc(sizeof(char) * (strlen(v) + 1));
@@ -1297,7 +1297,7 @@ void State_PushString(void* S, char* v)
     Stack_Push(state->_Stack, toPush);
 };
 
-void InteropFreeString(char* str)
+EXPORT void InteropFreeString(char* str)
 {
     free(str);
 };
