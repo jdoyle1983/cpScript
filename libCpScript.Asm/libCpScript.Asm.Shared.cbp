@@ -3,7 +3,6 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="libCpScript.Asm.Shared" />
-		<Option platforms="Unix;Mac;" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\CpStdLib.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CpStdLib_ConsoleIO.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CpStdLib_FileIO.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CpStdLib_Math.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CpStdLib_Utilities.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\CpStdLib.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CpStdLib_Utilities.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CpStdLib_ConsoleIO.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CpStdLib_FileIO.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CpStdLib_Math.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{355cef2f-660c-4233-a613-c40a78c8635b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{b65c457d-fea0-443a-ab26-ee7cfbb6c348}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -13,11 +13,11 @@ typedef struct
 
 void Utilities_Array_New(void* State)
 {
+	int i = 0;
     int Size = State_PopInt(State);
     CpArray* a = (CpArray*)malloc(sizeof(CpArray));
     a->Count = Size;
     a->Items = (char**)malloc(sizeof(char*) * Size);
-    int i = 0;
     for(i = 0; i < Size; i++)
     {
         a->Items[i] = (char*)malloc(sizeof(char) * 2);
