@@ -102,6 +102,9 @@ namespace libCpScript.Net.ObjectBasic
             {
                 if (s.Trim().StartsWith("#"))
                     _PreProcLines.Add(s);
+				else if(s.Trim().StartsWith("//"))
+				{
+				}
                 else
                     _OutLines.Add(s);
             }
