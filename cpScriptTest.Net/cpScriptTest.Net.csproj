@@ -67,6 +67,10 @@
       <Project>{53631606-901F-4C0A-8D43-1A828B8094F5}</Project>
       <Name>libCpScript.Net.ObjectBasic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libCpScript.Net.StdLib\libCpScript.Net.StdLib.csproj">
+      <Project>{C2D74C98-942E-404F-9A7F-3C67FAB962C3}</Project>
+      <Name>libCpScript.Net.StdLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1399,10 +1399,13 @@ EXPORT void InteropFreePtr(void* Ptr)
 
 EXPORT void* InteropAllocLongPtr()
 {
-    return malloc(sizeof(long));
+    long* ptr = (long*)malloc(sizeof(long));
+    *ptr = 0;
+    return ptr;
 };
 
 EXPORT long InteropLongPtrToLong(void* Ptr)
 {
-    return *((int*)Ptr);
+    long* ptr = (long*)Ptr;
+    return *ptr;
 };

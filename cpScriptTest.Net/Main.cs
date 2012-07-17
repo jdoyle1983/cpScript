@@ -131,9 +131,22 @@ namespace cpScriptTest.Net
 							"	LOOP\n" +
 							"END FUNCTION";*/
 
-			libCpScript.Net.Asm.State state = new libCpScript.Net.Asm.State(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.asm"));
-			File.WriteAllBytes(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cmp", state.Compile());
-			state.Delete();
+			libCpScript.Net.ObjectBasic.ObjectBasicScript script = new libCpScript.Net.ObjectBasic.ObjectBasicScript();
+			script.LoadScript(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cps"));
+			File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.asm", script.AsmScript);
+
+			libCpScript.Net.Asm.State state1 = new libCpScript.Net.Asm.State(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.asm"));
+			File.WriteAllBytes(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cmp", state1.Compile());
+			state1.Delete();
+
+			libCpScript.Net.Asm.State state2 = new libCpScript.Net.Asm.State(File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cmp"));
+			libCpScript.Net.StdLib.CpStdLib.InstallConsoleIO(state2.StatePtr);
+			libCpScript.Net.StdLib.CpStdLib.InstallFileIO(state2.StatePtr);
+			libCpScript.Net.StdLib.CpStdLib.InstallMath(state2.StatePtr);
+			libCpScript.Net.StdLib.CpStdLib.InstallUtilities(state2.StatePtr);
+
+			state2.RunFromMethod("Main");
+			state2.Delete();
 
      /*       string inputScript = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cps");
             libCpScript.Net.ObjectBasic.ObjectBasicScript script = new libCpScript.Net.ObjectBasic.ObjectBasicScript();

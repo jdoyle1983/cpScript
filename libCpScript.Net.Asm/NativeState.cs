@@ -11,7 +11,7 @@ namespace libCpScript.Net.Asm
 		internal static extern  System.IntPtr State_New(System.IntPtr ScriptText) ;
 
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_NewFromCompiled")]
-		internal static extern  System.IntPtr State_NewFromCompiled(System.IntPtr Script, long Length) ;
+		internal static extern  System.IntPtr State_NewFromCompiled(System.IntPtr Script, int Length) ;
 
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_Compile")]
 		internal static extern  System.IntPtr State_Compile(System.IntPtr StatePtr, IntPtr OutLength) ;
@@ -62,7 +62,7 @@ namespace libCpScript.Net.Asm
 		internal static extern  IntPtr InteropAllocLongPtr() ;
 
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="InteropLongPtrToLong")]
-		internal static extern  long InteropLongPtrToLong(IntPtr Ptr) ;
+		internal static extern  int InteropLongPtrToLong(IntPtr Ptr) ;
 
 
 	}

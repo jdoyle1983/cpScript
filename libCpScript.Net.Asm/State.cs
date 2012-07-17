@@ -55,8 +55,9 @@ namespace libCpScript.Net.Asm
 		{
 			IntPtr LengthPtr = NativeState.InteropAllocLongPtr();
 			IntPtr Compiled = NativeState.State_Compile(_State, LengthPtr);
-			byte[] rVal = new byte[NativeState.InteropLongPtrToLong(LengthPtr)];
-			Marshal.Copy(Compiled, rVal, 0, rVal.Length);
+			int Length = NativeState.InteropLongPtrToLong(LengthPtr);
+			byte[] rVal = new byte[Length];
+			Marshal.Copy(Compiled, rVal, 0, Length);
 			NativeState.InteropFreePtr(LengthPtr);
 			NativeState.InteropFreePtr(Compiled);
 			return rVal;

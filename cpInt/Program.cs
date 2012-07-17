@@ -34,20 +34,44 @@ namespace cpInt
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("No File(s) Specified.");
+                Console.WriteLine("No File(s) Specified. (use -o file.cmp to just compile asm file)");
             }
             else
             {
-				//bool shouldLoad = true;
-				State State = null;
-				string ScriptText = System.IO.File.ReadAllText(args[0]);
-				State = new State(ScriptText);
-				CpStdLib.InstallConsoleIO(State.StatePtr);
-				CpStdLib.InstallFileIO(State.StatePtr);
-				CpStdLib.InstallMath(State.StatePtr);
-				CpStdLib.InstallUtilities(State.StatePtr);
-				State.RunFromMethod("Main");
-				State.Delete();
+				bool shouldRun = true;
+				string outFile = "";
+				if(args.Length > 1)
+				{
+					for(int i = 1; i < args.Length; i++)
+					{
+						if(args[i] == "-o")
+						{ 
+							i++;
+							shouldRun = false;
+							outFile = args[i];
+						}
+					}
+				}
+				byte[] inBytes = System.IO.File.ReadAllBytes(args[0]);
+				if( inBytes[0] != 'C' || inBytes[1] != 'P' || inBytes[2] != 'A' || inBytes[3] != 'S' || inBytes[4] != 'M' || inBytes[5] != 'C' || inBytes[6] != 'M' || inBytes[7] != 'P')
+				{
+					State s = new State(System.IO.File.ReadAllText(args[0]));
+					inBytes = s.Compile();
+					s.Delete();
+				}
+
+				State state = new State(inBytes);
+				if(shouldRun)
+				{
+					CpStdLib.InstallConsoleIO(state.StatePtr);
+					CpStdLib.InstallFileIO(state.StatePtr);
+					CpStdLib.InstallMath(state.StatePtr);
+					CpStdLib.InstallUtilities(state.StatePtr);
+					state.RunFromMethod("Main");
+				}
+				else
+					System.IO.File.WriteAllBytes(outFile, state.Compile());
+				state.Delete();
 				/*
 				if(args.Length == 1) //Compiled scripts will be compiled into a single file
 				{
