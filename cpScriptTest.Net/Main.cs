@@ -131,14 +131,18 @@ namespace cpScriptTest.Net
 							"	LOOP\n" +
 							"END FUNCTION";*/
 
-            string inputScript = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cps");
+			libCpScript.Net.Asm.State state = new libCpScript.Net.Asm.State(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.asm"));
+			File.WriteAllBytes(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cmp", state.Compile());
+			state.Delete();
+
+     /*       string inputScript = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cps");
             libCpScript.Net.ObjectBasic.ObjectBasicScript script = new libCpScript.Net.ObjectBasic.ObjectBasicScript();
             script.LoadScript(inputScript);
 
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.asm", script.AsmScript);
 
             script.LoadMethod("Main");
-            script.RunScript();
+            script.RunScript();*/
 
             /*
 

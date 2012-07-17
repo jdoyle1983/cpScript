@@ -521,19 +521,19 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
     return state;
 };
 
-EXPORT void State_Compile(void* S, void** outData, long* len)
+EXPORT void* State_Compile(void* S, long* len)
 {
     State* state = (State*)S;
     int i = 0;
     int offset = 0;
     char Magic[] = "CPASMCMP";
-    *outData = malloc(sizeof(char) * 8);
+    void* outData = malloc(sizeof(char) * 8);
     *len = sizeof(char) * 8;
-    memcpy(*outData, Magic, *len);
+    memcpy(outData, Magic, *len);
     offset = *len;
     *len += sizeof(int);
-    *outData = realloc(*outData, *len);
-    memcpy(*outData + offset, &state->_Tokens->Count, sizeof(int));
+    outData = realloc(outData, *len);
+    memcpy(outData + offset, &state->_Tokens->Count, sizeof(int));
     offset = *len;
     for(i = 0; i < state->_Tokens->Count; i++)
     {
@@ -541,23 +541,25 @@ EXPORT void State_Compile(void* S, void** outData, long* len)
         char tt = (char)t->Tok;
         int sl = 0;
         *len += sizeof(char);
-        *outData = realloc(*outData, *len);
-        memcpy(*outData + offset, &tt, sizeof(char));
+        outData = realloc(outData, *len);
+        memcpy(outData + offset, &tt, sizeof(char));
         offset = *len;
         if(tt == tRegister || tt == tMemoryVar || tt == tLiteral || tt == tQuotedLiteral)
             sl = strlen(t->Val);
         *len += sizeof(int);
-        *outData = realloc(*outData, *len);
-        memcpy(*outData + offset, &sl, sizeof(int));
+        outData = realloc(outData, *len);
+        memcpy(outData + offset, &sl, sizeof(int));
         offset = *len;
         if(sl > 0)
         {
             *len += sizeof(char) * strlen(t->Val);
-            *outData = realloc(*outData, *len);
-            memcpy(*outData + offset, t->Val, sizeof(char) * strlen(t->Val));
+            outData = realloc(outData, *len);
+            memcpy(outData + offset, t->Val, sizeof(char) * strlen(t->Val));
             offset = *len;
         }
     }
+
+    return outData;
 };
 
 EXPORT void State_Delete(void* S)
@@ -1390,14 +1392,9 @@ EXPORT void State_PushString(void* S, char* v)
     Stack_Push(state->_Stack, toPush);
 };
 
-EXPORT void InteropFreeString(char* str)
+EXPORT void InteropFreePtr(void* Ptr)
 {
-    free(str);
-};
-
-EXPORT void* InteropAllocVoidPtr()
-{
-    return malloc(0);
+    free(Ptr);
 };
 
 EXPORT void* InteropAllocLongPtr()
@@ -1405,18 +1402,7 @@ EXPORT void* InteropAllocLongPtr()
     return malloc(sizeof(long));
 };
 
-EXPORT long InteropGetLongFromLongPtr(void* lPtr)
+EXPORT long InteropLongPtrToLong(void* Ptr)
 {
-    return *((long*)lPtr);
+    return *((int*)Ptr);
 };
-
-EXPORT void InteropFreeVoidPtr(void* vPtr)
-{
-    free(vPtr);
-};
-
-EXPORT void InteropFreeLongPtr(void* lPtr)
-{
-    free(lPtr);
-};
-

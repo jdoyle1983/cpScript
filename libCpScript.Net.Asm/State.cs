@@ -43,6 +43,25 @@ namespace libCpScript.Net.Asm
 			Marshal.FreeHGlobal(AnsiScriptText);
 		}
 
+		public State(byte[] CompiledScript)
+		{
+			IntPtr pnt = Marshal.AllocHGlobal(CompiledScript.Length);
+			Marshal.Copy(CompiledScript, 0, pnt, CompiledScript.Length);
+			_State = NativeState.State_NewFromCompiled(pnt, CompiledScript.Length);
+			Marshal.FreeHGlobal(pnt);
+		}
+
+		public byte[] Compile()
+		{
+			IntPtr LengthPtr = NativeState.InteropAllocLongPtr();
+			IntPtr Compiled = NativeState.State_Compile(_State, LengthPtr);
+			byte[] rVal = new byte[NativeState.InteropLongPtrToLong(LengthPtr)];
+			Marshal.Copy(Compiled, rVal, 0, rVal.Length);
+			NativeState.InteropFreePtr(LengthPtr);
+			NativeState.InteropFreePtr(Compiled);
+			return rVal;
+		}
+
 		public void Delete ()
 		{
 			NativeState.State_Delete (_State);
@@ -96,7 +115,7 @@ namespace libCpScript.Net.Asm
 		{
 			IntPtr AnsiR = NativeState.State_PopString (_State);
 			string rValue = Marshal.PtrToStringAnsi (AnsiR);
-			NativeState.InteropFreeString(AnsiR);
+			NativeState.InteropFreePtr(AnsiR);
 			return rValue;
 		}
 

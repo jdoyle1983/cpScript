@@ -20,9 +20,8 @@ int main(int argc, char* argv[])
     fclose(f);
     result[size] = '\0';
     void* State = State_New(result);
-    void* CompiledScript = malloc(0);
     long CompiledLen = 0;
-    State_Compile(State, &CompiledScript, &CompiledLen);
+    void* CompiledScript = State_Compile(State, &CompiledLen);
     State_Delete(State);
 
     f = fopen("out.cmp", "wb");

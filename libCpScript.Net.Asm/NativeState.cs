@@ -10,6 +10,12 @@ namespace libCpScript.Net.Asm
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_New")]
 		internal static extern  System.IntPtr State_New(System.IntPtr ScriptText) ;
 
+		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_NewFromCompiled")]
+		internal static extern  System.IntPtr State_NewFromCompiled(System.IntPtr Script, long Length) ;
+
+		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_Compile")]
+		internal static extern  System.IntPtr State_Compile(System.IntPtr StatePtr, IntPtr OutLength) ;
+
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_Delete")]
 		internal static extern  void State_Delete(System.IntPtr StatePtr) ;
 
@@ -49,7 +55,15 @@ namespace libCpScript.Net.Asm
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PushString")]
 		internal static extern  void State_PushString(System.IntPtr StatePtr, System.IntPtr v) ;
 
-		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="InteropFreeString")]
-		internal static extern  void InteropFreeString(System.IntPtr str) ;
+		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="InteropFreePtr")]
+		internal static extern  void InteropFreePtr(System.IntPtr str) ;
+
+		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="InteropAllocLongPtr")]
+		internal static extern  IntPtr InteropAllocLongPtr() ;
+
+		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="InteropLongPtrToLong")]
+		internal static extern  long InteropLongPtrToLong(IntPtr Ptr) ;
+
+
 	}
 }

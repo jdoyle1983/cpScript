@@ -13,7 +13,7 @@ extern "C" {
 
 EXPORT void* State_New(char* ScriptText);
 EXPORT void* State_NewFromCompiled(void* Script, long Len);
-EXPORT void State_Compile(void* state, void** outData, long* len);
+EXPORT void* State_Compile(void* state, long* len);
 EXPORT void State_Delete(void* State);
 EXPORT void State_RegisterFunction(void* State, char* Name, void (*UserFunction)(void*), short StubFunction);
 EXPORT short State_Iterate(void* State);
@@ -30,12 +30,9 @@ EXPORT void State_PushDouble(void* State, double v);
 EXPORT void State_PushBool(void* State, short v);
 EXPORT void State_PushString(void* State, char* v);
 
-EXPORT void InteropFreeString(char* str);
-EXPORT void* InteropAllocVoidPtr();
+EXPORT void InteropFreePtr(void* Ptr);
 EXPORT void* InteropAllocLongPtr();
-EXPORT long InteropGetLongFromLongPtr(void* lPtr);
-EXPORT void InteropFreeVoidPtr(void* vPtr);
-EXPORT void InteropFreeLongPtr(void* lPtr);
+EXPORT long InteropLongPtrToLong(void* Ptr);
 
 #ifdef __cplusplus
 }
