@@ -20,6 +20,27 @@ int main(int argc, char* argv[])
     fclose(f);
     result[size] = '\0';
     void* State = State_New(result);
+    void* CompiledScript = malloc(0);
+    long CompiledLen = 0;
+    State_Compile(State, &CompiledScript, &CompiledLen);
+    State_Delete(State);
+
+    f = fopen("out.cmp", "wb");
+    fwrite(CompiledScript, sizeof(char), CompiledLen, f);
+    fclose(f);
+
+    free(CompiledScript);
+    CompiledLen = 0;
+
+    f = fopen("out.cmp", "rb");
+    fseek(f, 0, SEEK_END);
+    CompiledLen = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    CompiledScript = malloc(CompiledLen);
+    fread(CompiledScript, sizeof(char), CompiledLen, f);
+    fclose(f);
+
+    State = State_NewFromCompiled(CompiledScript, CompiledLen);
     CpStdLib_InstallConsoleIO(State);
     CpStdLib_InstallFileIO(State);
     CpStdLib_InstallMath(State);

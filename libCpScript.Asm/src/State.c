@@ -467,6 +467,99 @@ EXPORT void* State_New(char* ScriptText)
     return state;
 };
 
+EXPORT void* State_NewFromCompiled(void* Script, long Len)
+{
+    int i = 0;
+    int offset = 0;
+    char* Magic = malloc(sizeof(char) * 8);
+    memcpy(Magic, Script, sizeof(char) * 8);
+    if( Magic[0] != 'C' || Magic[1] != 'P' ||
+        Magic[2] != 'A' || Magic[3] != 'S' ||
+        Magic[4] != 'M' || Magic[5] != 'C' ||
+        Magic[6] != 'M' || Magic[7] != 'P')
+        return NULL;
+
+    offset += sizeof(char) * 8;
+
+
+    State* state = (State*)malloc(sizeof(State));
+    state->_CursorStack = Stack_New();
+    state->_Stack = Stack_New();
+    state->_Memory = List_New();
+    state->_Labels = List_New();
+    state->_Registers = Stack_New();
+    state->_Headers = Stack_New();
+    state->_BlockHeaders = Stack_New();
+    state->_Offset = -1;
+
+    state->_Tokens = List_New();
+    int TokenCount = 0;
+    memcpy(&TokenCount, Script + offset, sizeof(int));
+    offset += sizeof(int);
+
+    for(i = 0; i < TokenCount; i++)
+    {
+        char tt = 0;
+        int len = 0;
+        memcpy(&tt, Script + offset, sizeof(char));
+        offset += sizeof(char);
+        memcpy(&len, Script + offset, sizeof(int));
+        offset += sizeof(int);
+        char* val = (char*)malloc(sizeof(char) * (len + 1));
+        if(len > 0)
+        {
+            memcpy(val, Script + offset, sizeof(char) * len);
+            offset += sizeof(char) * len;
+        }
+        val[len] = '\0';
+        AssemblyToken* Tok = AssemblyToken_New(tt, val);
+        free(val);
+        List_Add(state->_Tokens, Tok);
+    }
+
+    State_DoInit(state);
+    return state;
+};
+
+EXPORT void State_Compile(void* S, void** outData, long* len)
+{
+    State* state = (State*)S;
+    int i = 0;
+    int offset = 0;
+    char Magic[] = "CPASMCMP";
+    *outData = malloc(sizeof(char) * 8);
+    *len = sizeof(char) * 8;
+    memcpy(*outData, Magic, *len);
+    offset = *len;
+    *len += sizeof(int);
+    *outData = realloc(*outData, *len);
+    memcpy(*outData + offset, &state->_Tokens->Count, sizeof(int));
+    offset = *len;
+    for(i = 0; i < state->_Tokens->Count; i++)
+    {
+        AssemblyToken* t = List_AssemblyTokenAtIndex(state->_Tokens, i);
+        char tt = (char)t->Tok;
+        int sl = 0;
+        *len += sizeof(char);
+        *outData = realloc(*outData, *len);
+        memcpy(*outData + offset, &tt, sizeof(char));
+        offset = *len;
+        if(tt == tRegister || tt == tMemoryVar || tt == tLiteral || tt == tQuotedLiteral)
+            sl = strlen(t->Val);
+        *len += sizeof(int);
+        *outData = realloc(*outData, *len);
+        memcpy(*outData + offset, &sl, sizeof(int));
+        offset = *len;
+        if(sl > 0)
+        {
+            *len += sizeof(char) * strlen(t->Val);
+            *outData = realloc(*outData, *len);
+            memcpy(*outData + offset, t->Val, sizeof(char) * strlen(t->Val));
+            offset = *len;
+        }
+    }
+};
+
 EXPORT void State_Delete(void* S)
 {
     State* state = (State*)S;
@@ -1301,3 +1394,29 @@ EXPORT void InteropFreeString(char* str)
 {
     free(str);
 };
+
+EXPORT void* InteropAllocVoidPtr()
+{
+    return malloc(0);
+};
+
+EXPORT void* InteropAllocLongPtr()
+{
+    return malloc(sizeof(long));
+};
+
+EXPORT long InteropGetLongFromLongPtr(void* lPtr)
+{
+    return *((long*)lPtr);
+};
+
+EXPORT void InteropFreeVoidPtr(void* vPtr)
+{
+    free(vPtr);
+};
+
+EXPORT void InteropFreeLongPtr(void* lPtr)
+{
+    free(lPtr);
+};
+

@@ -4,7 +4,7 @@
 		<Project filename="libCpScript.Asm.cbp" />
 		<Project filename="libCpScript.Asm.Shared.cbp" />
 		<Project filename="libCpStdLib.cbp" />
-		<Project filename="cpScriptTest.cbp" />
-		<Project filename="libCpStdLib.Shared.cbp" active="1" />
+		<Project filename="cpScriptTest.cbp" active="1" />
+		<Project filename="libCpStdLib.Shared.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
