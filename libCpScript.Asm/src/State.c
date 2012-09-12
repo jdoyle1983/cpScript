@@ -444,6 +444,15 @@ void State_DoInit(State* state)
                 List_Add(state->_Labels, d);
             }
         }
+        else if(aTok->Tok == tLiteral)
+        {
+            char* v = StrToLowTrim(aTok->Val);
+            if(strcmp(v, "true") == 0)
+                AssemblyToken_SetValue(aTok, "1");
+            else if(strcmp(v, "false") == 0)
+                AssemblyToken_SetValue(aTok, "0");
+            free(v);
+        }
     }
 
     Stack_Push(state->_Registers, List_New());
