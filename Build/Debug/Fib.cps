@@ -1,6 +1,30 @@
 #include Lib/ConsoleIO.obh
 
 FUNCTION Main()
+	VAR BoolTest = false
+	VAR DoubleTest = 8.492
+	VAR IntTest = 0
+	VAR StringTest = "---"
+	
+	DisplayVariables()
+	
+	SetVariables()
+	Console.WriteLine("From Script: BoolTest   : " .. BoolTest)
+	Console.WriteLine("From Script: DoubleTest : " .. DoubleTest)
+	Console.WriteLine("From Script: IntTest    : " .. IntTest)
+	Console.WriteLine("From Script: StringTest : " .. StringTest)
+	
+	BoolTest = false
+	DoubleTest = 6.232
+	IntTest = 0
+	StringTest = "---"
+	
+	Console.WriteLine("Before Call")
+	
+	DisplayVariables()
+	
+	Console.WriteLine("After Call")
+	
 	Console.WriteLine(" ")
 	Console.Write("Enter Fibonacci Sequence Iteration Count: ")
 	VAR fibMax = Console.ReadLine()

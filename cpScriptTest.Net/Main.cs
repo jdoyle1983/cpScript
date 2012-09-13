@@ -26,6 +26,25 @@ namespace cpScriptTest.Net
 {
 	class MainClass
 	{
+		public static void SetVariables(System.IntPtr StatePtr)
+		{
+			libCpScript.Net.Asm.State State = new libCpScript.Net.Asm.State(StatePtr);
+			State.SetBoolVariableInScope("BoolTest", true);
+			State.SetDoubleVariableInScope("DoubleTest", 12.4);
+			State.SetIntVariableInScope("IntTest", 15);
+			State.SetStringVariableInScope("StringTest", "Test String");
+		}
+		
+		public static void DisplayVariables(System.IntPtr StatePtr)
+		{
+			Console.WriteLine("Display Variables...");
+			libCpScript.Net.Asm.State State = new libCpScript.Net.Asm.State(StatePtr);
+			Console.WriteLine("From Host  : BoolTest   : " + State.GetBoolVariableInScope("BoolTest").ToString());
+			Console.WriteLine("From Host  : DoubleTest : " + State.GetDoubleVariableInScope("DoubleTest").ToString());
+			Console.WriteLine("From Host  : IntTest    : " + State.GetIntVariableInScope("IntTest").ToString());
+			Console.WriteLine("From Host  : StringTest : " + State.GetStringVariableInScope("StringTest").ToString());
+		}
+		
 		public static void ParamCheck(libCpScript.Net.Asm.State State)
 		{
 			string p5 = State.PopString();
@@ -132,6 +151,8 @@ namespace cpScriptTest.Net
 							"END FUNCTION";*/
 
 			libCpScript.Net.ObjectBasic.ObjectBasicScript script = new libCpScript.Net.ObjectBasic.ObjectBasicScript();
+			script.RegisterFunction("SetVariables", SetVariables, false);
+			script.RegisterFunction("DisplayVariables", DisplayVariables, false);
 			script.LoadScript(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cps"));
 			File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.asm", script.AsmScript);
 
@@ -140,6 +161,8 @@ namespace cpScriptTest.Net
 			state1.Delete();
 
 			libCpScript.Net.Asm.State state2 = new libCpScript.Net.Asm.State(File.ReadAllBytes(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cmp"));
+			state2.RegisterFunction("SetVariables", SetVariables, false);
+			state2.RegisterFunction("DisplayVariables", DisplayVariables, false);
 			libCpScript.Net.StdLib.CpStdLib.InstallConsoleIO(state2.StatePtr);
 			libCpScript.Net.StdLib.CpStdLib.InstallFileIO(state2.StatePtr);
 			libCpScript.Net.StdLib.CpStdLib.InstallMath(state2.StatePtr);

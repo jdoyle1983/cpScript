@@ -121,9 +121,20 @@ namespace libCpScript.Net.ObjectBasic
 	
 	public class Tokenizer
 	{
+		private static Token TokenBeforeLast 
+		{
+			get { if(Toks.Count > 1) return Toks[Toks.Count - 2]; return new Token(TokenType.ttINVALID, ""); }
+		}
+			
 		private static Token LastToken
 		{
 			get { if(Toks.Count > 0) return Toks[Toks.Count - 1]; return new Token(TokenType.ttINVALID, ""); }
+		}
+		
+		private static void ReplaceLastTwoTokens (Token t)
+		{
+			Toks.RemoveAt(Toks.Count - 1);
+			ReplaceLastToken(t);
 		}
 		
 		private static void ReplaceLastToken(Token t)
@@ -170,51 +181,73 @@ namespace libCpScript.Net.ObjectBasic
 						case ";": Toks.Add(new Token(TokenType.SemiColon, t)); break;
 						case ".": 
 						{
-							if(LastToken != null)
-							{
-								if(LastToken.Type == TokenType.Period)
-									ReplaceLastToken(new Token(TokenType.OpCat, ".."));
-								else
-									Toks.Add(new Token(TokenType.Period, t));
-							}
+							if(LastToken.Type == TokenType.Period)
+								ReplaceLastToken(new Token(TokenType.OpCat, ".."));
 							else
 								Toks.Add(new Token(TokenType.Period, t));
 						} break;
 						case "=":
 						{
-							if(LastToken != null)
-							{
-								if(LastToken.Type == TokenType.OpGreaterThan)
-									ReplaceLastToken(new Token(TokenType.OpGreaterThanOrEqualTo, ">="));
-								else if(LastToken.Type == TokenType.OpLessThan)
-									ReplaceLastToken(new Token(TokenType.OpLessThanOrEqualTo, "<="));
-								else if(LastToken.Type == TokenType.OpNot)
-									ReplaceLastToken(new Token(TokenType.OpNotEqualTo, "!="));
-								else if(LastToken.Type == TokenType.Assignment)
-									ReplaceLastToken(new Token(TokenType.OpEqualTo, "=="));
-								else
-									Toks.Add(new Token(TokenType.Assignment, t));
-							}
+							if(LastToken.Type == TokenType.OpGreaterThan)
+								ReplaceLastToken(new Token(TokenType.OpGreaterThanOrEqualTo, ">="));
+							else if(LastToken.Type == TokenType.OpLessThan)
+								ReplaceLastToken(new Token(TokenType.OpLessThanOrEqualTo, "<="));
+							else if(LastToken.Type == TokenType.OpNot)
+								ReplaceLastToken(new Token(TokenType.OpNotEqualTo, "!="));
+							else if(LastToken.Type == TokenType.Assignment)
+								ReplaceLastToken(new Token(TokenType.OpEqualTo, "=="));
 							else
 								Toks.Add(new Token(TokenType.Assignment, t));
 						} break;
 						case "&":
 						{
-							if(LastToken != null && LastToken.Type == TokenType.And)
+							if(LastToken.Type == TokenType.And)
 								ReplaceLastToken(new Token(TokenType.OpAnd, "&&"));
 							else
 								Toks.Add(new Token(TokenType.And, "&"));
 						} break;
 						case "|":
 						{
-							if(LastToken != null && LastToken.Type == TokenType.Or)
+							if(LastToken.Type == TokenType.Or)
 								ReplaceLastToken(new Token(TokenType.OpOr, "||"));
 							else
 								Toks.Add(new Token(TokenType.Or, "|"));
 						} break;
 						case "\"": inQuotes = true; quoteString = ""; quoteChar = "\""; break;
 						case "\'": inQuotes = true; quoteString = ""; quoteChar = "\'"; break;
-						default: if(t.Trim() != "") Toks.Add(new Token(TokenType.Literal, t)); break;
+						default:
+						{
+							bool AddLit = true;
+							if(t.Trim() != "")
+							{
+								if(LastToken.Type == TokenType.Period && TokenBeforeLast.Type == TokenType.Literal)
+								{
+									bool CanConvert1 = false;
+									bool CanConvert2 = false;
+									int ti = 0;
+									try
+									{
+										ti = Convert.ToInt32(TokenBeforeLast.Value);
+										CanConvert1 = true;
+									} catch{}
+									try
+									{
+										ti = Convert.ToInt32(t);
+										CanConvert2 = true;
+									} catch{}
+									
+									if(CanConvert1 && CanConvert2)
+									{
+										AddLit = false;
+										ReplaceLastTwoTokens(new Token(TokenType.Literal, TokenBeforeLast.Value.Trim() + "." + t.Trim()));
+									}
+								}
+							}
+							else
+								AddLit = false;
+							if(AddLit)
+								Toks.Add(new Token(TokenType.Literal, t));
+						}break;
 					}
 				}
 				else

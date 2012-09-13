@@ -1037,8 +1037,8 @@ EXPORT short State_Iterate(void* S)
                 }
                 if(l->UserFunction != NULL)
                 {
-                    l->UserFunction(state);
                     StatePop(state);
+                    l->UserFunction(state);
                 }
                 else
                     state->_Offset = l->Offset;
@@ -1340,9 +1340,25 @@ EXPORT int State_PopInt(void* S)
     return r;
 };
 
+EXPORT int State_GetIntVariableInScope(void* S, char* n)
+{
+    char* v = State_GetStringVariableInScope(S, n);
+    int r = atoi(v);
+    free(v);
+    return r;
+};
+
 EXPORT double State_PopDouble(void* S)
 {
     char* v = State_PopString(S);
+    double r = (double)atof(v);
+    free(v);
+    return r;
+};
+
+EXPORT double State_GetDoubleVariableInScope(void* S, char* n)
+{
+    char* v = State_GetStringVariableInScope(S, n);
     double r = (double)atof(v);
     free(v);
     return r;
@@ -1356,6 +1372,14 @@ EXPORT short State_PopBool(void* S)
     return r;
 };
 
+EXPORT short State_GetBoolVariableInScope(void* S, char* n)
+{
+    char* v = State_GetStringVariableInScope(S, n);
+    short r = (short)atoi(v);
+    free(v);
+    return r;
+};
+
 EXPORT char* State_PopString(void* S)
 {
     State* state = (State*)S;
@@ -1363,11 +1387,30 @@ EXPORT char* State_PopString(void* S)
     return r;
 };
 
+EXPORT char* State_GetStringVariableInScope(void* S, char* n)
+{
+    char* ActualName = (char*)malloc(sizeof(char) * (strlen(n) + 2));
+    sprintf(ActualName, "%%%s", n);
+    char* mVal = ReadMemoryBlock((State*)S, ActualName);
+    char* cVal = (char*)malloc(sizeof(char) * (strlen(mVal) + 1));
+    strcpy(cVal, mVal);
+    free(ActualName);
+    return cVal;
+};
+
 EXPORT void State_PushInt(void* S, int v)
 {
     char* p = (char*)malloc(sizeof(char) * 3000);
     sprintf(p, "%d", v);
     State_PushString(S, p);
+    free(p);
+};
+
+EXPORT void State_SetIntVariableInScope(void* S, char* n, int v)
+{
+    char* p = (char*)malloc(sizeof(char) * 3000);
+    sprintf(p, "%d", v);
+    State_SetStringVariableInScope(S, n, p);
     free(p);
 };
 
@@ -1384,6 +1427,19 @@ EXPORT void State_PushDouble(void* S, double v)
     }
 };
 
+EXPORT void State_SetDoubleVariableInScope(void* S, char* n, double v)
+{
+    if(ShouldMakeDoubletToInt(v) == 1)
+        State_SetIntVariableInScope(S, n, (int)v);
+    else
+    {
+        char* p = (char*)malloc(sizeof(char) * 3000);
+        sprintf(p, "%f", v);
+        State_SetStringVariableInScope(S, n, p);
+        free(p);
+    }
+};
+
 EXPORT void State_PushBool(void* S, short v)
 {
     char* p = (char*)malloc(sizeof(char) * 100);
@@ -1392,13 +1448,28 @@ EXPORT void State_PushBool(void* S, short v)
     free(p);
 };
 
+EXPORT void State_SetBoolVariableInScope(void* S, char* n, short v)
+{
+    char* p = (char*)malloc(sizeof(char) * 100);
+    sprintf(p, "%d", v);
+    State_SetStringVariableInScope(S, n, p);
+    free(p);
+};
+
 EXPORT void State_PushString(void* S, char* v)
 {
     State* state = (State*)S;
     char* toPush = (char*)malloc(sizeof(char) * (strlen(v) + 1));
     strcpy(toPush, v);
-    //printf("PUSHING: '%s'\n", toPush);
     Stack_Push(state->_Stack, toPush);
+};
+
+EXPORT void State_SetStringVariableInScope(void* S, char* n, char* v)
+{
+    char* ActualName = (char*)malloc(sizeof(char) * (strlen(n) + 2));
+    sprintf(ActualName, "%%%s", n);
+    SetMemoryBlock((State*)S, ActualName, v);
+    free(ActualName);
 };
 
 EXPORT void InteropFreePtr(void* Ptr)

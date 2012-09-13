@@ -100,16 +100,40 @@ namespace libCpScript.Net.Asm
 		{
 			return NativeState.State_PopInt (_State);
 		}
+		
+		public int GetIntVariableInScope (string Name)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi(Name);
+			int r = NativeState.State_GetIntVariableInScope(_State, AnsiName);
+			Marshal.FreeHGlobal(AnsiName);
+			return r;
+		}
 
 		public double PopDouble ()
 		{
 			return NativeState.State_PopDouble (_State);
+		}
+		
+		public double GetDoubleVariableInScope (string Name)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi(Name);
+			double r = NativeState.State_GetDoubleVariableInScope(_State, AnsiName);
+			Marshal.FreeHGlobal(AnsiName);
+			return r;
 		}
 
 		public bool PopBool ()
 		{
 			short r = NativeState.State_PopBool (_State);
 			return r == 1 ? true : false;
+		}
+		
+		public bool GetBoolVariableInScope (string Name)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi(Name);
+			bool r = NativeState.State_GetBoolVariableInScope(_State, AnsiName)  == 1 ? true : false;
+			Marshal.FreeHGlobal(AnsiName);
+			return r;
 		}
 
 		public string PopString ()
@@ -119,20 +143,51 @@ namespace libCpScript.Net.Asm
 			NativeState.InteropFreePtr(AnsiR);
 			return rValue;
 		}
+		
+		public string GetStringVariableInScope (string Name)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi (Name);
+			IntPtr AnsiR = NativeState.State_GetStringVariableInScope (_State, AnsiName);
+			string r = Marshal.PtrToStringAnsi (AnsiR);
+			NativeState.InteropFreePtr (AnsiR);
+			Marshal.FreeHGlobal (AnsiName);
+			return r;
+		}
 
 		public void PushInt (int v)
 		{
 			NativeState.State_PushInt(_State, v);
+		}
+		
+		public void SetIntVariableInScope (string Name, int v)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi (Name);
+			NativeState.State_SetIntVariableInScope(_State, AnsiName, v);
+			Marshal.FreeHGlobal (AnsiName);
 		}
 
 		public void PushDouble (double v)
 		{
 			NativeState.State_PushDouble(_State, v);
 		}
+		
+		public void SetDoubleVariableInScope (string Name, double v)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi (Name);
+			NativeState.State_SetDoubleVariableInScope(_State, AnsiName, v);
+			Marshal.FreeHGlobal (AnsiName);
+		}
 
 		public void PushBool (bool v)
 		{
 			NativeState.State_PushBool(_State, (short)(v ? 1 : 0));
+		}
+		
+		public void SetBoolVariableInScope (string Name, bool v)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi (Name);
+			NativeState.State_SetBoolVariableInScope(_State, AnsiName, (short)(v ? 1 : 0));
+			Marshal.FreeHGlobal (AnsiName);
 		}
 
 		public void PushString (string v)
@@ -140,6 +195,15 @@ namespace libCpScript.Net.Asm
 			IntPtr Ansiv = Marshal.StringToHGlobalAnsi(v);
 			NativeState.State_PushString(_State, Ansiv);
 			Marshal.FreeHGlobal(Ansiv);
+		}
+		
+		public void SetStringVariableInScope (string Name, string v)
+		{
+			IntPtr AnsiName = Marshal.StringToHGlobalAnsi (Name);
+			IntPtr Ansiv = Marshal.StringToHGlobalAnsi(v);
+			NativeState.State_SetStringVariableInScope(_State, AnsiName, Ansiv);
+			Marshal.FreeHGlobal(Ansiv);
+			Marshal.FreeHGlobal(AnsiName);
 		}
 	}
 }

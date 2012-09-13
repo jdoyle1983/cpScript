@@ -30,6 +30,16 @@ EXPORT void State_PushDouble(void* State, double v);
 EXPORT void State_PushBool(void* State, short v);
 EXPORT void State_PushString(void* State, char* v);
 
+EXPORT int State_GetIntVariableInScope(void* S, char* n);
+EXPORT double State_GetDoubleVariableInScope(void* S, char* n);
+EXPORT short State_GetBoolVariableInScope(void* S, char* n);
+EXPORT char* State_GetStringVariableInScope(void* S, char* n);
+
+EXPORT void State_SetIntVariableInScope(void* S, char* n, int v);
+EXPORT void State_SetDoubleVariableInScope(void* S, char* n, double v);
+EXPORT void State_SetBoolVariableInScope(void* S, char* n, short v);
+EXPORT void State_SetStringVariableInScope(void* S, char* n, char* v);
+
 EXPORT void InteropFreePtr(void* Ptr);
 EXPORT void* InteropAllocLongPtr();
 EXPORT long InteropLongPtrToLong(void* Ptr);

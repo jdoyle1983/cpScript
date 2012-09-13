@@ -3,9 +3,25 @@
 #include <stdio.h>
 #include <malloc.h>
 
+void SetVariables(void* State)
+{
+    State_SetBoolVariableInScope(State, "BoolTest", 1);
+    State_SetDoubleVariableInScope(State, "DoubleTest", 12.4);
+    State_SetIntVariableInScope(State, "IntTest", 15);
+    State_SetStringVariableInScope(State, "StringTest", "Test String");
+};
+
+void DisplayVariables(void* State)
+{
+    printf("rom Host  : BoolTest   : %i", State_GetBoolVariableInScope(State, "BoolTest"));
+    printf("rom Host  : DoubleTest : %f", State_GetDoubleVariableInScope(State, "DoubleTest"));
+    printf("rom Host  : IntTest    : %i", State_GetIntVariableInScope(State, "IntTest"));
+    printf("rom Host  : StringTest : %s", State_GetStringVariableInScope(State, "StringTest"));
+};
+
 int main(int argc, char* argv[])
 {
-    if(argc < 2)
+   if(argc < 2)
         return -1;
     FILE* f = fopen(argv[1], "rb");
     if(f == NULL)
@@ -20,6 +36,8 @@ int main(int argc, char* argv[])
     fclose(f);
     result[size] = '\0';
     void* State = State_New(result);
+    State_RegisterFunction(State, "SetVariables", SetVariables, 0);
+    State_RegisterFunction(State, "DisplayVariables", DisplayVariables, 0);
     long CompiledLen = 0;
     void* CompiledScript = State_Compile(State, &CompiledLen);
     State_Delete(State);
@@ -38,8 +56,10 @@ int main(int argc, char* argv[])
     CompiledScript = malloc(CompiledLen);
     fread(CompiledScript, sizeof(char), CompiledLen, f);
     fclose(f);
-
+    printf("Loading Script...\n");
     State = State_NewFromCompiled(CompiledScript, CompiledLen);
+    State_RegisterFunction(State, "SetVariables", SetVariables, 0);
+    State_RegisterFunction(State, "DisplayVariables", DisplayVariables, 0);
     CpStdLib_InstallConsoleIO(State);
     CpStdLib_InstallFileIO(State);
     CpStdLib_InstallMath(State);
