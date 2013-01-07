@@ -6,24 +6,20 @@ FUNCTION Main()
 	VAR IntTest = 0
 	VAR StringTest = "---"
 	
-	DisplayVariables()
-	
-	SetVariables()
 	Console.WriteLine("From Script: BoolTest   : " .. BoolTest)
 	Console.WriteLine("From Script: DoubleTest : " .. DoubleTest)
 	Console.WriteLine("From Script: IntTest    : " .. IntTest)
 	Console.WriteLine("From Script: StringTest : " .. StringTest)
 	
-	BoolTest = false
+	BoolTest = true
 	DoubleTest = 6.232
-	IntTest = 0
-	StringTest = "---"
+	IntTest = 10
+	StringTest = "-dfdf-"
 	
-	Console.WriteLine("Before Call")
-	
-	DisplayVariables()
-	
-	Console.WriteLine("After Call")
+	Console.WriteLine("From Script: BoolTest   : " .. BoolTest)
+	Console.WriteLine("From Script: DoubleTest : " .. DoubleTest)
+	Console.WriteLine("From Script: IntTest    : " .. IntTest)
+	Console.WriteLine("From Script: StringTest : " .. StringTest)
 	
 	Console.WriteLine(" ")
 	Console.Write("Enter Fibonacci Sequence Iteration Count: ")

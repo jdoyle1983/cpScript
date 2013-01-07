@@ -274,7 +274,7 @@ MyClassVar.SomeFunction(43, 23)
 CLASSNAME.StaticFunction(33, 23)
 
 If Statement
-IF ((SomeValue == 32) || MyVar2 = 66) && MyVar3 != "Yes" THEN
+IF ((SomeValue == 32) || MyVar2 == 66) && MyVar3 != "Yes" THEN
 	...Perform Some Action
 ELSE IF (...Some Condition) THEN
 	...Perform Some Action

@@ -88,7 +88,7 @@ Global
 		{C2D74C98-942E-404F-9A7F-3C67FAB962C3} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = cpInt\cpInt.csproj
+		StartupItem = cpScriptTest.Net\cpScriptTest.Net.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
