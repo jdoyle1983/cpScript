@@ -1,358 +1,519 @@
 libCpScript ObjectBasic Reference Manual
 (c) 2012 Jason Doyle, All Rights Reserved
+Email: jdoyle1983@gmail.com
 
-I. 		Overview
-II.		Example Code
+I...........Overview
+II.........Language Syntax
+	A...........Pre-Processor Directives
+	    1...........#HostFunction
+		2...........#Include
+		3...........#Lib
+    B...........Variables
+	    1...........General Variables
+		2...........Class Variables
+	C...........Operators
+	    1...........Numeric Operators
+		2...........String Operators
+		3...........Logical Operators
+	D...........Control Flow
+	    1...........Function Calls
+		2...........Conditional Execution
+	E...........Loops
+	    1...........While Loop
+		2...........For Loop
+	F...........Classes
+	    1...........Defining a Class
+		2...........Accessing Class Properties
+		3...........Accessing Class Methods
+	G...........Classes Advanced
+	    1...........Extending Existing Classes
+		2...........Static Class Methods
+	H...........The Standard Library
+	    1...........ConsoleIO
+		2...........FileIO
+		3...........Math
+		4...........Utilities
+III.........Example Code
 
+
+Forward
+		This document assumes a basic understanding of programming.  This document
+		is not intended to teach basic programming skills.  The only purpose of this
+		document is define the libCpScript ObjectBasic language syntax.  As such,
+		conecepts such as loops, conditional statements, and variables will not be
+		expressly defined.
 
 
 I.		Overview
 
-libCpScript ObjectBasic (lcsob) is a BASIC like language, with full
-object support.  It compiles into libCpScript Assembly.  It supports
-extending of classes.
+		libCpScript ObjectBasic (lcsob) is a BASIC like language, with full
+		object support.  It compiles into libCpScript Assembly.  It supports
+		extending of classes.
 
+II.		Language Syntax
 
-II. 	Pre Processor Directives
+		A.	Pre Processor Directives
+			
+			These directives can be used to instruct the compiler about additional
+			resources availble to the script.
 
-	#HostFunction [FUNC]	-	Informs the compiler there is a host
-				function that will be implemented at a later time.
-				This is required to allow the parser to recognize a
-				function name as a function, rather than a literal
-				string.
+				1. 	#HostFunction [FUNC]
 				
-	#Include [PATH]			-	Include additional script code into
-				this script.  This script must be relative to the 
-				executing host application.
+					Informs the compiler there is a host function that 
+					will be implemented at a later time. This is required 
+					to allow the parser to recognize a function name as 
+					a function, rather than a literal string.
 				
-	#Lib [PATH]				-	Include a library in this script.
-				This script must be relative to the executing host
-				application.
+				2.	#Include [PATH]
+				
+					Include additional script code into this script.  This
+					script must be relative to the executing host 
+					application.
+				
+				3.	#Lib [PATH]
+					Include a library in this script. This script must be
+					relative to the executing host application.
+					
+		B.	Variables
+			
+			Variables in lcsob are typeless (excluding class variables).  As
+			such, there are no limitations to operations performed on a variable,
+			even in cases where it may cause errors.  If you attempt to add 2
+			variables, each typeless variable will be first converted to an integer,
+			and a typeless result is returned.  Currently, attempting a math
+			operation on a string is undefined, and will more than likely crash
+			the host application.  (This is a known short coming, and will be handled
+			correctly before production release).
+		
+				1.	General Variables
+					
+					General variables are typeless values.  They become whatever type is necessary
+					to perform an operation. (If you attempt a math operation, they will be converted
+					to numbers to perform said operation).  Variables can be initialized without a
+					value, or with any valid operation syntax.  A variable defined with no initial
+					value will have the equivilant of a blank string for a value.
+					
+					Un-Initialized Declaration:
+					VAR MyVar
+					
+					Declaration With Initial Value:
+					VAR MyVar = 1
+					VAR MyVar = "Hello"
+					VAR MyVar = 32 + 82
+					VAR MyVar = MyFunction(32, 82)
+					VAR MyVar = 23 + (-23 * (84 / MyOtherVar) + 2)
+				
+				2.	Class Variables
+				
+					Class variables are always declared Un-Initialized.  There is a required init method
+					for each class that will get called upon declaration.  Please See II.F.1 for details
+					on defining a class.
+					
+					Class Variable Declaration:
+					
+					CLASSNAME MyClassVar
 				
 				
+		C.	Operators
+		
+			Operators allow you to manipulate variables within the script, here is a
+			table of all operators in lcsob:			
+		
+				1.	Numeric Operators
 				
-II.		Example Code
+					Variables are converted to double precision values, then the math operations
+					are then performed.
+				
+					+				Add 2 values
+					-				Subtract 2 values
+					*				Multiply 2 values
+					/				Divide 2 values
+					%				Divide 2 values, return the remainder
+				
+				2.	String Operators
+				
+					Variables are converted to strings, then the string operations are performed.
+				
+					..				Concat 2 strings
+				
+				3.	Logical Operators
+				
+					Variables are converted to booleans, then the logical operations are performed.
+				
+					==				Return true if values are the same, otherwise false
+					!=				Return true if values are not the same, otherwise false
+					>				Return true if value1 is greater than value2, otherwise false
+					>=				Return true if value1 is greater than or equal to value2, otherwise false
+					<				Return true if value1 is less than value2, otherwise false
+					<=				Return true if value1 is less than or equal to value2, otherwise false
+					!				Invert bool value (false->true, true->false)
+					&&				Return true if value1 is true and value2 is true
+					||				Return true if value1 is true or value2 is true
+				
+				
+		D.	Control Flow
+		
+				1.	Function Calls
+				
+				2.	Conditional Execution
+				
+				
+		E.	Loops
+				
+				1.	While Loop
+				
+				2.	For Loop
+				
+				
+		F.	Classes
+		
+				1.	Defining a Class
+				
+				2.	Accessing Class Properties
+				
+				3.	Accessing Class Methods
+				
+				
+		G.	Classes Advanced
+		
+				1.	Extending Existing Classes
+				
+				2.	Static Class Methods
+				
+				
+		H.	The Standard Library
+		
+				1.	ConsoleIO
+				
+				2.	FileIO
+				
+				3.	Math
+				
+				4.	Utilities
+				
+				
+III.	Example Code
 
--- Lib/ConsoleIO.obh
-#Lib Lib/libCpScript.libConsoleIO.dll
-#HostFunction __StdLib__ConsoleIO__Write
-#HostFunction __StdLib__ConsoleIO__WriteLine
-#HostFunction __StdLib__ConsoleIO__ReadLine
+		-- Lib/ConsoleIO.obh
+		#Lib Lib/libCpScript.libConsoleIO.dll
+		#HostFunction __StdLib__ConsoleIO__Write
+		#HostFunction __StdLib__ConsoleIO__WriteLine
+		#HostFunction __StdLib__ConsoleIO__ReadLine
 
-CLASS Console
+		CLASS Console
 
-	METHOD STATIC Write(val)
-		__StdLib__ConsoleIO__Write(val)
-	END METHOD
-	
-	METHOD STATIC WriteLine(val)
-		__StdLib__ConsoleIO__WriteLine(val)
-	END METHOD
-	
-	METHOD STATIC ReadLine()
-		RETURN __StdLib__ConsoleIO__ReadLine()
-	END METHOD
-	
-END CLASS
+			METHOD STATIC Write(val)
+				__StdLib__ConsoleIO__Write(val)
+			END METHOD
+			
+			METHOD STATIC WriteLine(val)
+				__StdLib__ConsoleIO__WriteLine(val)
+			END METHOD
+			
+			METHOD STATIC ReadLine()
+				RETURN __StdLib__ConsoleIO__ReadLine()
+			END METHOD
+			
+		END CLASS
 
--- Lib/FileIO.obh
-#Lib Lib/libCpScript.libFileIO.dll
-#HostFunction __StdLib__FileIO__Open
-#HostFunction __StdLib__FileIO__WriteLine
-#HostFunction __StdLib__FileIO__ReadLine
-#HostFunction __StdLib__FileIO__Close
-#HostFunction __StdLib__FileIO__Eof
+		-- Lib/FileIO.obh
+		#Lib Lib/libCpScript.libFileIO.dll
+		#HostFunction __StdLib__FileIO__Open
+		#HostFunction __StdLib__FileIO__WriteLine
+		#HostFunction __StdLib__FileIO__ReadLine
+		#HostFunction __StdLib__FileIO__Close
+		#HostFunction __StdLib__FileIO__Eof
 
-CLASS File
+		CLASS File
 
-	PROP FileObj
+			PROP FileObj
 
-	METHOD Init()
-	END METHOD
+			METHOD Init()
+			END METHOD
 
-	METHOD OpenRead(filepath)
-		FileObj = __StdLib__FileIO__Open("r", filepath)
-	END METHOD
-	
-	METHOD OpenWrite(filepath)
-		FileObj = __StdLib__FileIO__Open("w", filepath)
-	END METHOD
-	
-	METHOD WriteLine(val)
-		__StdLib__FileIO__WriteLine(FileObj, val)
-	END METHOD
-	
-	METHOD ReadLine()
-		RETURN __StdLib__FileIO__ReadLine(FileObj)
-	END METHOD
-	
-	METHOD Close()
-		__StdLib__FileIO__Close(FileObj)
-	END METHOD
-	
-	METHOD Eof()
-		RETURN __StdLib__FileIO__Eof(FileObj)
-	END METHOD
-	
-END CLASS
+			METHOD OpenRead(filepath)
+				FileObj = __StdLib__FileIO__Open("r", filepath)
+			END METHOD
+			
+			METHOD OpenWrite(filepath)
+				FileObj = __StdLib__FileIO__Open("w", filepath)
+			END METHOD
+			
+			METHOD WriteLine(val)
+				__StdLib__FileIO__WriteLine(FileObj, val)
+			END METHOD
+			
+			METHOD ReadLine()
+				RETURN __StdLib__FileIO__ReadLine(FileObj)
+			END METHOD
+			
+			METHOD Close()
+				__StdLib__FileIO__Close(FileObj)
+			END METHOD
+			
+			METHOD Eof()
+				RETURN __StdLib__FileIO__Eof(FileObj)
+			END METHOD
+			
+		END CLASS
 
--- Lib/Math.obh
-#Lib Lib/libCpScript.libMath.dll
-#HostFunction __StdLib__Math__Abs
-#HostFunction __StdLib__Math__Floor
-#HostFunction __StdLib__Math__Ceiling
+		-- Lib/Math.obh
+		#Lib Lib/libCpScript.libMath.dll
+		#HostFunction __StdLib__Math__Abs
+		#HostFunction __StdLib__Math__Floor
+		#HostFunction __StdLib__Math__Ceiling
 
-CLASS Math
+		CLASS Math
 
-	METHOD STATIC ABS(val)
-		RETURN __StdLib__Math__Abs(val)
-	END METHOD
-	
-	METHOD STATIC FLOOR(val)
-		RETURN __StdLib__Math__Floor(val)
-	END METHOD
-	
-	METHOD STATIC CEILING(val)
-		RETURN __StdLib__Math__Ceiling(val)
-	END METHOD
-	
-END CLASS
+			METHOD STATIC ABS(val)
+				RETURN __StdLib__Math__Abs(val)
+			END METHOD
+			
+			METHOD STATIC FLOOR(val)
+				RETURN __StdLib__Math__Floor(val)
+			END METHOD
+			
+			METHOD STATIC CEILING(val)
+				RETURN __StdLib__Math__Ceiling(val)
+			END METHOD
+			
+		END CLASS
 
--- Main Script
-#HostFunction ParamCheck
-#include Lib/ConsoleIO.obh
-#include Lib/FileIO.obh
-#include Lib/Math.obh
+		-- Main Script
+		#HostFunction ParamCheck
+		#include Lib/ConsoleIO.obh
+		#include Lib/FileIO.obh
+		#include Lib/Math.obh
 
-CLASS BaseObject
-	PROP ObjectId
-	
-	METHOD Init()
-		ObjectId = 0
-	END METHOD
-END CLASS
+		CLASS BaseObject
+			PROP ObjectId
+			
+			METHOD Init()
+				ObjectId = 0
+			END METHOD
+		END CLASS
 
-CLASS String EXTENDS BaseObject
-	PROP Value
-	
-	METHOD Init()
-		ObjectId = 1
-	END METHOD
-END CLASS
+		CLASS String EXTENDS BaseObject
+			PROP Value
+			
+			METHOD Init()
+				ObjectId = 1
+			END METHOD
+		END CLASS
 
-CLASS StringBuilder EXTENDS String
-	METHOD Init()
-		ObjectId = 2
-	END METHOD
-	
-	METHOD Append(val)
-		Value = Value .. val
-	END METHOD
+		CLASS StringBuilder EXTENDS String
+			METHOD Init()
+				ObjectId = 2
+			END METHOD
+			
+			METHOD Append(val)
+				Value = Value .. val
+			END METHOD
 
-	METHOD AppendLine(val)
-		Value = Value .. val .. "\n"
-	END METHOD
-END CLASS
+			METHOD AppendLine(val)
+				Value = Value .. val .. "\n"
+			END METHOD
+		END CLASS
 
-CLASS TestClass1
-	METHOD Init()
-	END METHOD
-	
-	METHOD ShouldDoSomething(myval)
-		Console.WriteLine(myval)
-	END METHOD
-END CLASS
+		CLASS TestClass1
+			METHOD Init()
+			END METHOD
+			
+			METHOD ShouldDoSomething(myval)
+				Console.WriteLine(myval)
+			END METHOD
+		END CLASS
 
-CLASS TestClass2
-	METHOD Init()
-	END METHOD
-	
-	METHOD DoSomething(myitem:TestClass1)
-	
-		myitem.ShouldDoSomething("Test Line")
-	
-	END METHOD
-END CLASS
+		CLASS TestClass2
+			METHOD Init()
+			END METHOD
+			
+			METHOD DoSomething(myitem:TestClass1)
+			
+				myitem.ShouldDoSomething("Test Line")
+			
+			END METHOD
+		END CLASS
 
-FUNCTION Main()
+		FUNCTION Main()
 
-	TestClass1 ts1
-	TestClass2 ts2
-	ts2.DoSomething(ts1)
+			TestClass1 ts1
+			TestClass2 ts2
+			ts2.DoSomething(ts1)
 
-	File f1
-	f1.OpenWrite("output.txt")
-	f1.WriteLine("Line 1")
-	f1.WriteLine("Line 2")
-	f1.Close()
-	File f2
-	f2.OpenRead("output.txt")
-	Console.WriteLine(f2.ReadLine())
-	Console.WriteLine(f2.ReadLine())
-	f2.Close()
-	
-	Console.WriteLine("Function Main() Start")
-	ParamCheck("1","2","3","4","5")
-	StringBuilder builder
-	builder.AppendLine("Line 1")
-	builder.AppendLine("Line 2")
-	builder.AppendLine("Line 3")
-	builder.AppendLine("Live 4")
-	Console.WriteLine(builder.Value)
-	Console.WriteLine("Enter a String: ")
-	VAR Input = Console.ReadLine()
-	Console.Write("You Entered: ")
-	Console.WriteLine(Input)
-	Console.WriteLine("Goodbye.")
-	Console.WriteLine("Function Main() End")
-	
-	VAR myVar
-	myVar = 189 * (232 / 34 + 83 - 34) * 45
-	Console.WriteLine(myVar)
-	
-	VAR myVar2 = 8 % 3
-	Console.WriteLine(myVar2)
-	
-	Console.WriteLine(Math.ABS(-23))
-	
-	VAR myVar3 = 125 * ((4 + 3) * (-(28 - 4) * 5) + 88)
-	Console.WriteLine(myVar3)
-END FUNCTION
-
-
+			File f1
+			f1.OpenWrite("output.txt")
+			f1.WriteLine("Line 1")
+			f1.WriteLine("Line 2")
+			f1.Close()
+			File f2
+			f2.OpenRead("output.txt")
+			Console.WriteLine(f2.ReadLine())
+			Console.WriteLine(f2.ReadLine())
+			f2.Close()
+			
+			Console.WriteLine("Function Main() Start")
+			ParamCheck("1","2","3","4","5")
+			StringBuilder builder
+			builder.AppendLine("Line 1")
+			builder.AppendLine("Line 2")
+			builder.AppendLine("Line 3")
+			builder.AppendLine("Live 4")
+			Console.WriteLine(builder.Value)
+			Console.WriteLine("Enter a String: ")
+			VAR Input = Console.ReadLine()
+			Console.Write("You Entered: ")
+			Console.WriteLine(Input)
+			Console.WriteLine("Goodbye.")
+			Console.WriteLine("Function Main() End")
+			
+			VAR myVar
+			myVar = 189 * (232 / 34 + 83 - 34) * 45
+			Console.WriteLine(myVar)
+			
+			VAR myVar2 = 8 % 3
+			Console.WriteLine(myVar2)
+			
+			Console.WriteLine(Math.ABS(-23))
+			
+			VAR myVar3 = 125 * ((4 + 3) * (-(28 - 4) * 5) + 88)
+			Console.WriteLine(myVar3)
+		END FUNCTION
 
 
 
 
 
-Example Code: Fibonacci Sequence:
-#include Lib/ConsoleIO.obh
 
-FUNCTION Main()
-	Console.Write("Enter Fibonacci Sequence Iteration Count: ")
-	VAR fibMax = Console.ReadLine()
-	VAR f1 = 0
-	VAR f2 = 0
-	VAR f3 = 0
-	VAR i = 0
-	FOR i = 1 to fibMax
-		IF i == 1 THEN
-			f1 = 1
-			Console.WriteLine("Seq " .. i .. ": " .. f1)
-		ELSE IF i == 2 THEN
-			f2 = 1
-			Console.WriteLine("Seq " .. i .. ": " .. f2)
+
+		Example Code: Fibonacci Sequence:
+		#include Lib/ConsoleIO.obh
+
+		FUNCTION Main()
+			Console.Write("Enter Fibonacci Sequence Iteration Count: ")
+			VAR fibMax = Console.ReadLine()
+			VAR f1 = 0
+			VAR f2 = 0
+			VAR f3 = 0
+			VAR i = 0
+			FOR i = 1 to fibMax
+				IF i == 1 THEN
+					f1 = 1
+					Console.WriteLine("Seq " .. i .. ": " .. f1)
+				ELSE IF i == 2 THEN
+					f2 = 1
+					Console.WriteLine("Seq " .. i .. ": " .. f2)
+				ELSE
+					f3 = f1 + f2
+					Console.WriteLine("Seq " .. i .. ": " .. f3)
+					f1 = f2
+					f2 = f3
+				END IF
+			NEXT
+		END FUNCTION
+
+
+
+
+
+
+
+
+
+
+
+
+		Variable Declaration
+		VAR MyVar
+		VAR MyVar2 = 34 + 32
+		VAR MyVar3 = 89 * (SomeFunction(14, "Yes") + 2)
+
+		Class Variable Declaration
+		CLASSNAME MyClassVar
+		MyClassVar.SomePrperty = 342
+		MyClassVar.SomeFunction(43, 23)
+		CLASSNAME.StaticFunction(33, 23)
+
+		If Statement
+		IF ((SomeValue == 32) || MyVar2 == 66) && MyVar3 != "Yes" THEN
+			...Perform Some Action
+		ELSE IF (...Some Condition) THEN
+			...Perform Some Action
 		ELSE
-			f3 = f1 + f2
-			Console.WriteLine("Seq " .. i .. ": " .. f3)
-			f1 = f2
-			f2 = f3
+			...Perform Some Action
 		END IF
-	NEXT
-END FUNCTION
+
+		While Statement
+		WHILE (...Some Condition)
+			...Perform Some Action
+		LOOP
+
+		For Statement
+		VAR Counter = 0
+		FOR Counter = 0 TO 100 STEP + 10
+			...Perform Some Action
+		NEXT
+		FOR Counter = 100 TO 0 STEP - 10
+			...Perform Some Action
+		NEXT
+		FOR Counter = 1 TO 10
+			...Perform Some Action (Step + 1 is assumed)
+		NEXT
+
+		Class Declaration
+		CLASS SomeClass
+			PROP SomeProp
+			PROP SomeProp2
+			
+			METHOD Init() ...Init Required If Instance Class
+			END METHOD
+			
+			METHOD SomeMethod(var1, var2)
+			END METHOD
+			
+			METHOD STATIC SomeStaticMethod(var1, var2)
+			END METHOD
+		END CLASS
+
+		CLASS SomeClass2 EXTENDS SomeClass
+			PROP SomeProp3
+			PROP SomeProp4
+			
+			METHOD Init() ...Init Required, Will Call Base Init First Up The Extension Chain
+			END METHOD
+			
+			METHOD OVERRIDE SomeMethod(var1, var2)
+				...This method will replace the base method for this object, and any extensions of this object
+			END METHOD
+			
+			METHOD SomeMethod2(var1, var2)
+			END METHOD
+		END CLASS
 
 
+		Math Operands
+		+		Add
+		-		Subtract
+		*		Multiply
+		/		Divide
+		%		Modulo
+		..		Concat
 
+		Comparison Operands
+		==		Equal To
+		!=		Not Equal To
+		>		Greater Than
+		>=		Greater Than or Equal To
+		<		Less Than
+		<=		Less Than or Equal To
+		!		Not
+		&&		Logical AND
+		||		Logical OR
 
-
-
-
-
-
-
-
-
-Variable Declaration
-VAR MyVar
-VAR MyVar2 = 34 + 32
-VAR MyVar3 = 89 * (SomeFunction(14, "Yes") + 2)
-
-Class Variable Declaration
-CLASSNAME MyClassVar
-MyClassVar.SomePrperty = 342
-MyClassVar.SomeFunction(43, 23)
-CLASSNAME.StaticFunction(33, 23)
-
-If Statement
-IF ((SomeValue == 32) || MyVar2 == 66) && MyVar3 != "Yes" THEN
-	...Perform Some Action
-ELSE IF (...Some Condition) THEN
-	...Perform Some Action
-ELSE
-	...Perform Some Action
-END IF
-
-While Statement
-WHILE (...Some Condition)
-	...Perform Some Action
-LOOP
-
-For Statement
-VAR Counter = 0
-FOR Counter = 0 TO 100 STEP + 10
-	...Perform Some Action
-NEXT
-FOR Counter = 100 TO 0 STEP - 10
-	...Perform Some Action
-NEXT
-FOR Counter = 1 TO 10
-	...Perform Some Action (Step + 1 is assumed)
-NEXT
-
-Class Declaration
-CLASS SomeClass
-	PROP SomeProp
-	PROP SomeProp2
-	
-	METHOD Init() ...Init Required If Instance Class
-	END METHOD
-	
-	METHOD SomeMethod(var1, var2)
-	END METHOD
-	
-	METHOD STATIC SomeStaticMethod(var1, var2)
-	END METHOD
-END CLASS
-
-CLASS SomeClass2 EXTENDS SomeClass
-	PROP SomeProp3
-	PROP SomeProp4
-	
-	METHOD Init() ...Init Required, Will Call Base Init First Up The Extension Chain
-	END METHOD
-	
-	METHOD OVERRIDE SomeMethod(var1, var2)
-		...This method will replace the base method for this object, and any extensions of this object
-	END METHOD
-	
-	METHOD SomeMethod2(var1, var2)
-	END METHOD
-END CLASS
-
-
-Math Operands
-+		Add
--		Subtract
-*		Multiply
-/		Divide
-%		Modulo
-..		Concat
-
-Comparison Operands
-==		Equal To
-!=		Not Equal To
->		Greater Than
->=		Greater Than or Equal To
-<		Less Than
-<=		Less Than or Equal To
-!		Not
-&&		Logical AND
-||		Logical OR
-
-Function Type Hints
-When passing a class as a function parameter, a type hint is necessary.  This just tells the compiler what kind of class is expected.
-You could hint a base class, and send a higher level extension.
-FUNCTION MyFunction(var1 : MYCLASS, var2, var3 : MYOTHERCLASS)
-END FUNCTION
+		Function Type Hints
+		When passing a class as a function parameter, a type hint is necessary.  This just tells the compiler what kind of class is expected.
+		You could hint a base class, and send a higher level extension.
+		FUNCTION MyFunction(var1 : MYCLASS, var2, var3 : MYOTHERCLASS)
+		END FUNCTION
 
 
