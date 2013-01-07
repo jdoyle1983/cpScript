@@ -1,6 +1,7 @@
 #HostFunction __StdLib__Utilities__Array__New
 #HostFunction __StdLib__Utilities__Array__Free
 #HostFunction __StdLib__Utilities__Array__Count
+#HostFunction __StdLib__Utilities__Array__Resize
 #HostFunction __StdLib__Utilities__Array__SetItem
 #HostFunction __StdLib__Utilities__Array__GetItem
 
@@ -18,6 +19,10 @@ CLASS Array
 	
 	METHOD Free()
 		__Utilities__Array__Free(ArrayId)
+	END METHOD
+	
+	METHOD Resize(newsize)
+		__Utilities__Array__Resize(ArrayId, newsize)
 	END METHOD
 	
 	METHOD Size()

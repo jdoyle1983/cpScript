@@ -42,6 +42,32 @@ void Utilities_Array_Count(void* State)
     State_PushInt(State, a->Count);
 };
 
+void Utilities_Array_Resize(void* State)
+{
+    CpArray* a = (CpArray*)State_PopInt(State);
+    int newSize = State_PopInt(State);
+
+    int origSize = a->Count;
+    int i = 0;
+
+    if(newSize < origSize)
+    {
+        for(i = newSize; i < origSize; i++)
+            free(a->Items[i]);
+    }
+
+    a->Items = (char**)realloc(a->Items, sizeof(char*) * newSize);
+
+    if(newSize > origSize)
+    {
+        for(i = origSize; i < newSize; i++)
+        {
+            a->Items[i] = (char*)malloc(sizeof(char) * 2);
+            strcpy(a->Items[i], "");
+        }
+    }
+};
+
 void Utilities_Array_SetItem(void* State)
 {
     int ArrayIndex = State_PopInt(State);

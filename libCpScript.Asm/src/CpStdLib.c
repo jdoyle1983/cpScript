@@ -41,6 +41,7 @@ EXPORT void CpStdLib_InstallUtilities(void* State)
     State_RegisterFunction(State, "__StdLib__Utilities__Array__New", &Utilities_Array_New, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__Free", &Utilities_Array_Free, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__Count", &Utilities_Array_Count, 0);
+    State_RegisterFunction(State, "__StdLib__Utilities__Array__Resize", &Utilities_Array_Resize, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__SetItem", &Utilities_Array_SetItem, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__GetItem", &Utilities_Array_GetItem, 0);
 };
