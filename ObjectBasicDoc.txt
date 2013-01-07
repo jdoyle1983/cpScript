@@ -8,6 +8,7 @@ II.........Language Syntax
 	    1...........#HostFunction
 		2...........#Include
 		3...........#Lib
+		4...........Comments
     B...........Variables
 	    1...........General Variables
 		2...........Class Variables
@@ -16,8 +17,9 @@ II.........Language Syntax
 		2...........String Operators
 		3...........Logical Operators
 	D...........Control Flow
-	    1...........Function Calls
-		2...........Conditional Execution
+	    1...........Function Declaration
+	    2...........Function Calls
+		3...........Conditional Execution
 	E...........Loops
 	    1...........While Loop
 		2...........For Loop
@@ -71,8 +73,20 @@ II.		Language Syntax
 					application.
 				
 				3.	#Lib [PATH]
+				
 					Include a library in this script. This script must be
 					relative to the executing host application.
+					
+				4.	Comments
+				
+					If the first 2 non whitespace characters on a line begin
+					with --, the entire line is treated as a comment, and
+					ommited from compilation.
+					
+					Exmample:
+					
+					--My Comment
+					     -- Another Comment
 					
 		B.	Variables
 			
@@ -153,39 +167,278 @@ II.		Language Syntax
 				
 		D.	Control Flow
 		
-				1.	Function Calls
+				1.	Function Declaration
 				
-				2.	Conditional Execution
+					Functions can be declared with or without parameters, and with or without a return
+					value.  Since all variables are typeless, only the parameter name is required as a 
+					placeholder.  One additional notation is available when passing a class instance as
+					a parameter, it is required to tell the compiler what kind of class object is being
+					passed.
+					
+					Examples:
+					
+					FUNCTION MyParameterlessFunctionWithNoReturn()
+						-- Do something
+					END FUNCTION
+					
+					FUNCTION MyFunctionWithNoReturn(value1, value2)
+						VAR Value3 = value1 + value2
+					END FUNCTION
+					
+					FUNCTION MyFunctionWithReturn(value1, value2)
+						RETURN value1 + value2
+					END FUNCTION
+					
+					FUNCTION MyFunctionWithClass(value1, value2:MyClass, value3, value4:MyOtherClass)
+						-- value2 is an instance of class MyClass
+						-- value4 is an instance of class MyOtherClass
+					END FUNCTION
+				
+				2.	Function Calls
+				
+					Calling functions is fairly straight forward.
+					Using the above functions, here are some examples:
+					
+					FUNCTION Main()
+					
+						MyClass myClassInstance
+						MyOtherClass myOtherClassInstance
+						VAR Value1 = 10
+						VAR Value2 = 20
+						
+						MyParameterlessFunctionWithNoReturn()
+						MyFunctionWithNoReturn(Value1, Value2)
+						VAR Value3 = MyFunctionWithReturn(Value1, Value2)
+						MyFunctionWithClass(Value1, myClassInstance, Value2, myOtherClassInstance)
+					
+					END FUNCTION
+				
+				3.	Conditional Execution
+				
+					Conditional execution in lcsob is fairly simple.  It supports a simple
+					IF-THEN-ELSE IF-THEN-ELSE-END IF structure.  Each condition can utilize
+					logical OR and AND operators.
+					
+					Example:
+					
+					VAR Value1 = 10
+					VAR Value2 = 20
+					
+					IF (Value1 >= 10 && Value2 <= 20) || (Value2 >= 10 && Value2 <= 30) THEN
+						-- Do Something
+					ELSE IF Value1 != 10 THEN
+						-- Do Something
+					ELSE IF Value2 != 20 THEN
+						-- Do Something
+					ELSE
+						-- Do Something
+					END IF
 				
 				
 		E.	Loops
 				
 				1.	While Loop
 				
+					While loops use a simple condition check loop.
+					
+					Example:
+					
+					WHILE(Value1 < 10)
+						Value1 = Value1 + 1
+					LOOP
+				
 				2.	For Loop
+				
+					With a for loop, the loop index variable must be declared
+					prior to use.  In addition, you can supply a stepping value
+					to increment the loop by each iteration.  If no stepping
+					value is supplied and + 1 at each iteration is implied.
+					
+					Examples:
+					
+					VAR loopStart = 1
+					VAR loopEnd = 100
+					VAR loopVar = 0
+					VAR loopInc = 5
+					
+					FOR loopVar = 1 TO 100 STEP + 1
+					LOOP
+					
+					FOR loopVar = 100 TO 1 STEP - 1
+					LOOP
+					
+					FOR loopVAr = 1 TO 100
+						-- STEP + 1 is implied
+					LOOP
+					
+					FOR loopVar = loopStart TO loopEnd STEP + loopInc
+						-- Given the var values it will loop from 1 to 100 stepping + 5 each iteration
+					LOOP
 				
 				
 		F.	Classes
 		
 				1.	Defining a Class
 				
+					Classes can be easily defined as long as a few simple rules are followed.
+						* Each class capable of an instance must define the Init method.
+						* Initial property values should be set within the Init method.
+						* Classes cannot currently contain properties that are other class instances.
+						* The 2 reserved keywords within a class are PROP and METHOD.
+						* A PROP is a class property (a typeless variable, that retains it's value
+						  within the class).
+						* A METHOD is a function that has access to the classes local properties.
+						* Method parameters follow all the same rules as function parameters (type hinting, etc.)
+						
+					Defining a class:
+					
+					CLASS MyBaseClass
+						PROP MyObjectId
+						PROP AddedVal
+						
+						METHOD Init()
+							MyObjectId = -1
+							AddedVal = 0
+						END METHOD
+						
+						METHOD AddSomeValue(toaddvalue)
+							AddedVal = AddedVal + toaddvalue
+						END METHOD
+						
+						METHOD ReadSomeValue()
+							RETURN AddedVal
+						END METHOD
+					END CLASS
+				
 				2.	Accessing Class Properties
 				
+					Using the example class above, here is how to create an instance of, and access
+					the properties of the class:
+					
+					MyBaseClass myInstance
+					
+					VAR currentObjectId = myInstance.MyObjectId
+					
+					myInstance.MyObjectId = 10
+				
 				3.	Accessing Class Methods
+				
+					Using the example class above, here is how to call a method of a class instance:
+					
+					MyBaseClass myInstance
+					
+					myInstace.AddSomeValue(10)
+					myInstace.AddSomeValue(15)
+					VAR totalVal = myInstance.ReadSomeValue()
 				
 				
 		G.	Classes Advanced
 		
 				1.	Extending Existing Classes
 				
+					You can extend a class from an existing class.  It will automatically have available
+					all properties and methods of it's parent class (this continues all the way up to
+					the original base class.
+					
+					In addition, you can override parent class methods.  Once a class has overriden a parent
+					method, and derivitives of this class, will used the overriden method.
+					
+					When an instance of a derived class is created, it starts at the base class, and calls
+					the init method of each derived class in the chain.
+					
+					Example:
+					
+					CLASS MyExClass EXTENDS MyBaseClass
+						PROP NewProp
+						
+						METHOD Init()
+							NewProp = 15
+						END METHOD
+						
+						METHOD OVERRIDE AddSomeValue(toaddvalue)
+							AddedVal = AddedVal + (toaddvalue * 2)
+						END METHOD
+					END CLASS
+					
+					CLASS My2ExClass EXTENDS MyExClass
+						METHOD Init()
+						END METHOD
+					END CLASS
+					
+					CLASS MyOtherExClass EXTENDS MyBaseClass
+						METHOD Init()
+						END METHOD
+					END CLASS
+					
+					Give the above example, if you create an instance of MyExClass, and call the AddSomeValue
+					method of this instance, it will use the one defined in MyExClass.  An instance of My2ExClass
+					will call the MyExClass override method of AddSomeValue as well.  An instance of MyOtherExClass
+					however will call the AddSomeValue method defined in MyBaseClass.
+					
+					An instance of MyExClass will have the following properties available:
+						* MyObjectId
+						* AddedValue
+						* NewProp
+						
+					An instance of My2ExClass will have the following properties available:
+						* MyObjectId
+						* AddedValue
+						* NewProp
+						
+					An instance of MyOtherExClass will have the following properties available:
+						* MyObjectId
+						* AddedValue
+				
 				2.	Static Class Methods
+				
+					Static methods can be defined for a class.  These methods follow the static
+					method procedure found in most languages:
+						* You cannot use the dot notation of an instance to access a static method.
+						* Static methods do not have access to instance properties.
+						* You must use the dot notation with the class name to call a static method
+						
+					Example:
+					
+					CLASS MyClass
+						PROP MyObjectId
+						
+						METHOD Init()
+						END METHOD
+						
+						METHOD STATIC MyStaticMethod(value1, value2)
+							-- This function does not have access to MyObjectId
+							RETURN value1 + value2
+						END METHOD
+					END CLASS
+					
+					MyClass myClassInstance
+					--WRONG
+					VAR newValue = myClassInstance.MySTaticMethod(10, 10)
+					--RIGHT
+					VAR newVAlue = MyClass.MyStaticMethod(10, 10)
 				
 				
 		H.	The Standard Library
 		
 				1.	ConsoleIO
 				
+					All console functions are located as static methods of the
+					Console class.
+					
+					Console.Write(val)
+						Write a value to the console
+						
+					Console.WriteLine(val)
+						Write a value to the console, move to next line.
+						
+					Console.ReadLine()
+						Prompts to enter characters in the console window.  Once
+						the return key is pressed, it returns all entered keys
+						from this function
+				
 				2.	FileIO
+				
+					File IO requires creating an instace of the 
 				
 				3.	Math
 				
