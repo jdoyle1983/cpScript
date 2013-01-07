@@ -1,19 +1,25 @@
 
-The Repo Contains 8 Linked, but Distict Projects
+The Repo Contains The 6 Projects That Make CpScript
 
-libCpScript.Net.Asm		 
--  Assemmbly like scripting language.
-libCpScript.Net.ObjectBasic      
--  BASIC like scripting language, compiles into lipCpScript.Net.Asm
-libCpScript.Net.StdLib.ConsoleIO 
--  Basic console functions that can be included in scripts
-libCpScript.Net.StdLib.FileIO    
--  Basic file functions that can be included in scripts
-libCpScript.Net.StdLib.Math      
--  Basic math functions that can be included in scripts
-cpScriptTest.Net		
--  Test application for libCpScript.Net libraries
-cpObjCmp                         
--  Compiles Object Basic script into Asm Script
-cpInt                            
--  Asm script runtime
+libCpScript.Asm (C)
+-  C CpScript Assembly Library (Core CpScript)
+   * Contains Both Static and Shared Libraries
+   * Contains the CpScript Standard Library
+
+libCpScript.Net.StdLib (C#)
+-  C# Interop Library For libCpStdLib (P/Invoke Calls To C Library)
+   
+libCpScript.Net.Asm (C#)
+-  C# Interop Library For libCpScript.Asm (P/Invoke Calls To C Library)
+
+libCpScript.Net.ObjectBasic (C#)
+-  Contains the Object Basic language built on CpScript
+
+cpObjCmp (C#)
+-  Utility To Compile Object Basic into CpScript Asm
+
+cpInt (C#)
+-  CpScript Runtime
+   * Runtime Environment For CpScript
+   * Loads And Runs CpScript Asm and CpScript Binary
+   * Compiler To Write CpScript Asm to Binary

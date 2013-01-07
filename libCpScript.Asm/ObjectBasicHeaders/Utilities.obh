@@ -1,10 +1,12 @@
 #HostFunction __StdLib__Utilities__Array__New
 #HostFunction __StdLib__Utilities__Array__Free
 #HostFunction __StdLib__Utilities__Array__Count
+#HostFunction __StdLib__Utilities__Array__Resize
 #HostFunction __StdLib__Utilities__Array__SetItem
 #HostFunction __StdLib__Utilities__Array__GetItem
 
 CLASS Array
+
 	PROP ArrayId
 	
 	METHOD Init()
@@ -12,22 +14,27 @@ CLASS Array
 	END METHOD
 	
 	METHOD Alloc(size)
-		ArrayId = __StdLib__Utilities__Array__New(size)
+		ArrayId = __Utilities__Array__New(size)
 	END METHOD
 	
 	METHOD Free()
-		__StdLib__Utilities__Array__Free(ArrayId)
+		__Utilities__Array__Free(ArrayId)
+	END METHOD
+	
+	METHOD Resize(newsize)
+		__Utilities__Array__Resize(ArrayId, newsize)
 	END METHOD
 	
 	METHOD Size()
-		RETURN __StdLib__Utilities__Array__Count(ArrayId)
+		RETURN __Utilities__Array__Count(ArrayId)
 	END METHOD
 	
 	METHOD SetItem(idx, val)
-		__StdLib__Utilities__Array__SetItem(ArrayId, idx, val)
+		__Utilities__Array__SetItem(ArrayId, idx, val)
 	END METHOD
 	
 	METHOD GetItem(idx)
-		RETURN __StdLib__Utilities__Array__GetItem(ArrayId, idx)
+		RETURN __Utilities__Array__GetItem(ArrayId, idx)
 	END METHOD
+
 END CLASS
