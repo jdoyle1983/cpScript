@@ -35,6 +35,7 @@ II.........Language Syntax
 		2...........FileIO
 		3...........Math
 		4...........Utilities
+		    a...........Array Class
 III.........Example Code
 
 
@@ -44,6 +45,11 @@ Forward
 		document is define the libCpScript ObjectBasic language syntax.  As such,
 		conecepts such as loops, conditional statements, and variables will not be
 		expressly defined.
+		
+		*NOTE*
+		libCpScript ObjectBasic is still very much in it's infancy stage.  It may
+		have major fundamental changes in the future and therefore should not be
+		considered production stable.
 
 
 I.		Overview
@@ -413,7 +419,7 @@ II.		Language Syntax
 					
 					MyClass myClassInstance
 					--WRONG
-					VAR newValue = myClassInstance.MySTaticMethod(10, 10)
+					VAR newValue = myClassInstance.MyStaticMethod(10, 10)
 					--RIGHT
 					VAR newVAlue = MyClass.MyStaticMethod(10, 10)
 				
@@ -422,7 +428,7 @@ II.		Language Syntax
 		
 				1.	ConsoleIO
 				
-					All console functions are located as static methods of the
+					All console methods are located as static methods of the
 					Console class.
 					
 					Console.Write(val)
@@ -438,11 +444,97 @@ II.		Language Syntax
 				
 				2.	FileIO
 				
-					File IO requires creating an instace of the 
+					File IO requires creating an instace of the File class.
+					Once the an instance is created, you can open / create files and
+					manipulate them using the following methods:
+					
+					fileInstance.OpenRead(FilePath)			
+						Opens Existing File For Reading Text
+						
+					fileInstance.OpenWrite(FilePath)
+						Opens / Creates File For Writing Text
+						
+					fileInstance.OpenBinaryRead(Filepath)
+						Opens Existing File For Binary Reading
+						
+					fileInstance.OpenBinaryWrite(FilePath)
+						Opens / Creates File For Binary Writing
+					
+					fileInstance.WriteLine(TextToWrite)
+						Write text to a file opened with OpenWrite
+						
+					fileInstance.ReadLine()
+						Read text line from a file opened with OpenRead
+						
+					fileInstance.WriteInt(IntVal)
+						Write int to file opened with OpenBinaryWrite
+						
+					fileInstance.ReadInt()
+						Read int from file opened with OpenBinaryRead
+						
+					fileInstance.WriteDouble(DoubleVal)
+						Write double to file opened with OpenBinaryWrite
+						
+					fileInstance.ReadDouble()
+						Read double from file opened with OpenBinaryRead
+						
+					fileInstance.WriteBool(BoolValue)
+						Write bool to file opened with OpenBinaryWrite
+						
+					fileInstance.ReadBool()
+						Read bool from file opened with OpenBinaryRead
+						
+					fileInstance.WriteString(StrValue)
+						Write string to file opened with OpenBinaryWrite
+					
+					fileInstance.ReadString()
+						Read string from file opened with OpenBinaryRead
+					
+					fileInstance.Eof()
+						Returns true if at end of file, only valid for Read files
+						
+					fileInstance.Close()
+						Close the file
 				
 				3.	Math
 				
+					All math methods are located as static methods of the
+					Math class.
+					
+					Math.ABS(param)
+						Returns the absolute value of param
+						
+					Math.FLOOR(param)
+						Rounds down the value of param
+						
+					Math.CEILING(param)
+						Rounds up the value of param
+				
 				4.	Utilities
+						
+						a. 	Array Class
+							
+							You must create an instance of the array class. Once
+							this has been created, you can manipulate the array
+							with the following methods:
+							
+							arrayInstance.Alloc(size)
+								Initialize an array of size length
+								
+							arrayInstance.Free()
+								Cleanup and free all array resources
+								
+							arrayInstance.Resize(newSize)
+								Change the size of the array.
+								
+							arrayInstance.Size()
+								Returns the current size of the array
+								
+							arrayInstance.SetItem(itemIndex, itemValue)
+								Set array item at itemIndex to the value in itemValue
+								
+							arrayInstance.GetItem(itemIndex)
+								Return the value of the array item at itemIndex
 				
 				
 III.	Example Code
@@ -664,109 +756,3 @@ III.	Example Code
 				END IF
 			NEXT
 		END FUNCTION
-
-
-
-
-
-
-
-
-
-
-
-
-		Variable Declaration
-		VAR MyVar
-		VAR MyVar2 = 34 + 32
-		VAR MyVar3 = 89 * (SomeFunction(14, "Yes") + 2)
-
-		Class Variable Declaration
-		CLASSNAME MyClassVar
-		MyClassVar.SomePrperty = 342
-		MyClassVar.SomeFunction(43, 23)
-		CLASSNAME.StaticFunction(33, 23)
-
-		If Statement
-		IF ((SomeValue == 32) || MyVar2 == 66) && MyVar3 != "Yes" THEN
-			...Perform Some Action
-		ELSE IF (...Some Condition) THEN
-			...Perform Some Action
-		ELSE
-			...Perform Some Action
-		END IF
-
-		While Statement
-		WHILE (...Some Condition)
-			...Perform Some Action
-		LOOP
-
-		For Statement
-		VAR Counter = 0
-		FOR Counter = 0 TO 100 STEP + 10
-			...Perform Some Action
-		NEXT
-		FOR Counter = 100 TO 0 STEP - 10
-			...Perform Some Action
-		NEXT
-		FOR Counter = 1 TO 10
-			...Perform Some Action (Step + 1 is assumed)
-		NEXT
-
-		Class Declaration
-		CLASS SomeClass
-			PROP SomeProp
-			PROP SomeProp2
-			
-			METHOD Init() ...Init Required If Instance Class
-			END METHOD
-			
-			METHOD SomeMethod(var1, var2)
-			END METHOD
-			
-			METHOD STATIC SomeStaticMethod(var1, var2)
-			END METHOD
-		END CLASS
-
-		CLASS SomeClass2 EXTENDS SomeClass
-			PROP SomeProp3
-			PROP SomeProp4
-			
-			METHOD Init() ...Init Required, Will Call Base Init First Up The Extension Chain
-			END METHOD
-			
-			METHOD OVERRIDE SomeMethod(var1, var2)
-				...This method will replace the base method for this object, and any extensions of this object
-			END METHOD
-			
-			METHOD SomeMethod2(var1, var2)
-			END METHOD
-		END CLASS
-
-
-		Math Operands
-		+		Add
-		-		Subtract
-		*		Multiply
-		/		Divide
-		%		Modulo
-		..		Concat
-
-		Comparison Operands
-		==		Equal To
-		!=		Not Equal To
-		>		Greater Than
-		>=		Greater Than or Equal To
-		<		Less Than
-		<=		Less Than or Equal To
-		!		Not
-		&&		Logical AND
-		||		Logical OR
-
-		Function Type Hints
-		When passing a class as a function parameter, a type hint is necessary.  This just tells the compiler what kind of class is expected.
-		You could hint a base class, and send a higher level extension.
-		FUNCTION MyFunction(var1 : MYCLASS, var2, var3 : MYOTHERCLASS)
-		END FUNCTION
-
-

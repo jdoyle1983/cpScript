@@ -1,3 +1,26 @@
+/*
+
+    libCpScript.Asm,
+    Copyright (C) 2013 Jason Doyle
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Contact Information:
+
+    Original Author: Jason Doyle (jdoyle1983@gmail.com)
+*/
+
 #include <Extensions.h>
 #include <string.h>
 #include <malloc.h>
@@ -65,7 +88,7 @@ char* StrToLower(char* SrcStr)
 {
 	int i = 0;
     char* r = (char*)malloc(sizeof(char) * (strlen(SrcStr) + 1));
-    strcpy(r, SrcStr);    
+    strcpy(r, SrcStr);
     for(i = 0; i < strlen(r); i++)
         r[i] = tolower(r[i]);
     return r;
@@ -182,7 +205,7 @@ short ShouldMakeDoubletToInt(double v)
 
     if(CanConvertToDouble(Src) == 0)
         rValue = 0;
-    
+
     for(i = 0; i < strlen(Src) && d == -1; i++)
         if(Src[i] == '.')
             d = i;

@@ -19,6 +19,16 @@ IV......Example Code
 
 
 
+Forward
+	
+	This document assumes a basic understanding of programming.  This document
+	is not intended to teach basic programming skills.  The only purpose of this
+	document is define the libCpScript language syntax.
+	
+	*NOTE*
+	libCpScript is still very much in it's infancy stage.  As such, it should
+	not be considered production ready.  Fundamental changes could still occure,
+	and I cannot guarantee backwards compatibility 
 
 
 I.		Language Details
