@@ -1,0 +1,16 @@
+libCpScript C API Manual
+(c) 2013 Jason Doyle, All Rights Reserved
+Email: jdoyle1983@gmail.com
+
+
+Table of Contents
+
+
+
+
+
+Forward
+	*NOTE*
+	libCpScript is still very much in it's infancy stage.  As such, it should
+	not be considered production ready.  Fundamental changes could still occure,
+	and I cannot guarantee backwards compatibility.

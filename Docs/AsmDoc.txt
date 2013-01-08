@@ -1,5 +1,5 @@
 libCpScript Assembly Reference Manual
-(c) 2012 Jason Doyle, All Rights Reserved
+(c) 2013 Jason Doyle, All Rights Reserved
 Email: jdoyle1983@gmail.com
 
 
@@ -211,10 +211,6 @@ III.	Syntax
 IV.		Example Code
 
 		This code below is generated from the ObjectBasic example code.
-
-		LIB "Lib/libCpScript.libConsoleIO.dll"
-		LIB "Lib/libCpScript.libFileIO.dll"
-		LIB "Lib/libCpScript.libMath.dll"
 
 		LBL _BaseObject_Init
 		POPB $this

@@ -1,5 +1,5 @@
 libCpScript ObjectBasic Reference Manual
-(c) 2012 Jason Doyle, All Rights Reserved
+(c) 2013 Jason Doyle, All Rights Reserved
 Email: jdoyle1983@gmail.com
 
 I...........Overview
@@ -99,7 +99,7 @@ II.		Language Syntax
 			Variables in lcsob are typeless (excluding class variables).  As
 			such, there are no limitations to operations performed on a variable,
 			even in cases where it may cause errors.  If you attempt to add 2
-			variables, each typeless variable will be first converted to an integer,
+			variables, each typeless variable will be first converted to a double,
 			and a typeless result is returned.  Currently, attempting a math
 			operation on a string is undefined, and will more than likely crash
 			the host application.  (This is a known short coming, and will be handled
@@ -344,7 +344,7 @@ II.		Language Syntax
 				
 					You can extend a class from an existing class.  It will automatically have available
 					all properties and methods of it's parent class (this continues all the way up to
-					the original base class.
+					the original base class).
 					
 					In addition, you can override parent class methods.  Once a class has overriden a parent
 					method, and derivitives of this class, will used the overriden method.
@@ -539,92 +539,6 @@ II.		Language Syntax
 				
 III.	Example Code
 
-		-- Lib/ConsoleIO.obh
-		#Lib Lib/libCpScript.libConsoleIO.dll
-		#HostFunction __StdLib__ConsoleIO__Write
-		#HostFunction __StdLib__ConsoleIO__WriteLine
-		#HostFunction __StdLib__ConsoleIO__ReadLine
-
-		CLASS Console
-
-			METHOD STATIC Write(val)
-				__StdLib__ConsoleIO__Write(val)
-			END METHOD
-			
-			METHOD STATIC WriteLine(val)
-				__StdLib__ConsoleIO__WriteLine(val)
-			END METHOD
-			
-			METHOD STATIC ReadLine()
-				RETURN __StdLib__ConsoleIO__ReadLine()
-			END METHOD
-			
-		END CLASS
-
-		-- Lib/FileIO.obh
-		#Lib Lib/libCpScript.libFileIO.dll
-		#HostFunction __StdLib__FileIO__Open
-		#HostFunction __StdLib__FileIO__WriteLine
-		#HostFunction __StdLib__FileIO__ReadLine
-		#HostFunction __StdLib__FileIO__Close
-		#HostFunction __StdLib__FileIO__Eof
-
-		CLASS File
-
-			PROP FileObj
-
-			METHOD Init()
-			END METHOD
-
-			METHOD OpenRead(filepath)
-				FileObj = __StdLib__FileIO__Open("r", filepath)
-			END METHOD
-			
-			METHOD OpenWrite(filepath)
-				FileObj = __StdLib__FileIO__Open("w", filepath)
-			END METHOD
-			
-			METHOD WriteLine(val)
-				__StdLib__FileIO__WriteLine(FileObj, val)
-			END METHOD
-			
-			METHOD ReadLine()
-				RETURN __StdLib__FileIO__ReadLine(FileObj)
-			END METHOD
-			
-			METHOD Close()
-				__StdLib__FileIO__Close(FileObj)
-			END METHOD
-			
-			METHOD Eof()
-				RETURN __StdLib__FileIO__Eof(FileObj)
-			END METHOD
-			
-		END CLASS
-
-		-- Lib/Math.obh
-		#Lib Lib/libCpScript.libMath.dll
-		#HostFunction __StdLib__Math__Abs
-		#HostFunction __StdLib__Math__Floor
-		#HostFunction __StdLib__Math__Ceiling
-
-		CLASS Math
-
-			METHOD STATIC ABS(val)
-				RETURN __StdLib__Math__Abs(val)
-			END METHOD
-			
-			METHOD STATIC FLOOR(val)
-				RETURN __StdLib__Math__Floor(val)
-			END METHOD
-			
-			METHOD STATIC CEILING(val)
-				RETURN __StdLib__Math__Ceiling(val)
-			END METHOD
-			
-		END CLASS
-
-		-- Main Script
 		#HostFunction ParamCheck
 		#include Lib/ConsoleIO.obh
 		#include Lib/FileIO.obh
