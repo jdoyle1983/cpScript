@@ -50,6 +50,23 @@ typedef struct
     int _Offset;
 } State;
 
+typedef struct
+{
+    short Tok;
+    int StrIdx;
+} CompiledAssemblyToken;
+
+CompiledAssemblyToken* CompiledAssemblyToken_New(short tok, int strIdx)
+{
+    CompiledAssemblyToken* t = (CompiledAssemblyToken*)malloc(sizeof(CompiledAssemblyToken));
+    t->Tok = tok;
+    t->StrIdx = strIdx;
+    return t;
+};
+
+#define List_CompiledAssemblyTokenAtIndex(l, i) 		(CompiledAssemblyToken*)List_AtIndex(l, i)
+
+
 short ptMemoryBlockVar(char* Val)
 {
     if(Val[0] == '$')
@@ -503,6 +520,7 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
 {
     int i = 0;
     int offset = 0;
+
     char* Magic = malloc(sizeof(char) * 8);
     memcpy(Magic, Script, sizeof(char) * 8);
     if( Magic[0] != 'C' || Magic[1] != 'P' ||
@@ -513,6 +531,27 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
 
     offset += sizeof(char) * 8;
 
+    List* StrValues = List_New();
+
+    int StrLen = 0;
+    int CmpLen = 0;
+
+    memcpy(&StrLen, Script + offset, sizeof(int));
+    offset += sizeof(int);
+    memcpy(&CmpLen, Script + offset, sizeof(int));
+    offset += sizeof(int);
+
+    for(i = 0; i < StrLen; i++)
+    {
+        int thisLen = 0;
+        memcpy(&thisLen, Script + offset, sizeof(int));
+        offset += sizeof(int);
+        char* thisStr = (char*)malloc(sizeof(char) * (thisLen + 1));
+        memcpy(thisStr, Script + offset, sizeof(char) * thisLen);
+        offset += sizeof(char) * thisLen;
+        thisStr[thisLen] = '\0';
+        List_Add(StrValues, thisStr);
+    }
 
     State* state = (State*)malloc(sizeof(State));
     state->_CursorStack = Stack_New();
@@ -525,35 +564,122 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
     state->_Offset = -1;
 
     state->_Tokens = List_New();
-    int TokenCount = 0;
-    memcpy(&TokenCount, Script + offset, sizeof(int));
-    offset += sizeof(int);
 
-    for(i = 0; i < TokenCount; i++)
+    for(i = 0; i < CmpLen; i++)
     {
         char tt = 0;
-        int len = 0;
         memcpy(&tt, Script + offset, sizeof(char));
         offset += sizeof(char);
-        memcpy(&len, Script + offset, sizeof(int));
+        int strIdx = -1;
+        memcpy(&strIdx, Script + offset, sizeof(int));
         offset += sizeof(int);
-        char* val = (char*)malloc(sizeof(char) * (len + 1));
-        if(len > 0)
+        char* strVal = NULL;
+        if(strIdx != -1)
+            strVal = List_StringAtIndex(StrValues, strIdx);
+        else
         {
-            memcpy(val, Script + offset, sizeof(char) * len);
-            offset += sizeof(char) * len;
+            strVal = (char*)malloc(sizeof(char) * 1);
+            strVal[0] = '\0';
         }
-        val[len] = '\0';
-        AssemblyToken* Tok = AssemblyToken_New(tt, val);
-        free(val);
+        AssemblyToken* Tok = AssemblyToken_New(tt, strVal);
         List_Add(state->_Tokens, Tok);
     }
 
+    for(i = 0; i < List_Count(StrValues); i++)
+        free(List_StringAtIndex(StrValues, i));
+    List_Delete(StrValues);
+
     State_DoInit(state);
+
     return state;
 };
 
 EXPORT void* State_Compile(void* S, long* len)
+{
+    State* state = (State*)S;
+    List* CmpToks = List_New();
+    List* StrValues = List_New();
+    int i = 0;
+    for(i = 0; i < state->_Tokens->Count; i++)
+    {
+        AssemblyToken* t = List_AssemblyTokenAtIndex(state->_Tokens, i);
+        int newStrIdx = -1;
+        short tt = t->Tok;
+        if(tt == tRegister || tt == tMemoryVar || tt == tLiteral || tt == tQuotedLiteral)
+        {
+            int e = 0;
+            for(e = 0; e < List_Count(StrValues) && newStrIdx == -1; e++)
+                if(strcmp(List_StringAtIndex(StrValues, e), t->Val) == 0)
+                    newStrIdx = e;
+            if(newStrIdx == -1)
+            {
+                List_Add(StrValues, t->Val);
+                newStrIdx = List_Count(StrValues) - 1;
+            }
+        }
+
+        CompiledAssemblyToken* ct = CompiledAssemblyToken_New(tt, newStrIdx);
+        List_Add(CmpToks, ct);
+    }
+
+    char Magic[] = "CPASMCMP";
+
+    int offset = 0;
+    void* outData = malloc(sizeof(char) * 8);
+    *len = sizeof(char) * 8;
+    memcpy(outData, Magic, *len);
+    offset = *len;
+    *len += sizeof(int);
+    outData = realloc(outData, *len);
+    int tLen = List_Count(StrValues);
+    memcpy(outData + offset, &tLen, sizeof(int));
+    offset = *len;
+    *len += sizeof(int);
+    outData = realloc(outData, *len);
+    tLen = List_Count(CmpToks);
+    memcpy(outData + offset, &tLen, sizeof(int));
+
+    for(i = 0; i < List_Count(StrValues); i++)
+    {
+        offset = *len;
+        *len += sizeof(int);
+        outData = realloc(outData, *len);
+        char* thisString = List_StringAtIndex(StrValues, i);
+        tLen = strlen(thisString);
+        memcpy(outData + offset, &tLen, sizeof(int));
+        offset = *len;
+        *len += sizeof(char) * strlen(thisString);
+        outData = realloc(outData, *len);
+        memcpy(outData + offset, thisString, sizeof(char) * strlen(thisString));
+    }
+
+    for(i = 0; i < List_Count(CmpToks); i++)
+    {
+        CompiledAssemblyToken* ct = List_CompiledAssemblyTokenAtIndex(CmpToks, i);
+        char tt = (char)ct->Tok;
+        int strIdx = ct->StrIdx;
+
+        offset = *len;
+        *len += sizeof(char);
+        outData = realloc(outData, *len);
+        memcpy(outData + offset, &tt, sizeof(char));
+        offset = *len;
+        *len += sizeof(int);
+        outData = realloc(outData, *len);
+        memcpy(outData + offset, &strIdx, sizeof(int));
+    }
+
+    List_Delete(StrValues);
+
+    for(i = 0; i < List_Count(CmpToks); i++)
+        free(List_CompiledAssemblyTokenAtIndex(CmpToks, i));
+
+    List_Delete(CmpToks);
+
+    return outData;
+};
+
+/*EXPORT void* State_Compile(void* S, long* len)
 {
     State* state = (State*)S;
     int i = 0;
@@ -592,7 +718,7 @@ EXPORT void* State_Compile(void* S, long* len)
     }
 
     return outData;
-};
+};*/
 
 EXPORT void State_Delete(void* S)
 {
