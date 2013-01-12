@@ -1,0 +1,19 @@
+#HostFunction __StdLib__Math__Abs
+#HostFunction __StdLib__Math__Floor
+#HostFunction __StdLib__Math__Ceiling
+
+CLASS Math
+
+	METHOD STATIC ABS(val)
+		RETURN __StdLib__Math__Abs(val)
+	END METHOD
+	
+	METHOD STATIC FLOOR(val)
+		RETURN __StdLib__Math__Floor(val)
+	END METHOD
+	
+	METHOD STATIC CEILING(val)
+		RETURN __StdLib__Math__Ceiling(val)
+	END METHOD
+	
+END CLASS

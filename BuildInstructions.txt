@@ -2,7 +2,7 @@ How to build all projects.
 
 REQUIREMENTS
 	* CodeBlocks IDE
-	* MonoDevelop
+	* MonoDevelop (.NET 3.5 Required)
 	
 BUILDING
 	* Open CodeBlocks workspace under PROJECTDIR/libCpScript.Asm/cpScriptAsm.workspace
