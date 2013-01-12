@@ -1,16 +1,16 @@
 How to build all projects.
 
 REQUIREMENTS
-	* CodeBlocks IDE
-	* MonoDevelop (.NET 3.5 Required)
+	* Windows
+		* MingW32 Build Environment
+		* MonoDevelop if you want to recompile the .NET libraries.
+	* Linux
+		* Standard Build Environment
+		* MonoDevelop if you want to recompile the .NET libraries
 	
 BUILDING
-	* Open CodeBlocks workspace under PROJECTDIR/libCpScript.Asm/cpScriptAsm.workspace
-	* Rebuild Entire Workspace (Note whether you are building under Debug or Release)
-	
-	* Open MonoDevelop solution under PROJECTDIR/cpScript.sln
-	* Rebuild entire solution, make sure you match Debug or Release, depending on how you
-	  built the c libraries.
-	* Make sure and select the x86 builds if on a 64bit system.
+	* Enter the C directory.
+	* On Windows: mingw32-make -f Makefile.win
+	* On Linux: make
 	
 All files are compiled under the PROJECTDIR/Build directory.
