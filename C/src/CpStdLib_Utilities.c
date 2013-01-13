@@ -67,8 +67,8 @@ void Utilities_Array_Count(void* State)
 
 void Utilities_Array_Resize(void* State)
 {
+	int newSize = State_PopInt(State);
     CpArray* a = (CpArray*)State_PopInt(State);
-    int newSize = State_PopInt(State);
 
     int origSize = a->Count;
     int i = 0;
@@ -80,6 +80,7 @@ void Utilities_Array_Resize(void* State)
     }
 
     a->Items = (char**)realloc(a->Items, sizeof(char*) * newSize);
+	a->Count = newSize;
 
     if(newSize > origSize)
     {
