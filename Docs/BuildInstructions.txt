@@ -1,16 +1,17 @@
-How to build all projects.
+32Bit .NET dll's are pre-built, and under the Build Directory.
+A MonoDevelop solution is availble under CSharp folder if you want to rebuild them.
 
+Ansi-C Libraries can be built using the provided Makefiles under the C directory.
 REQUIREMENTS
 	* Windows
-		* MingW32 Build Environment
-		* MonoDevelop if you want to recompile the .NET libraries.
+		* MingW32 Build Environment -OR- CygWin
 	* Linux
 		* Standard Build Environment
-		* MonoDevelop if you want to recompile the .NET libraries
 	
 BUILDING
 	* Enter the C directory.
 	* On Windows: mingw32-make -f Makefile.win
 	* On Linux: make
+	* In addition, you can use the linux Makefile under Cygwin on Windows.
 	
 All files are compiled under the PROJECTDIR/Build directory.
