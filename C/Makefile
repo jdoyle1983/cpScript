@@ -16,12 +16,12 @@ SHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
 SHARED_BIN = ../Build/libCpScript.Asm.Shared.so
 
 OBJSTATIC_OBJDIR = obj/libCpScript.ObjectBasic/static
-OBJSTATIC_OBJ = $(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o $(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o $(OBJSTATIC_OBJDIR)/ObjBas_Function.o $(OBJSTATIC_OBJDIR)/ObjBas_Script.o $(OBJSTATIC_OBJDIR)/ObjBas_Token.o $(OBJSTATIC_OBJDIR)/List.o $(OBJSTATIC_OBJDIR)/Extensions.o
+OBJSTATIC_OBJ = $(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o $(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o $(OBJSTATIC_OBJDIR)/ObjBas_Function.o $(OBJSTATIC_OBJDIR)/ObjBas_Script.o $(OBJSTATIC_OBJDIR)/ObjBas_Token.o $(OBJSTATIC_OBJDIR)/Stack.o $(OBJSTATIC_OBJDIR)/List.o $(OBJSTATIC_OBJDIR)/Extensions.o
 OBJSTATIC_CFLAGS = -Wall -O2
 OBJSTATIC_BIN = ../Build/libCpScript.ObjectBasic.a
 
 OBJSHARED_OBJDIR = obj/libCpScript.ObjectBasic/shared
-OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)/ObjBas_Function.o $(OBJSHARED_OBJDIR)/ObjBas_Script.o $(OBJSHARED_OBJDIR)/ObjBas_Token.o $(OBJSHARED_OBJDIR)/List.o $(OBJSHARED_OBJDIR)/Extensions.o
+OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)/ObjBas_Function.o $(OBJSHARED_OBJDIR)/ObjBas_Script.o $(OBJSHARED_OBJDIR)/ObjBas_Token.o $(OBJSHARED_OBJDIR)/Stack.o $(OBJSHARED_OBJDIR)/List.o $(OBJSHARED_OBJDIR)/Extensions.o
 OBJSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
 OBJSHARED_BIN = ../Build/libCpScript.ObjectBasic.Shared.so
 
@@ -213,6 +213,9 @@ $(OBJSTATIC_OBJDIR)/ObjBas_Token.o: src/ObjBas_Token.c
 
 $(OBJSTATIC_OBJDIR)/List.o: src/List.c
 	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/List.c -o $(OBJSTATIC_OBJDIR)/List.o
+	
+$(OBJSTATIC_OBJDIR)/Stack.o: src/Stack.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/Stack.c -o $(OBJSTATIC_OBJDIR)/Stack.o
 
 $(OBJSTATIC_OBJDIR)/Extensions.o: src/Extensions.c
 	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/Extensions.c -o $(OBJSTATIC_OBJDIR)/Extensions.o
@@ -237,6 +240,9 @@ $(OBJSHARED_OBJDIR)/ObjBas_Token.o: src/ObjBas_Token.c
 
 $(OBJSHARED_OBJDIR)/List.o: src/List.c
 	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/List.c -o $(OBJSHARED_OBJDIR)/List.o
+
+$(OBJSHARED_OBJDIR)/Stack.o: src/Stack.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/Stack.c -o $(OBJSHARED_OBJDIR)/Stack.o
 
 $(OBJSHARED_OBJDIR)/Extensions.o: src/Extensions.c
 	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/Extensions.c -o $(OBJSHARED_OBJDIR)/Extensions.o

@@ -29,6 +29,7 @@
 #define Stack List
 #define Stack_New List_New
 #define Stack_Delete List_Delete
+#define Stack_Count List_Count
 
 void* Stack_Peek(Stack* stack);
 void* Stack_Pop(Stack* stack);
@@ -39,9 +40,11 @@ void Stack_Push(Stack* stack, void* item);
 #define Stack_PeekInt(s) 	(int)Stack_Peek(s)
 #define Stack_PeekString(s) (char*)Stack_Peek(s)
 #define Stack_PeekList(s) 	(List*)Stack_Peek(s)
+#define Stack_PeekToken(s) 	(Token*)Stack_Peek(s)
 
 #define Stack_PopInt(s) 	(int)Stack_Pop(s)
 #define Stack_PopString(s) 	(char*)Stack_Pop(s)
 #define Stack_PopList(s) 	(List*)Stack_Pop(s)
+#define Stack_PopToken(s)	(Token*)Stack_Pop(s)
 
 #endif

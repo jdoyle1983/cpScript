@@ -52,6 +52,16 @@ void List_Add(List* list, void* item)
 	list->Items[list->Count - 1]  = item;
 };
 
+void List_AddInFront(List* list, void* item)
+{
+	list->Count++;
+	list->Items = (void**)realloc(list->Items, sizeof(void*) * list->Count);
+	int i = 0;
+	for(i = list->Count - 1; i > 0; i--)
+		list->Items[i] = list->Items[i - 1];
+	list->Items[0] = item;
+};
+
 void* List_AtIndex(List* list, int idx)
 {
 	return list->Items[idx];

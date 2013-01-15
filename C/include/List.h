@@ -40,6 +40,7 @@ void List_Delete(List* list);
 int List_Count(List* list);
 
 void List_Add(List* list, void* item);
+void List_AddInFront(List* list, void* item);
 void* List_AtIndex(List* list, int idx);
 
 void List_Remove(List* list, void* item);
@@ -68,7 +69,9 @@ void List_Clear(List* list);
 /*
 	For Object Basic
 */
+#define List_TokenAtIndex(l, i)					(Token*)List_AtIndex(l, i)
 #define List_FunctionAtIndex(l, i)				(Function*)List_AtIndex(l, i)
+#define List_FunctionParamAtIndex(l, i)			(FunctionParam*)List_AtIndex(l, i)
 #define List_ClassDefAtIndex(l, i)				(ClassDef*)List_AtIndex(l, i)
 #define List_CodeBlockAtIndex(l, i)				(CodeBlock*)List_AtIndex(l, i)
 #define List_ClassConversionAtIndex(l, i)		(ClassConversion*)List_AtIndex(l, i)

@@ -1,6 +1,6 @@
 /*
 
-    libCpScript.Asm,
+    libCpScript.Asm, libCpScript.ObjectBasic
     Copyright (C) 2013 Jason Doyle
 
     This program is free software: you can redistribute it and/or modify
