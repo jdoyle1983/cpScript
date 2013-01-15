@@ -12,6 +12,10 @@ LBL _Console_ReadLine
 JMP __StdLib__ConsoleIO__ReadLine
 RTN
 LBL Main
+PUSH ""
+JMP _Console_WriteLine
+PUSH ""
+JMP _Console_WriteLine
 PUSH "Enter Fibonacci Sequence Iteration Count: "
 JMP _Console_Write
 AB %fibMax
@@ -82,8 +86,8 @@ POP %f1
 PUSH %f3
 POP %f2
 LBL _EndIf2
-PUSH 1
 PUSH %i
+PUSH 1
 ADD
 POP %i
 JLE %i, %fibMax, _ForStart1

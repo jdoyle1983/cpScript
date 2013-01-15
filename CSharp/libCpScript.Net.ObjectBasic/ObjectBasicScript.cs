@@ -410,8 +410,8 @@ namespace libCpScript.Net.ObjectBasic
 			currentBlock++;
 			while(currentFunction._Blocks[currentBlock].Tokens[0].Type != TokenType.ExNext)
 				ParseBlock();
-			AsmResult.AppendLine("PUSH " + stepVal);
 			AsmResult.AppendLine("PUSH " + opVar);
+			AsmResult.AppendLine("PUSH " + stepVal);
 			if(op == TokenType.OpSub)
 			{
 				AsmResult.AppendLine("SUB");

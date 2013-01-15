@@ -1,6 +1,8 @@
 #include Lib/ConsoleIO.obh
 
 FUNCTION Main()
+	Console.WriteLine("")
+	Console.WriteLine("")
 	Console.Write("Enter Fibonacci Sequence Iteration Count: ")
 	VAR fibMax = Console.ReadLine()
 	VAR f1 = 0
