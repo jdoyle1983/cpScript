@@ -22,7 +22,7 @@ OBJSTATIC_BIN = ../Build/libCpScript.ObjectBasic.a
 
 OBJSHARED_OBJDIR = obj/libCpScript.ObjectBasic/shared
 OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)/ObjBas_Function.o $(OBJSHARED_OBJDIR)/ObjBas_Script.o $(OBJSHARED_OBJDIR)/ObjBas_Token.o $(OBJSHARED_OBJDIR)/List.o $(OBJSHARED_OBJDIR)/Extensions.o
-OBJSHARED_CFLAGS = -Wall -fPIC -march=native -DBUILDINGDLL
+OBJSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
 OBJSHARED_BIN = ../Build/libCpScript.ObjectBasic.Shared.so
 
 STDSTATIC_OBJDIR = obj/libCpStdLib/static
