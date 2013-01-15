@@ -47,14 +47,30 @@ void List_RemoveAt(List* list, int idx);
 
 void List_Clear(List* list);
 
+/*
+	Shared
+*/
 #define List_StringAtIndex(l, i) 				(char*)List_AtIndex(l, i)
+#define List_ListAtIndex(l, i)                  (List*)List_AtIndex(l, i)
+#define List_IntAtIndex(l, i)                   (int)List_AtIndex(l, i)
+
+#define List_AddInt(l, i)                       List_Add(l, (void*)i)
+
+/*
+	For ASM
+*/
 #define List_MemoryBlockAtIndex(l, i) 			(MemoryBlock*)List_AtIndex(l, i)
 #define List_LabelDefAtIndex(l, i) 				(LabelDef*)List_AtIndex(l, i)
 #define List_MemoryBlockHeaderAtIndex(l, i) 	(MemoryBlockHeader*)List_AtIndex(l, i)
 #define List_MemoryBlockSetHeaderAtIndex(l, i) 	(MemoryBlockSetHeader*)List_AtIndex(l, i)
 #define List_AssemblyTokenAtIndex(l, i) 		(AssemblyToken*)List_AtIndex(l, i)
-#define List_ListAtIndex(l, i)                  (List*)List_AtIndex(l, i)
-#define List_IntAtIndex(l, i)                   (int)List_AtIndex(l, i)
 
-#define List_AddInt(l, i)                       List_Add(l, (void*)i)
+/*
+	For Object Basic
+*/
+#define List_FunctionAtIndex(l, i)				(Function*)List_AtIndex(l, i)
+#define List_ClassDefAtIndex(l, i)				(ClassDef*)List_AtIndex(l, i)
+#define List_CodeBlockAtIndex(l, i)				(CodeBlock*)List_AtIndex(l, i)
+#define List_ClassConversionAtIndex(l, i)		(ClassConversion*)List_AtIndex(l, i)
+
 #endif

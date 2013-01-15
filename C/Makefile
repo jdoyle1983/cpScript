@@ -15,6 +15,16 @@ SHARED_OBJ = $(SHARED_OBJDIR)/State.o $(SHARED_OBJDIR)/Stack.o $(SHARED_OBJDIR)/
 SHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
 SHARED_BIN = ../Build/libCpScript.Asm.Shared.so
 
+OBJSTATIC_OBJDIR = obj/libCpScript.ObjectBasic/static
+OBJSTATIC_OBJ = $(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o $(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o $(OBJSTATIC_OBJDIR)/ObjBas_Function.o $(OBJSTATIC_OBJDIR)/ObjBas_Script.o $(OBJSTATIC_OBJDIR)/ObjBas_Token.o $(OBJSTATIC_OBJDIR)/List.o $(OBJSTATIC_OBJDIR)/Extensions.o
+OBJSTATIC_CFLAGS = -Wall -O2
+OBJSTATIC_BIN = ../Build/libCpScript.ObjectBasic.a
+
+OBJSHARED_OBJDIR = obj/libCpScript.ObjectBasic/shared
+OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)/ObjBas_Function.o $(OBJSHARED_OBJDIR)/ObjBas_Script.o $(OBJSHARED_OBJDIR)/ObjBas_Token.o $(OBJSHARED_OBJDIR)/List.o $(OBJSHARED_OBJDIR)/Extensions.o
+OBJSHARED_CFLAGS = -Wall -fPIC -march=native -DBUILDINGDLL
+OBJSHARED_BIN = ../Build/libCpScript.ObjectBasic.Shared.so
+
 STDSTATIC_OBJDIR = obj/libCpStdLib/static
 STDSTATIC_OBJ = $(STDSTATIC_OBJDIR)/CpStdLib.o $(STDSTATIC_OBJDIR)/CpStdLib_ConsoleIO.o $(STDSTATIC_OBJDIR)/CpStdLib_FileIO.o $(STDSTATIC_OBJDIR)/CpStdLib_Math.o $(STDSTATIC_OBJDIR)/CpStdLib_Utilities.o
 STDSTATIC_CFLAGS = -Wall -O2
@@ -32,13 +42,21 @@ CPINT_CFLAGS = -Wall -O2
 CPINT_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN)
 CPINT_BIN = ../Build/cpInt
 
-all: static shared cpint
+CPOBJCMP_OBJDIR = obj/cpObjCmp
+CPOBJCMP_OBJ = $(CPOBJCMP_OBJDIR)/CpObjCmp.o
+CPOBJCMP_CFLAGS = -Wall -O2
+CPOBJCMP_CLIBS = $(OBJSTATIC_BIN)
+CPOBJCMP_BIN = ../Build/cpObjCmp.New
 
-static: $(STATIC_BIN) $(STDSTATIC_BIN)
+all: static shared cpint cpobjcmp
 
-shared: $(SHARED_BIN) $(STDSHARED_BIN)
+static: $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
+
+shared: $(SHARED_BIN) $(STDSHARED_BIN) $(OBJSHARED_BIN)
 
 cpint: $(CPINT_BIN)
+
+cpobjcmp: $(CPOBJCMP_BIN)
 
 clean:
 	rm -f $(STATIC_BIN)
@@ -46,11 +64,17 @@ clean:
 	rm -f $(STDSTATIC_BIN)
 	rm -f $(STDSHARED_BIN)
 	rm -f $(CPINT_BIN)
+	rm -f $(OBJSTATIC_BIN)
+	rm -f $(OBJSHARED_BIN)
+	rm -f $(CPOBJCMP_BIN)
 	rm -f $(STATIC_OBJDIR)/*.o
 	rm -f $(SHARED_OBJDIR)/*.o
 	rm -f $(STDSTATIC_OBJDIR)/*.o
 	rm -f $(STDSHARED_OBJDIR)/*.o
 	rm -f $(CPINT_OBJDIR)/*.o
+	rm -f $(OBJSTATIC_OBJDIR)/*.o
+	rm -f $(OBJSHARED_OBJDIR)/*.o
+	rm -f $(CPOBJCMP_OBJDIR)/*.o
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)
@@ -159,3 +183,54 @@ $(STDSHARED_OBJDIR)/CpStdLib_Utilities.o: src/CpStdLib_Utilities.c
 	
 $(CPINT_OBJDIR)/CpInt.o: src/CpInt.c
 	$(CC) $(CPINT_CFLAGS) $(INC) -c src/CpInt.c -o $(CPINT_OBJDIR)/CpInt.o
+	
+$(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o: src/ObjBas_BlockBuilder.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/ObjBas_BlockBuilder.c -o $(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o
+
+$(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o: src/ObjBas_ClassDef.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/ObjBas_ClassDef.c -o $(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o
+
+$(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o: src/ObjBas_Evaluator.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/ObjBas_Evaluator.c -o $(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o
+
+$(OBJSTATIC_OBJDIR)/ObjBas_Function.o: src/ObjBas_Function.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/ObjBas_Function.c -o $(OBJSTATIC_OBJDIR)/ObjBas_Function.o
+
+$(OBJSTATIC_OBJDIR)/ObjBas_Script.o: src/ObjBas_Script.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/ObjBas_Script.c -o $(OBJSTATIC_OBJDIR)/ObjBas_Script.o
+
+$(OBJSTATIC_OBJDIR)/ObjBas_Token.o: src/ObjBas_Token.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/ObjBas_Token.c -o $(OBJSTATIC_OBJDIR)/ObjBas_Token.o
+
+$(OBJSTATIC_OBJDIR)/List.o: src/List.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/List.c -o $(OBJSTATIC_OBJDIR)/List.o
+
+$(OBJSTATIC_OBJDIR)/Extensions.o: src/Extensions.c
+	$(CC) $(OBJSTATIC_CFLAGS) $(INC) -c src/Extensions.c -o $(OBJSTATIC_OBJDIR)/Extensions.o
+	
+$(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o: src/ObjBas_BlockBuilder.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/ObjBas_BlockBuilder.c -o $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o
+
+$(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o: src/ObjBas_ClassDef.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/ObjBas_ClassDef.c -o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o
+
+$(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o: src/ObjBas_Evaluator.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/ObjBas_Evaluator.c -o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o
+
+$(OBJSHARED_OBJDIR)/ObjBas_Function.o: src/ObjBas_Function.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/ObjBas_Function.c -o $(OBJSHARED_OBJDIR)/ObjBas_Function.o
+
+$(OBJSHARED_OBJDIR)/ObjBas_Script.o: src/ObjBas_Script.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/ObjBas_Script.c -o $(OBJSHARED_OBJDIR)/ObjBas_Script.o
+
+$(OBJSHARED_OBJDIR)/ObjBas_Token.o: src/ObjBas_Token.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/ObjBas_Token.c -o $(OBJSHARED_OBJDIR)/ObjBas_Token.o
+
+$(OBJSHARED_OBJDIR)/List.o: src/List.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/List.c -o $(OBJSHARED_OBJDIR)/List.o
+
+$(OBJSHARED_OBJDIR)/Extensions.o: src/Extensions.c
+	$(CC) $(OBJSHARED_CFLAGS) $(INC) -c src/Extensions.c -o $(OBJSHARED_OBJDIR)/Extensions.o
+	
+$(CPOBJCMP_OBJDIR)/CpObjCmp.o: src/CpObjCmp.c
+	$(CC) $(CPOBJCMP_CFLAGS) $(INC) -c src/CpObjCmp.c -o $(CPOBJCMP_OBJDIR)/CpObjCmp.o
