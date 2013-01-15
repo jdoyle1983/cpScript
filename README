@@ -5,6 +5,12 @@ libCpScript.Asm (C)
 -  C CpScript Assembly Library (Core CpScript)
    * Contains Both Static and Shared Libraries
    * Contains the CpScript Standard Library
+   
+cpInt (C)
+- CpScript Runtime
+	* Runtime Environment For CpScript
+	* Loads and Runs CpScript Asm and CpScript Binary
+	* Compiler To Write CpScript Asm to Binary
 
 libCpScript.Net.StdLib (C#)
 -  C# Interop Library For libCpStdLib (P/Invoke Calls To C Library)
@@ -17,9 +23,3 @@ libCpScript.Net.ObjectBasic (C#)
 
 cpObjCmp (C#)
 -  Utility To Compile Object Basic into CpScript Asm
-
-cpInt (C#)
--  CpScript Runtime
-   * Runtime Environment For CpScript
-   * Loads And Runs CpScript Asm and CpScript Binary
-   * Compiler To Write CpScript Asm to Binary
