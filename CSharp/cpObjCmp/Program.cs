@@ -32,16 +32,15 @@ namespace cpObjCmp
     {
         static void Main(string[] args)
         {
-            if (args.Length < 3)
+            if (args.Length < 1)
             {
                 Console.WriteLine("No Input File(s) / Output File Specified");
 				Console.WriteLine("cpObjCmp [input] [input] -o [output]");
-                /*Console.WriteLine("cpObjCmp [input] [input] -c -o [output]");
-				Console.WriteLine("If the -c option is passed, a compiled asm script will be output");*/
+				Console.WriteLine("If no -o is specified, it will write the");
+				Console.WriteLine("resulting script to standard output.");
             }
             else
             {
-				//bool shouldCompile = false;
                 List<string> inputFiles = new List<string>();
                 string outputFile = "";
                 for (int i = 0; i < args.Length; i++)
@@ -51,23 +50,19 @@ namespace cpObjCmp
                         i++;
                         outputFile = args[i];
                     }
-					/*else if(args[i] == "-c")
-						shouldCompile = true;*/
                     else
                         inputFiles.Add(args[i]);
                 }
 
-                if (outputFile == "")
-                    Console.WriteLine("No Output File Specified.");
                 string fullScript = "";
                 foreach (string s in inputFiles)
                     fullScript += System.IO.File.ReadAllText(s) + "\n";
                 libCpScript.Net.ObjectBasic.ObjectBasicScript obj = new libCpScript.Net.ObjectBasic.ObjectBasicScript();
                 obj.LoadScript(fullScript);
-				//if(!shouldCompile)
+				if(outputFile != "")
                 	System.IO.File.WriteAllText(outputFile, obj.AsmScript);
-				/*else
-					System.IO.File.WriteAllBytes(outputFile, obj.Compile());*/
+				else
+					Console.Write(obj.AsmScript);
             }
         }
     }
