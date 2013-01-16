@@ -22,6 +22,7 @@
 */
 
 #include <ObjBas_Function.h>
+#include <ObjBas_BlockBuilder.h>
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -62,6 +63,21 @@ void FunctionParam_Delete(FunctionParam* p)
 	free(p);
 };
 
+Function* Function_New(void)
+{
+	Function* func = (Function*)malloc(sizeof(Function));
+	
+	func->Name = NULL;
+	func->UserFunction = 0;
+	func->Func = NULL;
+	func->Blocks = List_New();
+	func->Parameters = List_New();
+	func->IsOverride = 0;
+	func->IsStatic = 0;
+	func->IsStub = 0;
+	
+	return func;
+};
 
 void Function_Delete(Function* func)
 {
@@ -77,5 +93,50 @@ void Function_Delete(Function* func)
 
 List* Function_ParseFunctionDefs(List* Blocks)
 {
-	return NULL;
+	List* Functions = List_New();
+	
+	int i = 0;
+	for(i = 0; i < List_Count(Blocks); i++)
+	{
+		CodeBlock* b = List_CodeBlockAtIndex(Blocks, i);
+		Token* thisTok = List_TokenAtIndex(b->Tokens, 0);
+		
+		List* blk = List_New();
+		
+		if(thisTok->Type == ExFunction)
+		{
+			List_Add(blk, b);
+			thisTok = List_TokenAtIndex(b->Tokens, 1);
+			if(thisTok->Type != Literal)
+			{
+				printf("***EXCEPTION: Expected Function name not found.\n");
+				exit(0);
+			}
+			
+			Function* d = Function_New();
+			d->Name = (char*)malloc(sizeof(char) * (strlen(thisTok->Value) + 1));
+			strcpy(d->Name, thisTok->Value);
+			d->UserFunction = 0;
+			
+			CodeBlock* s = List_CodeBlockAtIndex(Blocks, i);
+			thisTok = List_TokenAtIndex(s->Tokens, 0);
+			while(thisTok->Type != ExEndFunction)
+			{
+				i++;
+				if(i >= List_Count(Blocks))
+				{
+					printf("***EXCEPTION: No End Function Found.\n");
+					exit(0);
+				}
+				
+				s = List_CodeBlockAtIndex(Blocks, i);
+				List_Add(blk, s);
+				thisTok = List_TokenAtIndex(s->Tokens, 0);
+			}
+			d->Blocks = blk;
+			List_Add(Functions, d);
+		}
+	}
+	
+	return Functions;
 };

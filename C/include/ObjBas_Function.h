@@ -52,6 +52,7 @@ typedef struct
 } Function;
 
 List* Function_ParseFunctionDefs(List* Blocks);
+Function* Function_New(void);
 void Function_Delete(Function* func);
 
 #endif

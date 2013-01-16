@@ -89,6 +89,16 @@ void List_RemoveAt(List* list, int idx)
 	}
 };
 
+void List_Reverse(List* list)
+{
+	void** revList = (void**)malloc(sizeof(void*) * list->Count);
+	int i = 0;
+	for(i = 0; i < list->Count; i++)
+		revList[i] = list->Items[list->Count - (i + 1)];
+	free(list->Items);
+	list->Items = revList;
+};
+
 void List_Clear(List* list)
 {
     list->Count = 0;
