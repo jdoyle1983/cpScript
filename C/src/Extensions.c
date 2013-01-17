@@ -94,14 +94,74 @@ char* StrToLower(char* SrcStr)
     return r;
 };
 
+short StrStartsWith(char* SrcStr, char* TestStr)
+{
+	short r = 0;
+	
+	int len = strlen(TestStr);
+	if(strlen(SrcStr) >= len)
+	{
+		short allMatch = 1;
+		int i = 0;
+		for(i = 0; i < strlen(TestStr) && allMatch == 1; i++)
+		{
+			if(TestStr[0] != SrcStr[0])
+				allMatch = 0;
+		}
+		
+		if(allMatch)
+			r = 1;
+	}
+	
+	return r;
+};
+
+void StrCat(char* SrcStr, char* CatStr)
+{
+	SrcStr = (char*)realloc(SrcStr, sizeof(char) * (strlen(SrcStr) + strlen(CatStr) + 1));
+	strcat(SrcStr, CatStr);
+};
+
+char* StrCopy(char* SrcStr)
+{
+	char* r = (char*)malloc(sizeof(char) * (strlen(SrcStr) + 1));
+	strcpy(r, SrcStr);
+	return r;
+};
+
 char* SubStr(char* Src, int Start, int End)
 {
 	int Len = End - Start + 2;
 	char* r = (char*)malloc(sizeof(char) * Len);
 	int i = 0;
-	for(i = Start; i <= End; i++)
+	for(i = Start; i <= End && i < strlen(Src); i++)
 		r[i - Start] = Src[i];
 	r[Len - 1] = '\0';
+	return r;
+};
+
+List* Split(char* SrcStr, char* DelimChars)
+{
+	List* r = List_New();
+
+	int start = 0;
+
+	int s = 0;
+	int d = 0;
+	for(s = 0; s < strlen(SrcStr); s++)
+	{
+		for(d = 0; d < strlen(DelimChars); d++)
+		{
+			if(SrcStr[s] == DelimChars[d])
+			{
+				List_Add(r, SubStr(SrcStr, start, s - 1));
+				start = s + 1;
+			}
+		}
+	}
+
+	if(start < strlen(SrcStr) - 1)
+		List_Add(r, SubStr(SrcStr, start, strlen(SrcStr) - 1));
 	return r;
 };
 
@@ -129,6 +189,31 @@ List* SplitAndKeep(char* SrcStr, char* DelimChars)
 	if(start < strlen(SrcStr) - 1)
 		List_Add(r, SubStr(SrcStr, start, strlen(SrcStr) - 1));
 	return r;
+};
+
+char* ReadFileContents(const char* FilePath)
+{
+	FILE* srcFile;
+    char* srcBuffer;
+    unsigned long srcLen;
+
+    srcFile = fopen(FilePath, "rb");
+    fseek(srcFile, 0, SEEK_END);
+    srcLen = ftell(srcFile);
+    fseek(srcFile, 0, SEEK_SET);
+
+    srcBuffer = (char*)malloc(srcLen + 1);
+
+    if(!srcBuffer)
+    {
+		printf("***EXCEPTION: Memory Error Reading File.");
+		exit(0);
+    }
+
+    fread(srcBuffer, srcLen, 1, srcFile);
+    fclose(srcFile);
+	
+	return srcBuffer;
 };
 
 short CanConvertToInt(char* Src)
