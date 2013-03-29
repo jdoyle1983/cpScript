@@ -35,6 +35,8 @@ extern "C" {
 #endif
 
 EXPORT void RegisterFunction(void* ObjScript, char* Name, void (*Func)(void* State), short StubMethod);
+EXPORT void* ObjScript_New();
+EXPORT void ObjScript_Delete(void* ObjScript);
 
 #ifdef __cplusplus
 }

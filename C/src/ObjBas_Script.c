@@ -284,6 +284,16 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 
 
 
+EXPORT void* ObjScript_New()
+{
+	return (void*)ObjectBasicScript_New();
+};
+
+EXPORT void ObjScript_Delete(void* obj)
+{
+	ObjectBasicScript_Delete((ObjectBasicScript*)obj);
+};
+
 EXPORT void RegisterFunction(void* ObjScript, char* Name, void (*Func)(void* State), short StubMethod)
 {
 	ObjectBasicScript* obj = (ObjectBasicScript*)ObjScript;
