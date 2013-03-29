@@ -282,7 +282,78 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	return rValue;
 };
 
+void EvaluateExpression(ObjectBasicScript* obj, int bStart)
+{
+	
+};
 
+void ParseVarBlock(ObjectBasicScript* obj)
+{
+};
+
+void ParseIfBlock(ObjectBasicScript* obj)
+{
+};
+
+
+char* getVarOrLit(ObjectBasicScript* obj, char* input)
+{
+	return NULL;
+};
+
+void ParseForBlock(ObjectBasicScript* obj)
+{
+};
+
+void ParseWhileBlock(ObjectBasicScript* obj)
+{
+};
+
+void ParseBlock(ObjectBasicScript* obj)
+{
+};
+
+void RecurseInit(ObjectBasicScript* obj, char* varName, ClassDef* cls)
+{
+};
+
+void ParseClasses(ObjectBasicScript* obj)
+{
+};
+
+void ParseFunctions(ObjectBasicScript* obj)
+{
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXPORT void LoadMethod(ObjectBasicScript* obj, char* MethodName)
+{
+};
+
+EXPORT void RunScript(ObjectBasicScript* obj)
+{
+};
+
+EXPORT short Iterate(ObjectBasicScript* obj)
+{
+	return 0;
+};
+
+EXPORT void LoadScript(ObjectBasicScript* obj, char* Script)
+{
+};
 
 EXPORT void* ObjScript_New()
 {
