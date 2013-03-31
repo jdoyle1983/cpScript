@@ -74,6 +74,13 @@ ObjectBasicScript* ObjectBasicScript_New()
 	return obj;
 };
 
+void AppendAsmLine(ObjectBasicScript* obj, char* NewLine)
+{
+	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + strlen(NewLine) + 2));
+	strcat(obj->AsmResult, "\n");
+	strcat(obj->AsmResult, NewLine);
+};
+
 void MethodStub(void* State)
 {
 };
@@ -284,7 +291,181 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 
 void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 {
+	List* toEval = List_New();
+	int i;
+	for(i = bStart; i < List_Count(List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock)->Tokens); i++)
+		List_Add(toEval, List_TokenAtIndex(List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock)->Tokens, i));
+	List* availFunctions = FunctionList(obj);
+	List* evaled = Evaluator_Parse(toEval, availFunctions);
 	
+	for(i = 0; i < List_Count(evaled); i++)
+	{
+		Token* t = List_TokenAtIndex(evaled, i);
+		switch(t->Type)
+		{
+			case ExClassAction:
+			{
+				int e = 0;
+				for(e = 0; e < List_Count(obj->CurrentClassProperties); e++)
+				{
+					ClassConversion* con = List_ClassConversionAtIndex(obj->CurrentClassProperties, e);
+					if(strcmp(t->Value, con->Input) == 0)
+					{
+						char* thisResult = (char*)malloc(sizeof(char) * (strlen(con->Output) + 6));
+						strcpy(thisResult, "PUSH ");
+						strcat(thisResult, con->Output);
+						AppendAsmLine(obj, thisResult);
+						free(thisResult);
+					}
+				}
+				for(e = 0; e < List_Count(obj->CurrentClassMethods); e++)
+				{
+					ClassConversion* con = List_ClassConversionAtIndex(obj->CurrentClassMethods, e);
+					if(strcmp(con->Input, t->Value) == 0)
+					{
+						if(con->IsStatic == 0)
+						{
+							
+						}
+					}
+				}
+			} break;
+			case QuotedLiteral:
+			{
+				char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 8));
+				strcpy(thisResult, "PUSH \"");
+				strcat(thisResult, t->Value);
+				strcat(thisResult, "\"");
+				AppendAsmLine(obj, thisResult);
+				free(thisResult);
+			} break;
+			case Literal:
+			{
+				short found = 0;
+				int e = 0;
+				for(e = 0; e < List_Count(obj->Functions); e++)
+				{
+					Function* f = List_FunctionAtIndex(obj->Functions, e);
+					if(strcmp(f->Name, t->Value) == 0)
+					{
+						found = 1;
+						char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 5));
+						strcpy(thisResult, "JMP ");
+						strcat(thisResult, t->Value);
+						AppendAsmLine(obj, thisResult);
+						free(thisResult);
+					}
+				}
+				
+				if(found == 0)
+				{
+					for(e = 0; e < List_Count(obj->CurrentVars); e++)
+					{
+						char* v = List_StringAtIndex(obj->CurrentVars, e);
+						if(strcmp(v, t->Value) == 0)
+						{
+							found = 1;
+							char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 7));
+							strcpy(thisResult, "PUSH %");
+							strcat(thisResult, t->Value);
+							AppendAsmLine(obj, thisResult);
+							free(thisResult);
+						}
+					}
+				}
+				
+				if(found == 0)
+				{
+					for(e = 0; e < List_Count(obj->CurrentFunction->Parameters); e++)
+					{
+						FunctionParam* fp = List_FunctionParamAtIndex(obj->CurrentFunction->Parameters, e);
+						if(strcmp(fp->VarName, t->Value) == 0)
+						{
+							found = 1;
+							if(fp->IsClassVar == 1)
+							{
+								char* thisResult = (char*)malloc(sizeof(char) * (strlen(fp->VarName) + 8));
+								strcpy(thisResult, "PUSHB $");
+								strcat(thisResult, fp->VarName);
+								AppendAsmLine(obj, thisResult);
+								free(thisResult);
+							}
+							else
+							{
+								char* thisResult = (char*)malloc(sizeof(char) * 5000);
+								sprintf(thisResult, "PUSH @%d", e + 1);
+								AppendAsmLine(obj, thisResult);
+								free(thisResult);
+							}
+						}
+					}
+				}
+				
+				if(found == 0 && obj->CurrentClass != NULL)
+				{
+					for(e = 0; e < List_Count(obj->CurrentClass->Properties); e++)
+					{
+						char* prop = List_StringAtIndex(obj->CurrentClass->Properties, e);
+						if(strcmp(prop, t->Value) == 0)
+						{
+							found = 1;
+							char* thisResult = (char*)malloc(sizeof(char) * 5000);
+							sprintf(thisResult, "PUSH $this:%d", e + 1);
+							AppendAsmLine(obj, thisResult);
+							free(thisResult);
+						}
+					}
+				}
+				
+				if(found == 0)
+				{
+					for(e = 0; e < List_Count(obj->CurrentClassVars); e++)
+					{
+						char* cv = List_StringAtIndex(obj->CurrentClassVars, e);
+						if(strcmp(cv, t->Value) == 0)
+						{
+							found = 1;
+							char* thisResult = (char*)malloc(sizeof(char) * (strlen(cv) + 8));
+							strcpy(thisResult, "PUSHB $");
+							strcat(thisResult, cv);
+							AppendAsmLine(obj, thisResult);
+							free(thisResult);
+						}
+					}
+				}
+				
+				if(found == 0)
+				{
+					char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 6));
+					strcpy(thisResult, "PUSH ");
+					strcat(thisResult, t->Value);
+					AppendAsmLine(obj, thisResult);
+					free(thisResult);
+				}
+			} break;
+			case OpAdd: AppendAsmLine(obj, "ADD"); break;
+			case OpSub: AppendAsmLine(obj, "SUB"); break;
+			case OpMul: AppendAsmLine(obj, "MUL"); break;
+			case OpDiv: AppendAsmLine(obj, "DIV"); break;
+			case OpMod: AppendAsmLine(obj, "MOD"); break;
+			case OpCat: AppendAsmLine(obj, "CAT"); break;
+			case OpNeg: AppendAsmLine(obj, "NEG"); break;
+			case OpOr: AppendAsmLine(obj, "CO"); break;
+			case OpAnd: AppendAsmLine(obj, "CA"); break;
+			case OpGreaterThan: AppendAsmLine(obj, "CG"); break;
+			case OpGreaterThanOrEqualTo: AppendAsmLine(obj, "CGE"); break;
+			case OpLessThan: AppendAsmLine(obj, "CL"); break;
+			case OpLessThanOrEqualTo: AppendAsmLine(obj, "CLE"); break;
+			case OpEqualTo: AppendAsmLine(obj, "CE"); break;
+			case OpNotEqualTo: AppendAsmLine(obj, "CE"); break;
+			case OpNot: AppendAsmLine(obj, "CI"); break;
+		}
+	}
+	
+	for(i = 0; i < List_Count(availFunctions); i++)
+		free(List_StringAtIndex(availFunctions, i));
+	List_Delete(availFunctions);
+	List_Delete(toEval);
 };
 
 void ParseVarBlock(ObjectBasicScript* obj)
