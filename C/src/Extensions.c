@@ -197,7 +197,9 @@ char* ReadFileContents(const char* FilePath)
     char* srcBuffer;
     unsigned long srcLen;
 
+	printf("Start\n");
     srcFile = fopen(FilePath, "rb");
+	printf("Done\n");
     fseek(srcFile, 0, SEEK_END);
     srcLen = ftell(srcFile);
     fseek(srcFile, 0, SEEK_SET);

@@ -77,14 +77,18 @@ ObjectBasicScript* ObjectBasicScript_New()
 void AppendAsm(ObjectBasicScript* obj, char* Value)
 {
 	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + strlen(Value) + 1));
+	printf("1\n");
 	strcat(obj->AsmResult, Value);
+	printf("2\n");
 };
 
 void AppendAsmLine(ObjectBasicScript* obj, char* NewLine)
 {
 	AppendAsm(obj, NewLine);
 	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + 2));
+	printf("3\n");
 	strcat(obj->AsmResult, "\n");
+	printf("4\n");
 };
 
 void MethodStub(void* State)
@@ -268,8 +272,11 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	for(i = 0; i < List_Count(_OutLines); i++)
 	{
 		char* thisItem = List_StringAtIndex(_OutLines, i);
+		printf("8\n");
 		StrCat(rValue, thisItem);
+		printf("9\n");
 		StrCat(rValue, "\n");
+		printf("10\n");
 	}
 	
 	for(i = 0; i < List_Count(ToIncludeFiles); i++)
@@ -716,7 +723,7 @@ void RecurseInit(ObjectBasicScript* obj, char* varName, ClassDef* cls)
 void ParseBlock(ObjectBasicScript* obj)
 {
 	int i = 0;
-	
+	int e = 0;
 	char* thisResult = (char*)malloc(sizeof(char) * 5000);
 	CodeBlock* thisBlock = List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock);
 	Token* thisToken = List_TokenAtIndex(thisBlock->Tokens, 0);
@@ -797,11 +804,49 @@ void ParseBlock(ObjectBasicScript* obj)
 						int p = 0;
 						for(p = 0; p < List_Count(thisClass->Properties); p++)
 						{
+							char* thisProp = List_StringAtIndex(thisClass->Properties, p);
+							ClassConversion* con = ClassConversion_New();
+							con->IsStatic = 0;
+							con->Input = (char*)malloc(sizeof(char) * (strlen(classVar) + strlen(thisProp) + 2));
+							sprintf(con->Input, "%s.%s", classVar, thisProp);
+							con->Output = (char*)malloc(sizeof(char) * (strlen(classVar) + 100));
+							sprintf(con->Output, "$%s:%d", classVar, (p + 1));
+							List_Add(obj->CurrentClassProperties, con);
 						}
+						List* instanceMethods = ClassDef_GetInstanceMethods(thisClass);
+						for(e = 0; e < List_Count(instanceMethods); e++)
+						{
+							ClassConversion* con = List_ClassConversionAtIndex(instanceMethods, e);
+							ClassConversion* cc = ClassConversion_New();
+							cc->IsStatic = 0;
+							cc->Input = (char*)malloc(sizeof(char) * (strlen(classVar) + strlen(con->Input) + 2));
+							sprintf(cc->Input, "%s.%s", classVar, con->Input);
+							cc->Output = (char*)malloc(sizeof(char) * (strlen(con->Output) + 1));
+							strcpy(cc->Output, con->Output);
+							List_Add(obj->CurrentClassMethods, cc);
+							ClassConversion_Delete(con);
+						}
+						List_Delete(instanceMethods);
+						List* staticMethods = ClassDef_GetStaticMethods(thisClass);
+						for(e = 0; e < List_Count(staticMethods); e++)
+						{
+							ClassConversion* con = List_ClassConversionAtIndex(staticMethods, e);
+							ClassConversion* cc = ClassConversion_New();
+							cc->IsStatic = 1;
+							cc->Input = (char*)malloc(sizeof(char) * (strlen(thisClass->Name) + strlen(con->Input) + 2));
+							sprintf(cc->Input, "%s.%s", thisClass->Name, con->Input);
+							cc->Output = (char*)malloc(sizeof(char) * (strlen(con->Output) + 1));
+							strcpy(cc->Output, con->Output);
+							List_Add(obj->CurrentClassMethods, cc);
+							ClassConversion_Delete(con);
+						}
+						List_Delete(staticMethods);
 					}
 				}
+				if(isClass == 0)
+					EvaluateExpression(obj, 0);
 			}
-		}
+		} break;
 	}
 	free(thisResult);
 	obj->CurrentBlock++;
@@ -1015,6 +1060,16 @@ EXPORT void LoadScript(ObjectBasicScript* obj, char* Script)
 		ParseFunctions(obj);
 		obj->ScriptLoaded = 1;
 	}
+};
+
+EXPORT void ObjScript_Load(void* ObjScript, char* Script)
+{
+	LoadScript((ObjectBasicScript*)ObjScript, Script);
+};
+
+EXPORT char* ObjScript_GetAsm(void* ObjScript)
+{
+	return ((ObjectBasicScript*)ObjScript)->AsmResult;
 };
 
 EXPORT void* ObjScript_New()

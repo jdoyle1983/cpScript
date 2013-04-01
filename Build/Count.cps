@@ -1,4 +1,4 @@
-#include Lib/ConsoleIO.obh
+#include Lib\ConsoleIO.obh
 
 FUNCTION Main()
 	Console.WriteLine("")

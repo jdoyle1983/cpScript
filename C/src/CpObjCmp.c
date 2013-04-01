@@ -79,7 +79,10 @@ int main(int argc, char* argv[])
 			}
 		}
 		
-		
+		void* objScript = ObjScript_New();
+		ObjScript_Load(objScript, fullScript);
+		printf("%s\n", ObjScript_GetAsm(objScript));
+		/*
 		
 		for(i = 0; i < inCount; i++)
 			printf("Source File: %s\n", inputFiles[i]);
@@ -91,8 +94,9 @@ int main(int argc, char* argv[])
 			
 		printf("\n\n");
 		
-		printf("%s\n", fullScript);
+		printf("%s\n", fullScript);*/
 		
+		ObjScript_Delete(objScript);
 		free(fullScript);
 		free(inputFiles);
 	}
