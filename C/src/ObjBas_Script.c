@@ -74,11 +74,17 @@ ObjectBasicScript* ObjectBasicScript_New()
 	return obj;
 };
 
+void AppendAsm(ObjectBasicScript* obj, char* Value)
+{
+	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + strlen(Value) + 1));
+	strcat(obj->AsmResult, Value);
+};
+
 void AppendAsmLine(ObjectBasicScript* obj, char* NewLine)
 {
-	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + strlen(NewLine) + 2));
+	AppendAsm(obj, NewLine);
+	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + 2));
 	strcat(obj->AsmResult, "\n");
-	strcat(obj->AsmResult, NewLine);
 };
 
 void MethodStub(void* State)
@@ -311,11 +317,8 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 					ClassConversion* con = List_ClassConversionAtIndex(obj->CurrentClassProperties, e);
 					if(strcmp(t->Value, con->Input) == 0)
 					{
-						char* thisResult = (char*)malloc(sizeof(char) * (strlen(con->Output) + 6));
-						strcpy(thisResult, "PUSH ");
-						strcat(thisResult, con->Output);
-						AppendAsmLine(obj, thisResult);
-						free(thisResult);
+						AppendAsm(obj, "PUSH ");
+						AppendAsmLine(obj, con->Output);
 					}
 				}
 				for(e = 0; e < List_Count(obj->CurrentClassMethods); e++)
@@ -325,19 +328,42 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 					{
 						if(con->IsStatic == 0)
 						{
-							
+							List* splitList = Split(con->Input, ".");
+							AppendAsm(obj, "PUSHB $");
+							AppendAsmLine(obj, List_StringAtIndex(splitList, 0));
+							int a = 0;
+							for(a = 0; a < List_Count(splitList); a++)
+								free(List_StringAtIndex(splitList, a));
+							List_Delete(splitList);
 						}
+						AppendAsm(obj, "JMP ");
+						AppendAsmLine(obj, con->Output);
 					}
+				}
+				for(e = 0; e < List_Count(obj->Classes); e++)
+				{
+					ClassDef* cd = List_ClassDefAtIndex(obj->Classes, e);
+					List* StaticMethods = ClassDef_GetStaticMethods(cd);
+					int a = 0;
+					for(a = 0; a < List_Count(StaticMethods); a++)
+					{
+						ClassConversion* con = List_ClassConversionAtIndex(StaticMethods, a);
+						if(strcmp(con->Input, t->Value) == 0)
+						{
+							AppendAsm(obj, "JMP ");
+							AppendAsmLine(obj, con->Output);
+						}
+						
+						ClassConversion_Delete(con);
+					}
+					List_Delete(StaticMethods);
 				}
 			} break;
 			case QuotedLiteral:
 			{
-				char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 8));
-				strcpy(thisResult, "PUSH \"");
-				strcat(thisResult, t->Value);
-				strcat(thisResult, "\"");
-				AppendAsmLine(obj, thisResult);
-				free(thisResult);
+				AppendAsm(obj, "PUSH \"");
+				AppendAsm(obj, t->Value);
+				AppendAsmLine(obj, "\"");
 			} break;
 			case Literal:
 			{
@@ -349,11 +375,8 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 					if(strcmp(f->Name, t->Value) == 0)
 					{
 						found = 1;
-						char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 5));
-						strcpy(thisResult, "JMP ");
-						strcat(thisResult, t->Value);
-						AppendAsmLine(obj, thisResult);
-						free(thisResult);
+						AppendAsm(obj, "JMP ");
+						AppendAsmLine(obj, t->Value);
 					}
 				}
 				
@@ -365,11 +388,8 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 						if(strcmp(v, t->Value) == 0)
 						{
 							found = 1;
-							char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 7));
-							strcpy(thisResult, "PUSH %");
-							strcat(thisResult, t->Value);
-							AppendAsmLine(obj, thisResult);
-							free(thisResult);
+							AppendAsm(obj, "PUSH %");
+							AppendAsmLine(obj, t->Value);
 						}
 					}
 				}
@@ -384,11 +404,8 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 							found = 1;
 							if(fp->IsClassVar == 1)
 							{
-								char* thisResult = (char*)malloc(sizeof(char) * (strlen(fp->VarName) + 8));
-								strcpy(thisResult, "PUSHB $");
-								strcat(thisResult, fp->VarName);
-								AppendAsmLine(obj, thisResult);
-								free(thisResult);
+								AppendAsm(obj, "PUSHB $");
+								AppendAsmLine(obj, fp->VarName);
 							}
 							else
 							{
@@ -425,22 +442,16 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 						if(strcmp(cv, t->Value) == 0)
 						{
 							found = 1;
-							char* thisResult = (char*)malloc(sizeof(char) * (strlen(cv) + 8));
-							strcpy(thisResult, "PUSHB $");
-							strcat(thisResult, cv);
-							AppendAsmLine(obj, thisResult);
-							free(thisResult);
+							AppendAsm(obj, "PUSHB $");
+							AppendAsmLine(obj, cv);
 						}
 					}
 				}
 				
 				if(found == 0)
 				{
-					char* thisResult = (char*)malloc(sizeof(char) * (strlen(t->Value) + 6));
-					strcpy(thisResult, "PUSH ");
-					strcat(thisResult, t->Value);
-					AppendAsmLine(obj, thisResult);
-					free(thisResult);
+					AppendAsm(obj, "PUSH ");
+					AppendAsmLine(obj, t->Value);
 				}
 			} break;
 			case OpAdd: AppendAsmLine(obj, "ADD"); break;
@@ -468,34 +479,240 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 	List_Delete(toEval);
 };
 
-void ParseVarBlock(ObjectBasicScript* obj)
+void ParseBlock(ObjectBasicScript* obj)
 {
 };
 
+void ParseVarBlock(ObjectBasicScript* obj)
+{
+	List* CurrentBlockTokens = List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock)->Tokens;
+	char* VarName = List_TokenAtIndex(CurrentBlockTokens, 1)->Value;
+	
+	AppendAsm(obj, "AB %");
+	AppendAsmLine(obj, VarName);
+	if(List_Count(CurrentBlockTokens) >= 3)
+	{
+		EvaluateExpression(obj, 3);
+		AppendAsm(obj, "POP %");
+		AppendAsmLine(obj, VarName);
+	}
+	char* newVarName = (char*)malloc(sizeof(char) * (strlen(VarName) + 1));
+	strcpy(newVarName, VarName);
+	List_Add(obj->CurrentVars, newVarName);
+};
+
+CodeBlock* getCurrentBlock(ObjectBasicScript* obj)
+{
+	CodeBlock* r = List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock);
+	return r;
+}
+
 void ParseIfBlock(ObjectBasicScript* obj)
 {
+	char* NewLine = (char*)malloc(sizeof(char) * 5000);
+	
+	long EndIfId = NextLabelId(obj);
+	long CmpReg = obj->RegisterCount + 1;
+	obj->RegisterCount++;
+	EvaluateExpression(obj, 1);
+	sprintf(NewLine, "POP @%ld", CmpReg);
+	AppendAsmLine(obj, NewLine);
+	long SkipId = NextLabelId(obj);
+	sprintf(NewLine, "JN @%ld, 1, _Skip%ld", CmpReg, SkipId);
+	AppendAsmLine(obj, NewLine);
+	obj->CurrentBlock++;
+	int CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	while(CurrentTokenType != ExEndIf)
+	{
+		if(CurrentTokenType == ExElseIf)
+		{
+			sprintf(NewLine, "LJMP _EndIf%ld", EndIfId);
+			AppendAsmLine(obj, NewLine);
+			sprintf(NewLine, "LBL _Skip%ld", SkipId);
+			AppendAsmLine(obj, NewLine);
+			EvaluateExpression(obj, 1);
+			sprintf(NewLine, "POP @%ld", CmpReg);
+			AppendAsmLine(obj, NewLine);
+			SkipId = NextLabelId(obj);
+			sprintf(NewLine, "JN @%ld, 1, _Skip%ld", CmpReg, SkipId);
+			AppendAsmLine(obj, NewLine);
+			obj->CurrentBlock++;
+		}
+		else if(CurrentTokenType == ExElse)
+		{
+			sprintf(NewLine, "LJMP _EndIf%ld", EndIfId);
+			AppendAsmLine(obj, NewLine);
+			sprintf(NewLine, "LBL _Skip%ld", SkipId);
+			AppendAsmLine(obj, NewLine);
+			obj->CurrentBlock++;
+		}
+		else
+			ParseBlock(obj);
+		CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	}
+	
+	free(NewLine);
 };
 
 
 char* getVarOrLit(ObjectBasicScript* obj, char* input)
 {
-	return NULL;
+	char* r = (char*)malloc(sizeof(char) * 5000);
+	int i = 0;
+	for(i = 0; i < List_Count(obj->CurrentFunction->Parameters); i++)
+	{
+		FunctionParam* thisParam = List_FunctionParamAtIndex(obj->CurrentFunction->Parameters, i);
+		if(strcmp(thisParam->VarName, input) == 0)
+		{
+			if(thisParam->IsClassVar == 1)
+			{
+				sprintf(r, "$%s", thisParam->ClassName);
+				return r;
+			}
+			else
+			{
+				sprintf(r, "@%d", (i + 1));
+				return r;
+			}
+		}
+	}
+	
+	if(obj->CurrentClass != NULL)
+	{
+		for(i = 0; i < List_Count(obj->CurrentClass->Properties); i++)
+		{
+			char* thisProperty = List_StringAtIndex(obj->CurrentClass->Properties, i);
+			if(strcmp(thisProperty, input) == 0)
+			{
+				sprintf(r, "$this:%d", (i + 1));
+				return r;
+			}
+		}
+	}
+	
+	for(i = 0; i < List_Count(obj->CurrentVars); i++)
+	{
+		if(strcmp(List_StringAtIndex(obj->CurrentVars, i), input) == 0)
+		{
+			sprintf(r, "%%%s", List_StringAtIndex(obj->CurrentVars, i));
+			return r;
+		}
+	}
+	
+	strcpy(r, input);
+	return r;
 };
 
 void ParseForBlock(ObjectBasicScript* obj)
 {
+	long forId = NextLabelId(obj);
+	CodeBlock* Block = getCurrentBlock(obj);
+	
+	//Token* forToken = List_TokenAtIndex(Block->Tokens, 0);
+	Token* varToken = List_TokenAtIndex(Block->Tokens, 1);
+	//Token* eqToken = List_TokenAtIndex(Block->Tokens, 2);
+	Token* initToken = List_TokenAtIndex(Block->Tokens, 3);
+	//Token* toToken = List_TokenAtIndex(Block->Tokens, 4);
+	Token* endValue = List_TokenAtIndex(Block->Tokens, 5);
+	
+	char* stepVal = (char*)malloc(sizeof(char) * 5000);
+	char* initialVal = getVarOrLit(obj, initToken->Value);
+	int op = OpAdd;
+	char* opVar = getVarOrLit(obj, varToken->Value);
+	char* endVar = getVarOrLit(obj, endValue->Value);
+	
+	if(StrStartsWith(opVar, "@") == 1 && StrStartsWith(opVar, "%") == 0)
+	{
+		printf("***Exception: Variable Not Found\n");
+		exit(0);
+	}
+	
+	//Token* stepToken = NULL;
+	Token* opToken = NULL;
+	Token* valToken = NULL;
+	
+	if(List_Count(Block->Tokens) == 9)
+	{
+		//stepToken = List_TokenAtIndex(Block->Tokens, 6);
+		opToken = List_TokenAtIndex(Block->Tokens, 7);
+		valToken = List_TokenAtIndex(Block->Tokens, 8);
+		op = opToken->Type;
+		free(stepVal);
+		stepVal = getVarOrLit(obj, valToken->Value);
+	}
+	
+	char* writeVal = (char*)malloc(sizeof(char) * 5000);
+	sprintf(writeVal, "MOV %s, %s", opVar, initialVal);
+	AppendAsmLine(obj, writeVal);
+	sprintf(writeVal, "LBL _ForStart%ld", forId);
+	AppendAsmLine(obj, writeVal);
+	obj->CurrentBlock++;
+	
+	while(List_TokenAtIndex(List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock)->Tokens, 0)->Type != ExNext)
+		ParseBlock(obj);
+	
+	sprintf(writeVal, "PUSH %s", opVar);
+	AppendAsmLine(obj, writeVal);
+	sprintf(writeVal, "PUSH %s", stepVal);
+	AppendAsmLine(obj, writeVal);
+	if(op == OpSub)
+	{
+		AppendAsmLine(obj, "SUB");
+		sprintf(writeVal, "POP %s", opVar);
+		AppendAsmLine(obj, writeVal);
+		sprintf(writeVal, "JGE %s, %s, _ForStart%ld", opVar, endVar, forId);
+		AppendAsmLine(obj, writeVal);
+	}
+	else
+	{
+		AppendAsmLine(obj, "ADD");
+		sprintf(writeVal, "POP %s", opVar);
+		AppendAsmLine(obj, writeVal);
+		sprintf(writeVal, "JLE %s, %s, _ForStart%ld", opVar, endVar, forId);
+		AppendAsmLine(obj, writeVal);
+	}
+	
+	free(writeVal);
+	free(stepVal);
+	free(endVar);
+	free(opVar);
+	free(initialVal);
 };
 
 void ParseWhileBlock(ObjectBasicScript* obj)
 {
-};
-
-void ParseBlock(ObjectBasicScript* obj)
-{
+	long whileId = NextLabelId(obj);
+	long CmpReg = obj->RegisterCount + 1;
+	obj->RegisterCount++;
+	
+	char* writeVal = (char*)malloc(sizeof(char) * 5000);
+	sprintf(writeVal, "LBL _WhileTestStart%ld", whileId);
+	AppendAsmLine(obj, writeVal);
+	EvaluateExpression(obj, 1);
+	sprintf(writeVal, "POP @%ld", CmpReg);
+	AppendAsmLine(obj, writeVal);
+	sprintf(writeVal, "JN @%ld, 1, _WhileEnd%ld", CmpReg, whileId);
+	AppendAsmLine(obj, writeVal);
+	obj->CurrentBlock++;
+	while(List_TokenAtIndex(List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock)->Tokens, 0)->Type != ExLoop)
+		ParseBlock(obj);
+	sprintf(writeVal, "LJMP _WhileTestStart%ld", whileId);
+	AppendAsmLine(obj, writeVal);
+	sprintf(writeVal, "LBL _WhileEnd%ld", whileId);
+	AppendAsmLine(obj, writeVal);
+	
+	free(writeVal);
 };
 
 void RecurseInit(ObjectBasicScript* obj, char* varName, ClassDef* cls)
 {
+	if(cls->Extends != NULL)
+		RecurseInit(obj, varName, cls->Extends);
+	char* writeVal = (char*)malloc(sizeof(char) * 5000);
+	sprintf(writeVal, "PUSHB $%s", varName);
+	AppendAsmLine(obj, writeVal);
+	sprintf(writeVal, "JMP _%s_Init", cls->Name);
+	AppendAsmLine(obj, writeVal);
 };
 
 void ParseClasses(ObjectBasicScript* obj)
