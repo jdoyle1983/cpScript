@@ -152,7 +152,7 @@ namespace cpScriptTest.Net
 							"	LOOP\n" +
 							"END FUNCTION";*/
 
-			libCpScript.Net.ObjectBasic.ObjectBasicScript script = new libCpScript.Net.ObjectBasic.ObjectBasicScript();
+			libCpScript.Net.ObjectBasic.Script script = new libCpScript.Net.ObjectBasic.Script();
 			script.RegisterFunction("SetVariables", SetVariables, false);
 			script.RegisterFunction("DisplayVariables", DisplayVariables, false);
 			script.LoadScript(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + Path.DirectorySeparatorChar + "Fib.cps"));

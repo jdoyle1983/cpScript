@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\..\..\Projects\cpScript\Build</OutputPath>
+    <OutputPath>..\..\Build</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\..\..\Projects\cpScript\Build</OutputPath>
+    <OutputPath>..\..\Build</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -35,7 +35,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\..\..\Projects\cpScript\Build</OutputPath>
+    <OutputPath>..\..\Build</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -45,7 +45,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release x86|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\..\..\Projects\cpScript\Build</OutputPath>
+    <OutputPath>..\..\Build</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -59,13 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Evaluator.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="BlockBuilder.cs" />
-    <Compile Include="Function.cs" />
-    <Compile Include="ObjectBasicScript.cs" />
-    <Compile Include="ClassDef.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="NativeScript.cs" />
+    <Compile Include="Script.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libCpScript.Net.Asm\libCpScript.Net.Asm.csproj">

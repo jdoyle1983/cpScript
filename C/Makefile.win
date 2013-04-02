@@ -46,7 +46,7 @@ CPOBJCMP_OBJDIR = obj\\cpObjCmp
 CPOBJCMP_OBJ = $(CPOBJCMP_OBJDIR)\\CpObjCmp.o
 CPOBJCMP_CFLAGS = -Wall -O2
 CPOBJCMP_CLIBS = $(OBJSTATIC_BIN)
-CPOBJCMP_BIN = ..\Build\cpObjCmp.New.exe
+CPOBJCMP_BIN = ..\Build\cpObjCmp.exe
 
 all: static shared cpint cpobjcmp
 

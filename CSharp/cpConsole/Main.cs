@@ -26,9 +26,10 @@ namespace cpConsole
 				string thisLine = Console.ReadLine();
 				if(thisLine.Trim().ToLower() == ".complete")
 				{
-					ObjectBasicScript obs = new ObjectBasicScript();
+					Script obs = new Script();
 					obs.LoadScript(sb.ToString());
-					State thisState = new State(obs.AsmScript);
+					State thisState = obs.CreateAsmState();
+
 					CpStdLib.InstallConsoleIO(thisState.StatePtr);
 					CpStdLib.InstallFileIO(thisState.StatePtr);
 					CpStdLib.InstallMath(thisState.StatePtr);
