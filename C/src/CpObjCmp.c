@@ -5,13 +5,18 @@
 
 #define VERSION "1.0.0"
 
-int main(int argc, char* argv[])
+void DisplayVersion()
 {
 	printf("Object Basic Script Compiler\n");
 	printf("v%s\n\n", VERSION);
-	
+};
+
+int main(int argc, char* argv[])
+{
 	if(argc < 2)
 	{
+		DisplayVersion();
+		
 		printf("No Input File(s) / Output File Specified\n");
 		printf("cpObjCmp [input] [input] -o [output]\n");
 		printf("If no -o is specified, it will write the\n");
@@ -81,20 +86,20 @@ int main(int argc, char* argv[])
 		
 		void* objScript = ObjScript_New();
 		ObjScript_Load(objScript, fullScript);
-		printf("%s\n", ObjScript_GetAsm(objScript));
-		/*
-		
-		for(i = 0; i < inCount; i++)
-			printf("Source File: %s\n", inputFiles[i]);
-		printf("Output: ");
+		char* AsmScript = ObjScript_GetAsm(objScript);
 		if(outputFile != NULL)
-			printf("%s\n", outputFile);
+		{
+			FILE* outFile = fopen(outputFile, "wb");
+			if(!outFile)
+				printf("Error Writing File '%s'\n", outputFile);
+			else
+			{
+				fwrite(AsmScript, 1, strlen(AsmScript), outFile);
+				fclose(outFile);
+			}
+		}
 		else
-			printf("<STDOUT>\n");
-			
-		printf("\n\n");
-		
-		printf("%s\n", fullScript);*/
+			printf("%s\n", AsmScript);
 		
 		ObjScript_Delete(objScript);
 		free(fullScript);

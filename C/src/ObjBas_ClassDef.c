@@ -243,8 +243,7 @@ List* ClassDef_ParseClassDefs(List* Blocks)
 			
 			c->Name = (char*)malloc(sizeof(char) * (strlen(List_TokenAtIndex(thisBlock->Tokens, 1)->Value) + 1));
 			strcpy(c->Name, List_TokenAtIndex(thisBlock->Tokens, 1)->Value);
-			
-			while(List_TokenAtIndex(thisBlock->Tokens, i)->Type != ExEndClass)
+			while(List_TokenAtIndex(List_CodeBlockAtIndex(Blocks, i)->Tokens, 0)->Type != ExEndClass)
 			{
 				thisBlock = List_CodeBlockAtIndex(Blocks, i);
 				if(List_TokenAtIndex(thisBlock->Tokens, 0)->Type == ExProperty)

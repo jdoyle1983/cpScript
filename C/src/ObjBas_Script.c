@@ -170,14 +170,14 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	List* _OutLines = List_New();
 	List* _PreProcLines = List_New();
 	List* _SrcLines = Split(Script, "\n");
-	printf("SplitDone\n");
+	//printf("SplitDone\n");
 	int i = 0;
 	for(i = 0; i < List_Count(_SrcLines); i++)
 	{
 		char* s = List_StringAtIndex(_SrcLines, i);
-		printf("PreTrim (%s)\n", s);
+		//printf("PreTrim (%s)\n", s);
 		char* t = StrTrim(s);
-		printf("PostTrim (%s)\n", t);
+		//printf("PostTrim (%s)\n", t);
 		if(strlen(t) > 0)
 		{
 			if(t[0] == '#')
@@ -197,7 +197,7 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	for(i = 0; i < List_Count(_PreProcLines); i++)
 	{
 		char* ppLine = List_StringAtIndex(_PreProcLines, i);
-		printf(":::::%s::::\n", ppLine);
+		//printf(":::::%s::::\n", ppLine);
 		char* ppLower = StrToLower(ppLine);
 		if(StrStartsWith(ppLower, "#include ") == 1)
 		{
@@ -217,20 +217,20 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 				found = 1;
 		if(found == 0)
 		{
-			printf("------------------- File Path ------------------\n\n'%s'\n\n", filePath);
-			FILE* incFile = fopen(filePath, "rb");
-			if(!incFile)
-				printf("WHOOPS!\n");
+			//printf("------------------- File Path ------------------\n\n'%s'\n\n", filePath);
+			/*FILE* incFile = fopen(filePath, "rb");
+			//if(!incFile)
+			//	printf("WHOOPS!\n");
 			fseek(incFile, 0, SEEK_END);
 			long incLen = ftell(incFile);
 			fseek(incFile, 0, SEEK_SET);
 			char* includeContent = (char*)malloc(sizeof(char) * (incLen + 1));
 			fread(includeContent, 1, incLen, incFile);
 			includeContent[incLen] = '\0';
-			fclose(incFile);
+			fclose(incFile);*/
 			
-			//char* includeContent = ReadFileContents(filePath);
-			printf("--------------- INCLUDE (%ld) --------------------\n\n%s\n\n", incLen, includeContent);
+			char* includeContent = ReadFileContents(filePath);
+			//printf("--------------- INCLUDE (%ld) --------------------\n\n%s\n\n", incLen, includeContent);
 			List* _ThisSrcLines = Split(includeContent, "\n");
 			free(includeContent);
 			
