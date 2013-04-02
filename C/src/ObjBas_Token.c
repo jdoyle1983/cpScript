@@ -257,7 +257,7 @@ List* Tokenizer_ParseExtended(List* Input)
 	int count = 0;
 	for(count = 0; count < List_Count(Input); count++)
 	{
-		Token* t = List_TokenAtIndex(Toks, count);
+		Token* t = List_TokenAtIndex(Input, count);
 		if(t->Type == Period && count > 0 && ((count + 1) < List_Count(Input)) && (List_TokenAtIndex(Input, count - 1))->Type == Literal && (List_TokenAtIndex(Input, count + 1))->Type == Literal)
 		{
 			char* p1 = (List_TokenAtIndex(Input, count - 1))->Value;

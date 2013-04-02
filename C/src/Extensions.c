@@ -40,12 +40,11 @@ char* StrLeft(char* SrcStr)
 {
     int Start = -1;
     int i = 0;
+	
     for(i = 0; i < strlen(SrcStr) && Start == -1; i++)
-        if(SrcStr[i] != ' ' &&
-           SrcStr[i] != '\n' &&
-           SrcStr[i] != '\r' &&
-           SrcStr[i] != '\t')
+        if(SrcStr[i] != ' ' && SrcStr[i] != '\n' && SrcStr[i] != '\r' && SrcStr[i] != '\t')
            Start = i;
+		   
     if(Start == -1)
     {
         char* r = (char*)malloc(sizeof(char));
@@ -60,12 +59,11 @@ char* StrRight(char* SrcStr)
 {
     int End = -1;
     int i = 0;
-    for(i = 0; i < strlen(SrcStr); i++)
-        if(SrcStr[i] != ' ' &&
-           SrcStr[i] != '\n' &&
-           SrcStr[i] != '\r' &&
-           SrcStr[i] != '\t')
+    
+	for(i = 0; i < strlen(SrcStr); i++)
+        if(SrcStr[i] != ' ' && SrcStr[i] != '\n' && SrcStr[i] != '\r' && SrcStr[i] != '\t')
            End = i;
+		   
     if(End == -1)
     {
         char* r = (char*)malloc(sizeof(char));
@@ -105,7 +103,7 @@ short StrStartsWith(char* SrcStr, char* TestStr)
 		int i = 0;
 		for(i = 0; i < strlen(TestStr) && allMatch == 1; i++)
 		{
-			if(TestStr[0] != SrcStr[0])
+			if(TestStr[i] != SrcStr[i])
 				allMatch = 0;
 		}
 		
@@ -116,10 +114,11 @@ short StrStartsWith(char* SrcStr, char* TestStr)
 	return r;
 };
 
-void StrCat(char* SrcStr, char* CatStr)
+char* StrCat(char* SrcStr, char* CatStr)
 {
 	SrcStr = (char*)realloc(SrcStr, sizeof(char) * (strlen(SrcStr) + strlen(CatStr) + 1));
 	strcat(SrcStr, CatStr);
+	return SrcStr;
 };
 
 char* StrCopy(char* SrcStr)
@@ -131,13 +130,28 @@ char* StrCopy(char* SrcStr)
 
 char* SubStr(char* Src, int Start, int End)
 {
+	char* r = (char*)malloc(sizeof(char) * (strlen(Src) + 1));
+	int c = 0;
+	int i = 0;
+	for(i = Start; i <= End && i < strlen(Src); i++)
+	{
+		r[c] = Src[i];
+		c++;
+	}
+	r[c] = '\0';
+	
+	return r;
+	
+	/*
 	int Len = End - Start + 2;
 	char* r = (char*)malloc(sizeof(char) * Len);
 	int i = 0;
 	for(i = Start; i <= End && i < strlen(Src); i++)
 		r[i - Start] = Src[i];
 	r[Len - 1] = '\0';
-	return r;
+	char* r2 = StrTrim(r);
+	free(r);
+	return r2;*/
 };
 
 List* Split(char* SrcStr, char* DelimChars)

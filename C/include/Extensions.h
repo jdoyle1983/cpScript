@@ -35,7 +35,7 @@ List* Split(char* SrcStr, char* DelimChars);
 List* SplitAndKeep(char* SrcStr, char* DelimChars);
 char* StrToLower(char* SrcStr);
 short StrStartsWith(char* SrcStr, char* TestStr);
-void StrCat(char* SrcStr, char* CatStr);
+char* StrCat(char* SrcStr, char* CatStr);
 char* StrCopy(char* SrcStr);
 
 char* ReadFileContents(const char* FilePath);

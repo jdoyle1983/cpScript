@@ -77,18 +77,14 @@ ObjectBasicScript* ObjectBasicScript_New()
 void AppendAsm(ObjectBasicScript* obj, char* Value)
 {
 	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + strlen(Value) + 1));
-	printf("1\n");
 	strcat(obj->AsmResult, Value);
-	printf("2\n");
 };
 
 void AppendAsmLine(ObjectBasicScript* obj, char* NewLine)
 {
 	AppendAsm(obj, NewLine);
 	obj->AsmResult = (char*)realloc(obj->AsmResult, sizeof(char) * (strlen(obj->AsmResult) + 2));
-	printf("3\n");
 	strcat(obj->AsmResult, "\n");
-	printf("4\n");
 };
 
 void MethodStub(void* State)
@@ -174,20 +170,23 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	List* _OutLines = List_New();
 	List* _PreProcLines = List_New();
 	List* _SrcLines = Split(Script, "\n");
+	printf("SplitDone\n");
 	int i = 0;
 	for(i = 0; i < List_Count(_SrcLines); i++)
 	{
 		char* s = List_StringAtIndex(_SrcLines, i);
+		printf("PreTrim (%s)\n", s);
 		char* t = StrTrim(s);
+		printf("PostTrim (%s)\n", t);
 		if(strlen(t) > 0)
 		{
 			if(t[0] == '#')
-				List_Add(_PreProcLines, StrCopy(s));
-			else if(s[0] == '/' && s[1] == '/')
+				List_Add(_PreProcLines, StrCopy(t));
+			else if(t[0] == '/' && t[1] == '/')
 			{
 			}
 			else
-				List_Add(_OutLines, StrCopy(s));
+				List_Add(_OutLines, StrCopy(t));
 		}
 		free(t);
 	}
@@ -198,6 +197,7 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	for(i = 0; i < List_Count(_PreProcLines); i++)
 	{
 		char* ppLine = List_StringAtIndex(_PreProcLines, i);
+		printf(":::::%s::::\n", ppLine);
 		char* ppLower = StrToLower(ppLine);
 		if(StrStartsWith(ppLower, "#include ") == 1)
 		{
@@ -217,7 +217,20 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 				found = 1;
 		if(found == 0)
 		{
-			char* includeContent = ReadFileContents(filePath);
+			printf("------------------- File Path ------------------\n\n'%s'\n\n", filePath);
+			FILE* incFile = fopen(filePath, "rb");
+			if(!incFile)
+				printf("WHOOPS!\n");
+			fseek(incFile, 0, SEEK_END);
+			long incLen = ftell(incFile);
+			fseek(incFile, 0, SEEK_SET);
+			char* includeContent = (char*)malloc(sizeof(char) * (incLen + 1));
+			fread(includeContent, 1, incLen, incFile);
+			includeContent[incLen] = '\0';
+			fclose(incFile);
+			
+			//char* includeContent = ReadFileContents(filePath);
+			printf("--------------- INCLUDE (%ld) --------------------\n\n%s\n\n", incLen, includeContent);
 			List* _ThisSrcLines = Split(includeContent, "\n");
 			free(includeContent);
 			
@@ -272,11 +285,8 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	for(i = 0; i < List_Count(_OutLines); i++)
 	{
 		char* thisItem = List_StringAtIndex(_OutLines, i);
-		printf("8\n");
-		StrCat(rValue, thisItem);
-		printf("9\n");
-		StrCat(rValue, "\n");
-		printf("10\n");
+		rValue = StrCat(rValue, thisItem);
+		rValue = StrCat(rValue, "\n");
 	}
 	
 	for(i = 0; i < List_Count(ToIncludeFiles); i++)
