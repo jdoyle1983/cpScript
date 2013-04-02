@@ -289,6 +289,8 @@ List* ClassDef_ParseClassDefs(List* Blocks)
 					
 					i++;
 					thisBlock = List_CodeBlockAtIndex(Blocks, i);
+					if(mdef->Blocks == NULL)
+						mdef->Blocks = List_New();
 					while(List_TokenAtIndex(thisBlock->Tokens, 0)->Type != ExEndMethod)
 					{
 						List_Add(mdef->Blocks, thisBlock);

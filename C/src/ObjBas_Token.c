@@ -217,6 +217,11 @@ List* Tokenizer_Tokenize(char* SrcScript)
 							free(trimValue1);
 						}					
 					}
+					
+					if(lastToken->Type == ttINVALID)
+						Token_Delete(lastToken);
+					if(tokenBeforeLast == ttINVALID)
+						Token_Delete(tokenBeforeLast);
 				}
 				else
 					AddLit = 0;
@@ -267,6 +272,7 @@ List* Tokenizer_ParseExtended(List* Input)
 			strcat(newValue, ".");
 			strcat(newValue, p2);
 			ReplaceLastToken(Toks, Token_NewWithValue(ExClassAction, newValue));
+			free(newValue);
 			count++;
 		}
 		else if(t->Type == Literal)

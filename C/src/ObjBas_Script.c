@@ -94,6 +94,7 @@ void MethodStub(void* State)
 void ObjectBasicScript_Delete(ObjectBasicScript* obj)
 {
 	int i = 0;
+	int e = 0;
 	for(i = 0; i < List_Count(obj->Functions); i++)
 		Function_Delete(List_FunctionAtIndex(obj->Functions, i));
 	List_Delete(obj->Functions);
@@ -158,7 +159,7 @@ List* FunctionList(ObjectBasicScript* obj)
 			List_Add(Names, thisValue);
 		}
 		for(e = 0; e < List_Count(StaticMethods); e++)
-			ClassConversion_Delete(List_ClassConversionAtIndex(StaticMethods, i));
+			ClassConversion_Delete(List_ClassConversionAtIndex(StaticMethods, e));
 		List_Delete(StaticMethods);
 	}
 	
@@ -472,11 +473,13 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 			case OpNot: AppendAsmLine(obj, "CI"); break;
 		}
 	}
-	
+	for(i = 0; i < List_Count(toEval); i++)
+		Token_Delete(List_TokenAtIndex(toEval, i));
 	for(i = 0; i < List_Count(availFunctions); i++)
 		free(List_StringAtIndex(availFunctions, i));
 	List_Delete(availFunctions);
 	List_Delete(toEval);
+	List_Delete(evaled);
 };
 
 void ParseBlock(ObjectBasicScript* obj);
@@ -1042,6 +1045,10 @@ EXPORT void LoadScript(ObjectBasicScript* obj, char* Script)
 		
 		List* Stage1 = Tokenizer_Tokenize(ProcScript);
 		List* Stage2 = Tokenizer_ParseExtended(Stage1);
+		
+		for(i = 0; i < List_Count(Stage1); i++)
+			Token_Delete(List_TokenAtIndex(Stage1, i));
+		List_Delete(Stage1);
 		
 		obj->Blocks = BlockBuilder_ConvertToBlocks(Stage2);
 		List_Delete(obj->Classes);

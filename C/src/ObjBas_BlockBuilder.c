@@ -59,6 +59,8 @@ List* BlockBuilder_ConvertToBlocks(List* Toks)
 	
 	if(List_Count(Current) > 0)
 		List_Add(Blocks, CodeBlock_New(Current));
+	else
+		List_Delete(Current);
 		
 	return Blocks;
 };
