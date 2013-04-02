@@ -170,14 +170,11 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	List* _OutLines = List_New();
 	List* _PreProcLines = List_New();
 	List* _SrcLines = Split(Script, "\n");
-	//printf("SplitDone\n");
 	int i = 0;
 	for(i = 0; i < List_Count(_SrcLines); i++)
 	{
 		char* s = List_StringAtIndex(_SrcLines, i);
-		//printf("PreTrim (%s)\n", s);
 		char* t = StrTrim(s);
-		//printf("PostTrim (%s)\n", t);
 		if(strlen(t) > 0)
 		{
 			if(t[0] == '#')
@@ -197,7 +194,6 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	for(i = 0; i < List_Count(_PreProcLines); i++)
 	{
 		char* ppLine = List_StringAtIndex(_PreProcLines, i);
-		//printf(":::::%s::::\n", ppLine);
 		char* ppLower = StrToLower(ppLine);
 		if(StrStartsWith(ppLower, "#include ") == 1)
 		{
@@ -217,20 +213,7 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 				found = 1;
 		if(found == 0)
 		{
-			//printf("------------------- File Path ------------------\n\n'%s'\n\n", filePath);
-			/*FILE* incFile = fopen(filePath, "rb");
-			//if(!incFile)
-			//	printf("WHOOPS!\n");
-			fseek(incFile, 0, SEEK_END);
-			long incLen = ftell(incFile);
-			fseek(incFile, 0, SEEK_SET);
-			char* includeContent = (char*)malloc(sizeof(char) * (incLen + 1));
-			fread(includeContent, 1, incLen, incFile);
-			includeContent[incLen] = '\0';
-			fclose(incFile);*/
-			
 			char* includeContent = ReadFileContents(filePath);
-			//printf("--------------- INCLUDE (%ld) --------------------\n\n%s\n\n", incLen, includeContent);
 			List* _ThisSrcLines = Split(includeContent, "\n");
 			free(includeContent);
 			
@@ -565,7 +548,8 @@ void ParseIfBlock(ObjectBasicScript* obj)
 			ParseBlock(obj);
 		CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
 	}
-	
+	sprintf(NewLine, "LBL _EndIf%ld", EndIfId);
+	AppendAsmLine(obj, NewLine);
 	free(NewLine);
 };
 
@@ -631,6 +615,7 @@ void ParseForBlock(ObjectBasicScript* obj)
 	Token* endValue = List_TokenAtIndex(Block->Tokens, 5);
 	
 	char* stepVal = (char*)malloc(sizeof(char) * 5000);
+	sprintf(stepVal, "1");
 	char* initialVal = getVarOrLit(obj, initToken->Value);
 	int op = OpAdd;
 	char* opVar = getVarOrLit(obj, varToken->Value);
@@ -896,7 +881,7 @@ void ParseClasses(ObjectBasicScript* obj)
 			AppendAsm(obj, def->Name);
 			AppendAsm(obj, "_");
 			AppendAsmLine(obj, mdef->Name);
-			if(mdef->IsStatic == 1)
+			if(mdef->IsStatic == 0)
 				AppendAsmLine(obj, "POPB $this");
 			int total = List_Count(mdef->Parameters);
 			while(total > 0)
