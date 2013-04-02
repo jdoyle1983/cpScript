@@ -281,10 +281,14 @@ List* ClassDef_ParseClassDefs(List* Blocks)
 							FunctionParam* p = FunctionParam_New();
 							p->IsClassVar = 0;
 							FunctionParam_SetVarName(p, thisTok->Value);
+							if(mdef->Parameters == NULL)
+								mdef->Parameters = List_New();
 							List_Add(mdef->Parameters, p);
 						}
 						tIdx++;
 					}
+					if(mdef->Parameters == NULL)
+						mdef->Parameters = List_New();
 					List_Reverse(mdef->Parameters);
 					
 					i++;

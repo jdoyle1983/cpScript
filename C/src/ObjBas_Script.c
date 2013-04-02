@@ -1002,6 +1002,8 @@ void ParseFunctions(ObjectBasicScript* obj)
 				ParseBlock(obj);
 				
 			AppendAsmLine(obj, "RTN");
+			
+			free(thisResult);
 		}
 	}
 };

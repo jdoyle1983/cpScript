@@ -220,11 +220,12 @@ List* Tokenizer_Tokenize(char* SrcScript)
 					
 					if(lastToken->Type == ttINVALID)
 						Token_Delete(lastToken);
-					if(tokenBeforeLast == ttINVALID)
+					if(tokenBeforeLast->Type == ttINVALID)
 						Token_Delete(tokenBeforeLast);
 				}
 				else
 					AddLit = 0;
+					
 				free(trimmed);
 				if(AddLit)
 					List_Add(Toks, Token_NewWithValue(Literal, t));

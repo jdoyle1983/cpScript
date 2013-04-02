@@ -71,7 +71,7 @@ Function* Function_New(void)
 	func->UserFunction = 0;
 	func->Func = NULL;
 	func->Blocks = NULL;
-	func->Parameters = List_New();
+	func->Parameters = NULL;
 	func->IsOverride = 0;
 	func->IsStatic = 0;
 	func->IsStub = 0;
@@ -86,9 +86,12 @@ void Function_Delete(Function* func)
 	if(func->Blocks != NULL)
 		List_Delete(func->Blocks);
 	int i = 0;
-	for(i = 0; i < List_Count(func->Parameters); i++)
-		FunctionParam_Delete(List_FunctionParamAtIndex(func->Parameters, i));
-	List_Delete(func->Parameters);
+	if(func->Parameters != NULL)
+	{
+		for(i = 0; i < List_Count(func->Parameters); i++)
+			FunctionParam_Delete(List_FunctionParamAtIndex(func->Parameters, i));
+		List_Delete(func->Parameters);
+	}
 	free(func);
 };
 
