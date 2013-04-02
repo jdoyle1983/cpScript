@@ -54,7 +54,18 @@ CPCONSOLE_CFLAGS = -Wall -O2
 CPCONSOLE_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
 CPCONSOLE_BIN = ..\Build\cpConsole.exe
 
-all: static shared cpint cpobjcmp cpconsole
+ER_OBJDIR = obj\\makeExec
+ER_OBJ = $(ER_OBJDIR)\\ExecRuntime.o
+ER_CFLAGS = -Wall -O2
+ER_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN)
+ER_BIN = ..\Build\ExecRuntime.exe
+
+ME_OBJ = $(ER_OBJDIR)\\MakeExec.o
+ME_CFLAGS = -Wall -O2
+ME_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
+ME_BIN = ..\Build\MakeExec.exe
+
+all: static shared cpint cpobjcmp cpconsole er me
 
 static: $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
 
@@ -66,6 +77,10 @@ cpobjcmp: $(CPOBJCMP_BIN)
 
 cpconsole: $(CPCONSOLE_BIN)
 
+er: $(ER_BIN)
+
+me: $(ME_BIN)
+
 clean:
 	cmd /c del /f $(STATIC_BIN)
 	cmd /c del /f $(SHARED_BIN)
@@ -76,6 +91,8 @@ clean:
 	cmd /c del /f $(OBJSHARED_BIN)
 	cmd /c del /f $(CPOBJCMP_BIN)
 	cmd /c del /f $(CPCONSOLE_BIN)
+	cmd /c del /f $(ER_BIN)
+	cmd /c del /f $(ME_BIN)
 	cmd /c del /f $(STATIC_OBJDIR)\\*.o
 	cmd /c del /f $(SHARED_OBJDIR)\\*.o
 	cmd /c del /f $(STDSTATIC_OBJDIR)\\*.o
@@ -85,6 +102,7 @@ clean:
 	cmd /c del /f $(OBJSHARED_OBJDIR)\\*.o
 	cmd /c del /f $(CPOBJCMP_OBJDIR)\\*.o
 	cmd /c del /f $(CPCONSOLE_OBJDIR)\\*.o
+	cmd /c del /f $(ER_OBJDIR)\\*.o
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)
@@ -94,6 +112,12 @@ $(CPOBJCMP_BIN): $(CPOBJCMP_OBJ)
 	
 $(CPCONSOLE_BIN): $(CPCONSOLE_OBJ)
 	$(CP) $(CPCONSOLE_CFLAGS) $(CPCONSOLE_OBJ) $(CPCONSOLE_CLIBS) -o $(CPCONSOLE_BIN)
+	
+$(ER_BIN): $(ER_OBJ)
+	$(CP) $(ER_CFLAGS) $(ER_OBJ) $(ER_CLIBS) -o $(ER_BIN)
+	
+$(ME_BIN): $(ME_OBJ)
+	$(CP) $(ME_CFLAGS) $(ME_OBJ) $(ME_CLIBS) -o $(ME_BIN)
 
 $(STATIC_BIN): $(STATIC_OBJ)
 	$(AR) rcs $(STATIC_BIN) $(STATIC_OBJ)
@@ -265,3 +289,9 @@ $(CPOBJCMP_OBJDIR)\\CpObjCmp.o: src\\CpObjCmp.c
 	
 $(CPCONSOLE_OBJDIR)\\CpConsole.o: src\\CpConsole.c
 	$(CC) $(CPCONSOLE_CFLAGS) $(INC) -c src\\CpConsole.c -o $(CPCONSOLE_OBJDIR)\\CpConsole.o
+	
+$(ER_OBJDIR)\\ExecRuntime.o: src\\ExecRuntime.c
+	$(CC) $(ER_CFLAGS) $(INC) -c src\\ExecRuntime.c -o $(ER_OBJDIR)\\ExecRuntime.o
+	
+$(ER_OBJDIR)\\MakeExec.o: src\\MakeExec.c
+	$(CC) $(ME_CFLAGS) $(INC) -c src\\MakeExec.c -o $(ER_OBJDIR)\\MakeExec.o
