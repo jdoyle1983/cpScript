@@ -18,8 +18,6 @@ int main(int argc, char* argv[])
 		char* SrcScript = argv[1];
 		char* DestExec = argv[2];
 		
-		printf("Reading Script...\n");
-		
 		void* Script = ObjScript_New();
 		FILE* srcFile = fopen(SrcScript, "rb");
 		fseek(srcFile, 0, SEEK_END);
@@ -29,8 +27,6 @@ int main(int argc, char* argv[])
 		fread(srcText, sizeof(char), srcSize, srcFile);
 		srcText[srcSize] = '\0';
 		fclose(srcFile);
-		
-		printf("Converting To Asm...\n");
 		
 		ObjScript_Load(Script, srcText);
 		void* State = State_New(ObjScript_GetAsm(Script));
@@ -44,7 +40,7 @@ int main(int argc, char* argv[])
 		ObjScript_Delete(Script);
 		free(srcText);
 		
-		printf("Generating Binary... (%ld)\n", binSize);
+		printf("Generating Binary...\n");
 		
 		FILE* runtime = fopen("ExecRuntime.exe", "rb");
 		if(!runtime)
@@ -65,6 +61,8 @@ int main(int argc, char* argv[])
 			fwrite(binData, 1, binSize, exec);
 			fwrite(&binSize, sizeof(long), 1, exec);
 			fclose(exec);
+			
+			printf("Done!\n");
 		}
 	}
 	
