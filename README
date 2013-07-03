@@ -1,5 +1,5 @@
 
-The Repo Contains The 8 Projects That Make CpScript
+The Repo Contains The 10 Projects That Make CpScript
 
 libCpScript.Asm (C)
 -  C CpScript Assembly Library (Core CpScript)
@@ -31,3 +31,9 @@ cpObjCmp (C)
 
 cpConsole (C)
 -  Basic command line program to quickly test scripting libraries.
+
+ExecRuntime (C)
+-  Runtime environment used to generated standalone executables.
+
+MakeExec (C)
+-  Tool to compile Object Basic script to standalone executable.
