@@ -15,10 +15,7 @@ ANSI C
   <tr>
     <td>libCpScript.Asm</td>
 	<td>C CpScript Assembly Library (Core CpScript)</td>
-	<td>
-* Static and Shared Libs
-* CpScript Standard Library
-    </td>
+	<td><ul><li>Static and Shared Libs</li><li>CpScript Standard Library</li></ul></td>
   </tr>
   <tr>
     <td>libCpScript.ObjectBasic</td>
