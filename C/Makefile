@@ -105,7 +105,6 @@ clean:
 	rm -f $(CPOBJCMP_OBJDIR)/*.o
 	rm -f $(CPCONSOLE_OBJDIR)\\*.o
 	rm -f $(ER_OBJDIR)\\*.o
-	rm -f $(ME_OBJDIR)\\*.o
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)

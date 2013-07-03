@@ -105,7 +105,6 @@ clean:
 	cmd /c del /f $(CPOBJCMP_OBJDIR)\\*.o
 	cmd /c del /f $(CPCONSOLE_OBJDIR)\\*.o
 	cmd /c del /f $(ER_OBJDIR)\\*.o
-	cmd /c del /f $(ME_OBJDIR)\\*.o
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)

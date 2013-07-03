@@ -27,18 +27,19 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+#include <math.h>
 
 void Math_Abs(void* State)
 {
-    State_PushInt(State, State_PopInt(State));
+	State_PushInt(State, abs(State_PopInt(State)));
 };
 
 void Math_Floor(void* State)
 {
-    State_PushDouble(State, State_PopDouble(State));
+	State_PushDouble(State, floor(State_PopDouble(State)));
 };
 
 void Math_Ceiling(void* State)
 {
-    State_PushDouble(State, State_PopDouble(State));
+	State_PushDouble(State, ceil(State_PopDouble(State)));
 };
