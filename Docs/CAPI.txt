@@ -2,15 +2,250 @@ libCpScript C API Manual
 (c) 2013 Jason Doyle, All Rights Reserved
 Email: jdoyle1983@gmail.com
 
+Object Basic API
 
-Table of Contents
+void* ObjScript_New()
+	Creates a new instance of the object basic script compiler.
+	
+	
+	
+void RegisterFunction(void* ObjScript, char* Name)
+	Make Object Basic compiler aware of a function that will be available to the assembly script.
+	
+	* ObjScript - Pointer to an Object Basic Script compiler instance.
+	* Name - Function name to expose to the script.
+	  
+	  
+	  
+void ObjScript_Load(void* ObjScript, char* Script)
+	Loads script to be parsed.
+	
+	* ObjScript - Pointer to an Object Basic Script compiler instance.
+	* Script - Complete Object Basic Script text.
+	
+	
+	
+char* ObjScript_GetAsm(void* ObjScript)
+	Returns the Assembly script compiled from the Object Basic Script.
+	
+	* ObjScript - Pointer to an Object Basic Script compiler instance.
+	
+
+
+void ObjScript_Delete(void* ObjScript)
+	Frees all Object Basic Script compiler instance memory.
+	
+	* ObjScript - Pointer to an Object Basic Script compiler instance.
+
+	
+	
+	
+	
+Assembly API
+
+void* State_New(char* ScriptText);
+	Returns a new Assembly state.
+	
+	* ScriptText - Assembly script text.
+
+
+	
+void* State_NewFromCompiled(void* Script, long Len);
+	Returns a new Assembly state.
+	
+	* Script - Pointer to the memory location containing the compiled assembly script.
+	* Len - The length of the compiled assembly script in memory.
 
 
 
+void* State_Compile(void* state, long* len);
+	Returns a pointer to the memory of the compiled assembly script.
+	
+	* state - Assembly state to compile.
+	* len - Will be populated with the size of the memory location containing the compiled assembly script.
 
 
-Forward
-	*NOTE*
-	libCpScript is still very much in it's infancy stage.  As such, it should
-	not be considered production ready.  Fundamental changes could still occure,
-	and I cannot guarantee backwards compatibility.
+
+void State_Delete(void* State);
+	Frees the Assembly script and all resources.
+	
+	* State - Assembly state to delete.
+
+
+
+void State_RegisterFunction(void* State, char* Name, void (*UserFunction)(void*), short StubFunction);
+	Registers a function for use within the script.
+	
+	* State - The assembly state to register a new function with.
+	* Name - The name the function will be available as in the script.
+	* UserFunction - Function pointer to the user function that will be called when the script calls this function.
+	* StubFunction - Flag indicating whether this method will be implemented at a later time, but the compiler should
+	                 be aware of it.  When this function is called, the void* that is passed is the assembly state that
+					 called the function.
+
+
+
+short State_Iterate(void* State);
+	Execute on assembly instructure within the state.
+	
+	* State - The assembly state to iterate.
+
+
+
+void State_RunFromMethod(void* State, char* Name);
+	Execute the assembly script until complete, starting from a specified method name.
+	This will move the execution pointer to the start of the function, and begin executing until
+	the function returns.
+	
+	* State - The assembly state to run method from.
+	* Name - The function name to begin execution.
+
+
+
+void State_LoadMethod(void* State, char* Name);
+	Move the execution pointer to the named function in the script.
+	
+	* State - The assembly state load the method in.
+	* Name - The name of the method to move the execution pointer to.
+
+
+
+int State_PopInt(void* State);
+	Pop an int from the state stack.
+	
+	* State - Assembly state to use.
+
+
+
+double State_PopDouble(void* State);
+	Pop a double from the state stack.
+	
+	* State - Assembly state to use.
+
+
+
+short State_PopBool(void* State);
+	Pop a bool from the state stack.
+	
+	* State - Assembly state to use.
+
+
+
+char* State_PopString(void* State);
+	Pop a string from the state stack.
+	
+	* State - Assembly state to use.
+
+
+
+void State_PushInt(void* State, int v);
+	Push an int to the state stack.
+	
+	* State - Assembly state to use.
+	* v - int value to push.
+
+
+
+void State_PushDouble(void* State, double v);
+	Push a double to the state stack.
+	
+	* State - Assembly state to use.
+	* v - double value to push.
+
+
+
+void State_PushBool(void* State, short v);
+	Push a bool to the state stack.
+	
+	* State - Assembly state to use.
+	* v - bool value to push.
+
+
+
+void State_PushString(void* State, char* v);
+	Push a string to the state stack.
+	
+	* State - Assembly state to use.
+	* v - string value to push.
+
+
+
+int State_GetIntVariableInScope(void* S, char* n);
+	Returns an int value from a variable in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+
+
+
+double State_GetDoubleVariableInScope(void* S, char* n);
+	Returns a double value from a variable in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+
+
+
+short State_GetBoolVariableInScope(void* S, char* n);
+	Returns a bool value from a variable in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+
+
+
+char* State_GetStringVariableInScope(void* S, char* n);
+	Returns a string value from a variable in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+
+
+
+void State_SetIntVariableInScope(void* S, char* n, int v);
+	Sets an int value in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+	* v - Variable value.
+
+
+
+void State_SetDoubleVariableInScope(void* S, char* n, double v);
+	Sets a double value in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+	* v - Variable value.
+
+
+
+void State_SetBoolVariableInScope(void* S, char* n, short v);
+	Sets a bool value in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+	* v - Variable value.
+
+
+
+void State_SetStringVariableInScope(void* S, char* n, char* v);
+	Sets a string value in the current scope.
+	
+	* S - Assembly state to use.
+	* n - Variable name.
+	* v - Variable value.
+
+
+
+void InteropFreePtr(void* Ptr);
+	This function exists only for C# interop, do not use.
+
+
+void* InteropAllocLongPtr();
+	This function exists only for C# interop, do not use.
+
+
+long InteropLongPtrToLong(void* Ptr);
+	This function exists only for C# interop, do not use.
+

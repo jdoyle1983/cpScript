@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 EXPORT void* ObjScript_New();
-EXPORT void RegisterFunction(void* ObjScript, char* Name, void (*Func)(void* State), short StubMethod);
+EXPORT void RegisterFunction(void* ObjScript, char* Name);
 EXPORT void ObjScript_Load(void* ObjScript, char* Script);
 EXPORT char* ObjScript_GetAsm(void* ObjScript);
 EXPORT void ObjScript_Delete(void* ObjScript);

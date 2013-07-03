@@ -33,7 +33,7 @@ namespace libCpScript.Net.ObjectBasic
 		internal static extern  System.IntPtr ObjScript_New() ;
 
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.ObjectBasic.Shared.so", EntryPoint="RegisterFunction")]
-		internal static extern  void RegisterFunction(System.IntPtr ObjScript, System.IntPtr Name, UserFunction UserFunction, short StubFunction) ;
+		internal static extern  void RegisterFunction(System.IntPtr ObjScript, System.IntPtr Name) ;
 
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.ObjectBasic.Shared.so", EntryPoint="ObjScript_Load")]
 		internal static extern  void ObjScript_Load(System.IntPtr ObjScript, System.IntPtr Script) ;

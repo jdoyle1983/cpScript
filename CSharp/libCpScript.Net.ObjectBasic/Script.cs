@@ -80,7 +80,7 @@ namespace libCpScript.Net.ObjectBasic
 
 			IntPtr AnsiName = Marshal.StringToHGlobalAnsi(Name);
 			short MStubFunction = (short)(StubFunction ? 1 : 0);
-			NativeScript.RegisterFunction(_Script, AnsiName, Function, MStubFunction);
+			NativeScript.RegisterFunction(_Script, AnsiName);
 			Marshal.FreeHGlobal(AnsiName);
 		}
 

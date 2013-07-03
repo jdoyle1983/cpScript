@@ -256,7 +256,7 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 		if(StrStartsWith(preProcLower, "#hostfunction ") == 1)
 		{
 			char* funcName = SubStr(preProcTrim, 14, strlen(preProcTrim) - 1);
-			RegisterFunction(obj, funcName, &MethodStub, 1);
+			RegisterFunction(obj, funcName);
 			free(funcName);
 		}
 		
@@ -1086,12 +1086,12 @@ EXPORT void ObjScript_Delete(void* obj)
 	ObjectBasicScript_Delete((ObjectBasicScript*)obj);
 };
 
-EXPORT void RegisterFunction(void* ObjScript, char* Name, void (*Func)(void* State), short StubMethod)
+EXPORT void RegisterFunction(void* ObjScript, char* Name)
 {
 	ObjectBasicScript* obj = (ObjectBasicScript*)ObjScript;
 	
 	Function* f = Function_New();
-	f->Func = Func;
+	f->Func = NULL;
 	if(f->Name != NULL)
 		free(f->Name);
 	f->Name = StrCopy(Name);
