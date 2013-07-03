@@ -42,9 +42,9 @@ int main(int argc, char* argv[])
 		
 		printf("Generating Binary...\n");
 		
-		FILE* runtime = fopen("ExecRuntime.exe", "rb");
+		FILE* runtime = fopen("execRuntime.exe", "rb");
 		if(!runtime)
-			runtime = fopen("ExecRuntime", "rb");
+			runtime = fopen("execRuntime", "rb");
 		if(runtime)
 		{
 			fseek(runtime, 0, SEEK_END);

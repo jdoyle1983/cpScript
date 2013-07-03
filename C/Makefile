@@ -1,3 +1,5 @@
+VERSION=1.0.0
+
 CC = gcc
 CP = gcc
 AR = ar
@@ -13,7 +15,7 @@ STATIC_BIN = ../Build/libCpScript.Asm.a
 SHARED_OBJDIR = obj/libCpScript.Asm/shared
 SHARED_OBJ = $(SHARED_OBJDIR)/State.o $(SHARED_OBJDIR)/Stack.o $(SHARED_OBJDIR)/Parser.o $(SHARED_OBJDIR)/MemoryBlockSetHeader.o $(SHARED_OBJDIR)/MemoryBlockHeader.o $(SHARED_OBJDIR)/MemoryBlock.o $(SHARED_OBJDIR)/List.o $(SHARED_OBJDIR)/LabelDef.o $(SHARED_OBJDIR)/Extensions.o $(SHARED_OBJDIR)/AssemblyToken.o 
 SHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
-SHARED_BIN = ../Build/libCpScript.Asm.Shared.so
+SHARED_BIN = ../Build/libCpScript.Asm.Shared.so.$(VERSION)
 
 OBJSTATIC_OBJDIR = obj/libCpScript.ObjectBasic/static
 OBJSTATIC_OBJ = $(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o $(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o $(OBJSTATIC_OBJDIR)/ObjBas_Function.o $(OBJSTATIC_OBJDIR)/ObjBas_Script.o $(OBJSTATIC_OBJDIR)/ObjBas_Token.o $(OBJSTATIC_OBJDIR)/Stack.o $(OBJSTATIC_OBJDIR)/List.o $(OBJSTATIC_OBJDIR)/Extensions.o
@@ -23,7 +25,7 @@ OBJSTATIC_BIN = ../Build/libCpScript.ObjectBasic.a
 OBJSHARED_OBJDIR = obj/libCpScript.ObjectBasic/shared
 OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)/ObjBas_Function.o $(OBJSHARED_OBJDIR)/ObjBas_Script.o $(OBJSHARED_OBJDIR)/ObjBas_Token.o $(OBJSHARED_OBJDIR)/Stack.o $(OBJSHARED_OBJDIR)/List.o $(OBJSHARED_OBJDIR)/Extensions.o
 OBJSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
-OBJSHARED_BIN = ../Build/libCpScript.ObjectBasic.Shared.so
+OBJSHARED_BIN = ../Build/libCpScript.ObjectBasic.Shared.so.$(VERSION)
 
 STDSTATIC_OBJDIR = obj/libCpStdLib/static
 STDSTATIC_OBJ = $(STDSTATIC_OBJDIR)/CpStdLib.o $(STDSTATIC_OBJDIR)/CpStdLib_ConsoleIO.o $(STDSTATIC_OBJDIR)/CpStdLib_FileIO.o $(STDSTATIC_OBJDIR)/CpStdLib_Math.o $(STDSTATIC_OBJDIR)/CpStdLib_Utilities.o
@@ -34,7 +36,7 @@ STDSHARED_OBJDIR = obj/libCpStdLib/shared
 STDSHARED_OBJ = $(STDSHARED_OBJDIR)/CpStdLib.o $(STDSHARED_OBJDIR)/CpStdLib_ConsoleIO.o $(STDSHARED_OBJDIR)/CpStdLib_FileIO.o $(STDSHARED_OBJDIR)/CpStdLib_Math.o $(STDSHARED_OBJDIR)/CpStdLib_Utilities.o
 STDSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
 STDSHARED_CLIBS = -lCpScript.Asm.Shared
-STDSHARED_BIN = ../Build/libCpStdLib.Shared.so
+STDSHARED_BIN = ../Build/libCpStdLib.Shared.so.$(VERSION)
 
 CPINT_OBJDIR = obj/cpInt
 CPINT_OBJ = $(CPINT_OBJDIR)/CpInt.o
@@ -58,12 +60,12 @@ ER_OBJDIR = obj/makeExec
 ER_OBJ = $(ER_OBJDIR)/ExecRuntime.o
 ER_CFLAGS = -Wall -O2
 ER_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN)
-ER_BIN = ../Build/ExecRuntime
+ER_BIN = ../Build/execRuntime
 
 ME_OBJ = $(ER_OBJDIR)/MakeExec.o
 ME_CFLAGS = -Wall -O2
 ME_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
-ME_BIN = ../Build/MakeExec
+ME_BIN = ../Build/makeExec
 
 all: static shared cpint cpobjcmp cpconsole er me
 

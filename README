@@ -1,42 +1,85 @@
-** This is the dev branch, for stability, please use one of the Stable branches **
+CpScript
+==================================
+
+*Note: Please use the stable branch for production implementations.
 
 
 
-The Repo Contains The 10 Projects That Make CpScript
+ANSI C
+----------------------------------
 
-libCpScript.Asm (C)
--  C CpScript Assembly Library (Core CpScript)
-   * Contains Both Static and Shared Libraries
-   * Contains the CpScript Standard Library
-   
-libCpScript.ObjectBasic (C)
--  C CpScript Object Basic Library
-   * Contains Both Static and Shared Libraries
-   * Generates Clean cpScript ASM
-   
-cpInt (C)
-- CpScript Runtime
-	* Runtime Environment For CpScript
-	* Loads and Runs CpScript Asm and CpScript Binary
-	* Compiler To Write CpScript Asm to Binary
+<table>
+  <tr>
+    <th>Project</th><th>Description</th><th>Notes</th>
+  </tr>
+  <tr>
+    <td>libCpScript.Asm</td>
+	<td>C CpScript Assembly Library (Core CpScript)</td>
+	<td>
+* Static and Shared Libs
+* CpScript Standard Library
+    </td>
+  </tr>
+  <tr>
+    <td>libCpScript.ObjectBasic</td>
+	<td>C CpScript Object Basic Library</td>
+	<td>
+* Contains Both Static and Shared Libs
+* Generates CpScript Assembly
+    </td>
+  </tr>
+  <tr>
+    <td>cpInt</td>
+	<td>CpScript Assembly Runtime</td>
+	<td>
+* Runtime Environment For Cp Script Assembly
+* Loads and Runs CpScript Assembly and CpScript Binary Script
+* Can Compile CpScript Assembly Into CpScript Binary
+    </td>
+  </tr>
+  <tr>
+    <td>cpObjCmp</td>
+	<td>Compiles CpScript Object Basic into CpScript Assembly</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>cpConsole</td>
+	<td>Interactive CpScript Object Basic Console</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>execRuntime</td>
+	<td>Runtime base app to create standalone Object Basic Script executables</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>makeExec</td>
+	<td>Tool to compile Object Basic Script into standalone executable.</td>
+	<td></td>
+  </tr>
+</table>
+	
+.NET
+----------------------------------
 
-libCpScript.Net.StdLib (C#)
--  C# Interop Library For libCpStdLib (P/Invoke Calls To C Library)
-   
-libCpScript.Net.Asm (C#)
--  C# Interop Library For libCpScript.Asm (P/Invoke Calls To C Library)
-
-libCpScript.Net.ObjectBasic (C#)
--  C# Interop Library Form libCpScript.ObjectBasic & libCpScript.Asm (P/Invoke Calls to C Library)
-
-cpObjCmp (C)
--  Utility To Compile Object Basic into CpScript Asm
-
-cpConsole (C)
--  Basic command line program to quickly test scripting libraries.
-
-ExecRuntime (C)
--  Runtime environment used to generated standalone executables.
-
-MakeExec (C)
--  Tool to compile Object Basic script to standalone executable.
+<table>
+  <tr>
+    <th>Project</th><th>Description</th><th>Notes</th>
+  </tr>
+  <tr>
+    <td>libCpScript.Net.StdLib</td>
+	<td>C# Interop Library For libCpStdLib</td>
+	<td>P/Invoke Calls To C Library</td>
+  </tr>
+  <tr>
+    <td>libCpScript.Net.Asm</td>
+	<td>C# Interop Library For libCpScript.Asm</td>
+	<td>P/Invoke Calls To C Library</td>
+  </tr>
+  <tr>
+    <td>libCpScript.Net.ObjectBasic</td>
+	<td>C# Interop Library For libCpScript.ObjectBasic & libCpScript.Asm</td>
+	<td>P/Invoke Calls To C Libraries</td>
+  </tr>
+</table>	
+	
