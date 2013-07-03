@@ -5,37 +5,37 @@ Email: jdoyle1983@gmail.com
 I...........Overview
 II.........Language Syntax
 	A...........Pre-Processor Directives
-	    1...........#HostFunction
+		1...........#HostFunction
 		2...........#Include
 		3...........#Lib
 		4...........Comments
-    B...........Variables
-	    1...........General Variables
+	B...........Variables
+		1...........General Variables
 		2...........Class Variables
 	C...........Operators
-	    1...........Numeric Operators
+		1...........Numeric Operators
 		2...........String Operators
 		3...........Logical Operators
 	D...........Control Flow
-	    1...........Function Declaration
-	    2...........Function Calls
+		1...........Function Declaration
+		2...........Function Calls
 		3...........Conditional Execution
 	E...........Loops
-	    1...........While Loop
+		1...........While Loop
 		2...........For Loop
 	F...........Classes
-	    1...........Defining a Class
+		1...........Defining a Class
 		2...........Accessing Class Properties
 		3...........Accessing Class Methods
 	G...........Classes Advanced
-	    1...........Extending Existing Classes
+		1...........Extending Existing Classes
 		2...........Static Class Methods
 	H...........The Standard Library
-	    1...........ConsoleIO
+		1...........ConsoleIO
 		2...........FileIO
 		3...........Math
 		4...........Utilities
-		    a...........Array Class
+			a...........Array Class
 III.........Example Code
 
 
