@@ -100,4 +100,35 @@ ANSI C
 	</td>
   </tr>
 </table>	
+
+Building
+==================================
+
+<ul>
+	<li>.NET
+		<ul>
+			<li>32Bit .NET dll's are pre-built, and under the Build directory</li>
+			<li>A MonoDevelop solution is available under the CSharp folder if you want to rebuild the .NET libraries.</li>
+		</ul>
+	</li>
+	<li>ANSI C
+		<ul>
+			<li>Requirements
+				<ul>
+					<li>Windows - MingW32 Build Environment OR Cygwin</li>
+					<li>Linux - Standard Build Environment</li>
+				</ul>
+			</li>
+			<li>Building
+				<ul>
+					<li>Enter the C directory</li>
+					<li>Windows - mingw32-make -f Makefile.win</li>
+					<li>Linux or Cygwin - make</li>
+				</ul>
+			</li>
+			<li>All files are compiled under the Build directory from the project root directory</li>
+		</ul>
+	</li>
+</ul>
+  
 	
