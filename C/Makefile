@@ -48,7 +48,24 @@ CPOBJCMP_CFLAGS = -Wall -O2
 CPOBJCMP_CLIBS = $(OBJSTATIC_BIN)
 CPOBJCMP_BIN = ../Build/cpObjCmp
 
-all: static shared cpint cpobjcmp
+CPCONSOLE_OBJDIR = obj/cpConsole
+CPCONSOLE_OBJ = $(CPCONSOLE_OBJDIR)/CpConsole.o
+CPCONSOLE_CFLAGS = -Wall -O2
+CPCONSOLE_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
+CPCONSOLE_BIN = ../Build/cpConsole
+
+ER_OBJDIR = obj/makeExec
+ER_OBJ = $(ER_OBJDIR)/ExecRuntime.o
+ER_CFLAGS = -Wall -O2
+ER_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN)
+ER_BIN = ../Build/ExecRuntime
+
+ME_OBJ = $(ER_OBJDIR)/MakeExec.o
+ME_CFLAGS = -Wall -O2
+ME_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
+ME_BIN = ../Build/MakeExec
+
+all: static shared cpint cpobjcmp cpconsole er me
 
 static: $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
 
@@ -57,6 +74,12 @@ shared: $(SHARED_BIN) $(STDSHARED_BIN) $(OBJSHARED_BIN)
 cpint: $(CPINT_BIN)
 
 cpobjcmp: $(CPOBJCMP_BIN)
+
+cpconsole: $(CPCONSOLE_BIN)
+
+er: $(ER_BIN)
+
+me: $(ME_BIN)
 
 clean:
 	rm -f $(STATIC_BIN)
@@ -67,6 +90,9 @@ clean:
 	rm -f $(OBJSTATIC_BIN)
 	rm -f $(OBJSHARED_BIN)
 	rm -f $(CPOBJCMP_BIN)
+	rm -f  $(CPCONSOLE_BIN)
+	rm -f  $(ER_BIN)
+	rm -f  $(ME_BIN)
 	rm -f $(STATIC_OBJDIR)/*.o
 	rm -f $(SHARED_OBJDIR)/*.o
 	rm -f $(STDSTATIC_OBJDIR)/*.o
@@ -75,12 +101,24 @@ clean:
 	rm -f $(OBJSTATIC_OBJDIR)/*.o
 	rm -f $(OBJSHARED_OBJDIR)/*.o
 	rm -f $(CPOBJCMP_OBJDIR)/*.o
+	rm -f $(CPCONSOLE_OBJDIR)\\*.o
+	rm -f $(ER_OBJDIR)\\*.o
+	rm -f $(ME_OBJDIR)\\*.o
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)
 	
 $(CPOBJCMP_BIN): $(CPOBJCMP_OBJ)
 	$(CP) $(CPOBJCMP_CFLAGS) $(CPOBJCMP_OBJ) $(CPOBJCMP_CLIBS) -o $(CPOBJCMP_BIN)
+
+$(CPCONSOLE_BIN): $(CPCONSOLE_OBJ)
+	$(CP) $(CPCONSOLE_CFLAGS) $(CPCONSOLE_OBJ) $(CPCONSOLE_CLIBS) -o $(CPCONSOLE_BIN)
+	
+$(ER_BIN): $(ER_OBJ)
+	$(CP) $(ER_CFLAGS) $(ER_OBJ) $(ER_CLIBS) -o $(ER_BIN)
+	
+$(ME_BIN): $(ME_OBJ)
+	$(CP) $(ME_CFLAGS) $(ME_OBJ) $(ME_CLIBS) -o $(ME_BIN)
 
 $(STATIC_BIN): $(STATIC_OBJ)
 	$(AR) rcs $(STATIC_BIN) $(STATIC_OBJ)
@@ -249,3 +287,12 @@ $(OBJSHARED_OBJDIR)/Extensions.o: src/Extensions.c
 	
 $(CPOBJCMP_OBJDIR)/CpObjCmp.o: src/CpObjCmp.c
 	$(CC) $(CPOBJCMP_CFLAGS) $(INC) -c src/CpObjCmp.c -o $(CPOBJCMP_OBJDIR)/CpObjCmp.o
+
+$(CPCONSOLE_OBJDIR)/CpConsole.o: src/CpConsole.c
+	$(CC) $(CPCONSOLE_CFLAGS) $(INC) -c src/CpConsole.c -o $(CPCONSOLE_OBJDIR)/CpConsole.o
+	
+$(ER_OBJDIR)/ExecRuntime.o: src/ExecRuntime.c
+	$(CC) $(ER_CFLAGS) $(INC) -c src/ExecRuntime.c -o $(ER_OBJDIR)/ExecRuntime.o
+	
+$(ER_OBJDIR)/MakeExec.o: src/MakeExec.c
+	$(CC) $(ME_CFLAGS) $(INC) -c src/MakeExec.c -o $(ER_OBJDIR)/MakeExec.o
