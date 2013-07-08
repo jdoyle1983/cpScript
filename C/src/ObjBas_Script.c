@@ -172,6 +172,7 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	List* _PreProcLines = List_New();
 	List* _SrcLines = Split(Script, "\n");
 	int i = 0;
+	int a = 0;
 	for(i = 0; i < List_Count(_SrcLines); i++)
 	{
 		char* s = List_StringAtIndex(_SrcLines, i);
@@ -218,9 +219,9 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 			List* _ThisSrcLines = Split(includeContent, "\n");
 			free(includeContent);
 			
-			for(i = 0; i < List_Count(_ThisSrcLines); i++)
+			for(a = 0; a < List_Count(_ThisSrcLines); a++)
 			{
-				char* s = List_StringAtIndex(_ThisSrcLines, i);
+				char* s = List_StringAtIndex(_ThisSrcLines, a);
 				char* t = StrTrim(s);
 				char* l = StrToLower(t);
 				if(strlen(t) > 0)
@@ -242,8 +243,8 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 				free(t);
 				free(l);
 			}
-			for(i = 0; i < List_Count(_ThisSrcLines); i++)
-				free(List_StringAtIndex(_ThisSrcLines, i));
+			for(a = 0; a < List_Count(_ThisSrcLines); a++)
+				free(List_StringAtIndex(_ThisSrcLines, a));
 			List_Delete(_ThisSrcLines);
 		}
 	}
