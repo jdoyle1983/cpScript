@@ -114,6 +114,7 @@ List* Parse(char* Input)
                 else if(strcmp(tVal, "popa") == 0) tok = tPopA;
                 else if(strcmp(tVal, "abs") == 0) tok = tAllocBlockSet;
                 else if(strcmp(tVal, "rbs") == 0) tok = tRefBlockSet;
+				else if(strcmp(tVal, "rebs") == 0) tok = tResBlockSet;
                 else if(strcmp(tVal, "fbs") == 0) tok = tDeallocBlockSet;
                 else if(strcmp(tVal, "pushb") == 0) tok = tPushB;
                 else if(strcmp(tVal, "popb") == 0) tok = tPopB;

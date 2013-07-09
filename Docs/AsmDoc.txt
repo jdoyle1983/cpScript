@@ -197,6 +197,8 @@ III.	Syntax
 					Allocate a new block set [7], with [9] blocks.
 				RBS [7]a,[7]b
 					Reference block set [7]a in [7]b (they share the same memory space).
+				REBS [7], [9]
+					Resize block set [7] with [9] blocks. Will allocate / free as necessary.
 				FBS [7]
 					Free block set.
 				PUSHB [7]

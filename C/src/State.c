@@ -430,6 +430,42 @@ char* ReadMemoryBlock(State* state, char* Id)
     return rValue;
 };
 
+void ResizeMemoryBlockSet(State* state, char* Id, int NewSize)
+{
+	MemoryBlockSetHeader* hed = NULL;
+    List* BlockHeaders = Stack_PeekList(state->_BlockHeaders);
+    int c = 0;
+    for(c = 0; c < BlockHeaders->Count; c++)
+    {
+        MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
+        if(strcmp(h->Name, Id) == 0)
+            hed = h;
+    }
+
+    if(hed != NULL)
+    {
+		int CurrentSize = hed->IndexOffset->Count;
+		if(CurrentSize != NewSize)
+		{
+			if(CurrentSize > NewSize)
+			{
+				for(c = CurrentSize - 1; c >= NewSize; c--)
+				{
+					MemoryBlock* mb = List_MemoryBlockAtIndex(state->_Memory, MemoryBlockSetHeader_GetOffset(hed, c));
+					MemoryBlock_Free(mb);
+					List_RemoveAt(hed->IndexOffset, c);
+				}
+			}
+			
+			if(CurrentSize < NewSize)
+			{
+				for(c = 0; c < (NewSize - CurrentSize); c++)
+					List_AddInt(hed->IndexOffset, -1);
+			}
+		}
+	}
+};
+
 void FreeMemoryBlockSet(State* state, char* Id)
 {
     MemoryBlockSetHeader* hed = NULL;
@@ -1435,6 +1471,19 @@ EXPORT short State_Iterate(void* S)
                 ReferenceMemoryBlockSet(state, src->Val, dest->Val);
                 state->_Offset++;
             } break;
+			
+			case tResBlockSet:
+			{
+				char* BlockName;
+				int Count = -1;
+				state->_Offset++;
+				BlockName = (List_AssemblyTokenAtIndex(state->_Tokens, state->_Offset))->Val;
+                state->_Offset++;
+                state->_Offset++;
+                Count = atoi(CurrentTok(state)->Val);
+				ResizeMemoryBlockSet(state, BlockName, Count);
+				state->_Offset++;
+			} break;
 
             case tDealloc:
             {

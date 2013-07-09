@@ -80,6 +80,8 @@ enum Token //Token values
 	tEndOfExec,
 
 	tLib,
+	
+	tResBlockSet,
 };
 
 #endif
