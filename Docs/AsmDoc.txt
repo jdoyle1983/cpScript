@@ -26,8 +26,8 @@ Forward
 	document is define the libCpScript language syntax.
 	
 	*NOTE*
-	libCpScript is still very much in it's infancy stage.  As such, it should
-	not be considered production ready.  Fundamental changes could still occure,
+	libCpScript is still very much in its infancy stage.  As such, it should
+	not be considered production ready.  Fundamental changes could still occur,
 	and I cannot guarantee backwards compatibility 
 
 
@@ -36,14 +36,14 @@ I.		Language Details
 			A. 	Overview
 		
 				libCpScript Assembly (lcsa) is a higher level assembly like language.
-				It's purpose is to allow increment execution, one opcode at a time.
+				It's purpose is to allow incremental execution, one op-code at a time.
 				This allows a higher level languages (such as libCpScript ObjectBasic)
 				to be compiled into a lower level, transportable code base.
 
 				lcsa utilizes a few unique features that enable it to function as a
 				stand alone language.  These items include block memory management,
 				variable recognition, custom library integration, host process function
-				importing, and typeless variables.
+				importing, and type-less variables.
 		
 			B.	Script State
 	
@@ -51,27 +51,27 @@ I.		Language Details
 				about the currently running script.  Any outside interaction with the
 				script is done through the state.
 			
-				Each "line" within an assembly file represents one opcode in lcsa.  The
-				state stores the current opcode, and increments it as execution occures.
-				Each time and JMP is called, it pushes it's current opcode index into a
-				special stack, sets the current opcode pointer to the location in the 
+				Each "line" within an assembly file represents one op-code in lcsa.  The
+				state stores the current op-code, and increments it as execution occurs.
+				Each time and JMP is called, it pushes its current op-code index into a
+				special stack, sets the current op-code pointer to the location in the 
 				JMP command, and continues execution from there. In addition to the 
-				opcode index being pushed onto the stack, any scoped variables are also
+				op-code index being pushed onto the stack, any scoped variables are also
 				pushed.
 			
-				When a RTN opcode is encountered, it pops the opcode location from the
+				When a RTN op-code is encountered, it pops the op-code location from the
 				stack, pops scoped variables from the stack, and continues execution on
-				the next opcode.
+				the next op-code.
 			
 				Variables are special types of storage space within lcsa.  The are stored
-				as typeless values (conversion is done during execution, depending on the 
+				as type-less values (conversion is done during execution, depending on the 
 				operation requested against that variable).  There are 3 distinct types
 				of variables in lcsa (see Section II).
 			
 				In addition, there is also a general stack used for passing parameters
 				and performing operations.  When a variable is pushed onto the stack, only
-				it's value is stored on the stack.  Most opcodes directly manipulate the
-				stack, so you should make yourself aware of what each opcode does.  This
+				its value is stored on the stack.  Most op-codes directly manipulate the
+				stack, so you should make yourself aware of what each op-code does.  This
 				information will allow you to better understand the state of the general
 				stack after each operation.
 
@@ -80,20 +80,20 @@ II.		Variables
 		
 			A. General Registers
 		
-				@[INTEGER] - 	A scoped general register.  Each time a JMP occures, these values are pushed onto a stack,
-								when a coorisponding RTN is called, these values are popped back into scope.
+				@[INTEGER] - 	A scoped general register.  Each time a JMP occurs, these values are pushed onto a stack,
+								when a corresponding RTN is called, these values are popped back into scope.
 			B. Block
 		
-				%[STRING]  - 	A scoped block, this block must be allocated with AB %[VAR].  Where [VAR] is a uniqe variable
-								name in scope.  It must also be freed with FB %[VAR].  Each time a JMP occures, these values are
-								pushed onto a stack, when a coorisponding RTN is called, these values are popped back into scope.
+				%[STRING]  - 	A scoped block, this block must be allocated with AB %[VAR].  Where [VAR] is a unique variable
+								name in scope.  It must also be freed with FB %[VAR].  Each time a JMP occurs, these values are
+								pushed onto a stack, when a corresponding RTN is called, these values are popped back into scope.
 							
 			C. Block Set
 			
 				$[STRING]  - 	A scoped block set, this is an indexed block that must be allocated with ABS $[VAR],[INTEGER]
 								Where [VAR] is a unique variable name in scope, and [INTEGER] is the number of blocks.  It must also
 								be freed with FBS $[VAR].  Individual values can be pushed on the stack with $[VAR]:[INDEX].  Each
-								time a JMP occures, these values are pushed onto a stack, when a coorisponding RTN is called, these
+								time a JMP occurs, these values are pushed onto a stack, when a corresponding RTN is called, these
 								values are popped back into scope.
 
 							
@@ -136,19 +136,19 @@ III.	Syntax
 				MOD
 					Pop the last 2 values from the stack, divide them, push the remainder onto the stack.
 				CAT
-					Pop the last 2 values from the stack, concat them, push the result onto the stack.
+					Pop the last 2 values from the stack, concatenate them, push the result onto the stack.
 				NEG
 					Pop the last value from the stack, negate it, push it back onto the stack.
 				LBL [8]
-					Assign a jumpable location in the script.
+					Assign a jump-able location in the script.
 				JMP [8]
-					Push the next offset onto the stack, jump to this offset of this label (scoping occures).
+					Push the next offset onto the stack, jump to this offset of this label (scoping occurs).
 				LJMP [8]
 					Jump to the offset, no scoping, no storing of last position.
 				MOV [2],[4]
 					Move the value of [4] into [2]
 				RTN
-					Return to the last offset pushed onto the stack, free and descope variables.
+					Return to the last offset pushed onto the stack, free and de-scope variables.
 				JE [4]a,[4]b,[8]
 					If [4]a is equal to [4]b, jump to [8]
 				JN [4]a,[4]b,[8]
@@ -182,7 +182,7 @@ III.	Syntax
 				CL
 					Pop the last 2 values from the stack, if the first is less than the second, push a 1 on the stack, otherwise a 0.
 				CLE
-					Pop the last 2 values from the stack, if the first is less than or equal to the second, push a 1 on the stack, othewise a 0.
+					Pop the last 2 values from the stack, if the first is less than or equal to the second, push a 1 on the stack, otherwise a 0.
 				CO
 					Pop the last 2 values from the stack, or them, push the result on the stack.
 				CA
@@ -190,7 +190,7 @@ III.	Syntax
 				CI
 					Pop the last value from the stack, invert it (false->true,true-false), push the result on the stack.
 				JMPO [6]
-					Jump to offset specified in [6] (scoping occures)
+					Jump to offset specified in [6] (scoping occurs)
 				LJMPO [6]
 					Jump to offset specified in [6] (no scoping)
 				ABS [7],[9]

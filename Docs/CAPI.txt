@@ -86,7 +86,7 @@ void State_RegisterFunction(void* State, char* Name, void (*UserFunction)(void*)
 
 
 short State_Iterate(void* State);
-	Execute on assembly instructure within the state.
+	Execute one assembly instruction within the state.
 	
 	* State - The assembly state to iterate.
 

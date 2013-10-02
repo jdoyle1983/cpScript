@@ -43,11 +43,11 @@ Forward
 		This document assumes a basic understanding of programming.  This document
 		is not intended to teach basic programming skills.  The only purpose of this
 		document is define the libCpScript ObjectBasic language syntax.  As such,
-		conecepts such as loops, conditional statements, and variables will not be
+		concepts such as loops, conditional statements, and variables will not be
 		expressly defined.
 		
 		*NOTE*
-		libCpScript ObjectBasic is still very much in it's infancy stage.  It may
+		libCpScript ObjectBasic is still very much in its infancy stage.  It may
 		have major fundamental changes in the future and therefore should not be
 		considered production stable.
 
@@ -63,7 +63,7 @@ II.		Language Syntax
 		A.	Pre Processor Directives
 			
 			These directives can be used to instruct the compiler about additional
-			resources availble to the script.
+			resources available to the script.
 
 				1. 	#HostFunction [FUNC]
 				
@@ -85,33 +85,33 @@ II.		Language Syntax
 					
 				4.	Comments
 				
-					If the first 2 non whitespace characters on a line begin
+					If the first 2 non white space characters on a line begin
 					with --, the entire line is treated as a comment, and
-					ommited from compilation.
+					omitted from compilation.
 					
-					Exmample:
+					Example:
 					
 					--My Comment
 					     -- Another Comment
 					
 		B.	Variables
 			
-			Variables in lcsob are typeless (excluding class variables).  As
+			Variables in lcsob are type-less (excluding class variables).  As
 			such, there are no limitations to operations performed on a variable,
 			even in cases where it may cause errors.  If you attempt to add 2
-			variables, each typeless variable will be first converted to a double,
-			and a typeless result is returned.  Currently, attempting a math
+			variables, each type-less variable will be first converted to a double,
+			and a type-less result is returned.  Currently, attempting a math
 			operation on a string is undefined, and will more than likely crash
 			the host application.  (This is a known short coming, and will be handled
 			correctly before production release).
 		
 				1.	General Variables
 					
-					General variables are typeless values.  They become whatever type is necessary
+					General variables are type-less values.  They become whatever type is necessary
 					to perform an operation. (If you attempt a math operation, they will be converted
 					to numbers to perform said operation).  Variables can be initialized without a
 					value, or with any valid operation syntax.  A variable defined with no initial
-					value will have the equivilant of a blank string for a value.
+					value will have the equivalent of a blank string for a value.
 					
 					Un-Initialized Declaration:
 					VAR MyVar
@@ -154,11 +154,11 @@ II.		Language Syntax
 				
 					Variables are converted to strings, then the string operations are performed.
 				
-					..				Concat 2 strings
+					..				Concatenate 2 strings
 				
 				3.	Logical Operators
 				
-					Variables are converted to booleans, then the logical operations are performed.
+					Variables are converted to boolean values, then the logical operations are performed.
 				
 					==				Return true if values are the same, otherwise false
 					!=				Return true if values are not the same, otherwise false
@@ -166,7 +166,7 @@ II.		Language Syntax
 					>=				Return true if value1 is greater than or equal to value2, otherwise false
 					<				Return true if value1 is less than value2, otherwise false
 					<=				Return true if value1 is less than or equal to value2, otherwise false
-					!				Invert bool value (false->true, true->false)
+					!				Invert boolean value (false->true, true->false)
 					&&				Return true if value1 is true and value2 is true
 					||				Return true if value1 is true or value2 is true
 				
@@ -176,8 +176,8 @@ II.		Language Syntax
 				1.	Function Declaration
 				
 					Functions can be declared with or without parameters, and with or without a return
-					value.  Since all variables are typeless, only the parameter name is required as a 
-					placeholder.  One additional notation is available when passing a class instance as
+					value.  Since all variables are type-less, only the parameter name is required as a 
+					place holder.  One additional notation is available when passing a class instance as
 					a parameter, it is required to tell the compiler what kind of class object is being
 					passed.
 					
@@ -291,7 +291,7 @@ II.		Language Syntax
 						* Initial property values should be set within the Init method.
 						* Classes cannot currently contain properties that are other class instances.
 						* The 2 reserved keywords within a class are PROP and METHOD.
-						* A PROP is a class property (a typeless variable, that retains it's value
+						* A PROP is a class property (a type-less variable, that retains it's value
 						  within the class).
 						* A METHOD is a function that has access to the classes local properties.
 						* Method parameters follow all the same rules as function parameters (type hinting, etc.)
@@ -346,8 +346,8 @@ II.		Language Syntax
 					all properties and methods of it's parent class (this continues all the way up to
 					the original base class).
 					
-					In addition, you can override parent class methods.  Once a class has overriden a parent
-					method, and derivitives of this class, will used the overriden method.
+					In addition, you can override parent class methods.  Once a class has overridden a parent
+					method, and derivatives of this class, will used the overridden method.
 					
 					When an instance of a derived class is created, it starts at the base class, and calls
 					the init method of each derived class in the chain.
@@ -444,7 +444,7 @@ II.		Language Syntax
 				
 				2.	FileIO
 				
-					File IO requires creating an instace of the File class.
+					File IO requires creating an instance of the File class.
 					Once the an instance is created, you can open / create files and
 					manipulate them using the following methods:
 					
