@@ -28,6 +28,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+/*
+	Various helper methods used by Object Basic and Cp Asm
+*/
+
 char* StrToLowTrim(char* SrcStr)
 {
     char* lStr = StrToLower(SrcStr);
@@ -141,17 +145,6 @@ char* SubStr(char* Src, int Start, int End)
 	r[c] = '\0';
 	
 	return r;
-	
-	/*
-	int Len = End - Start + 2;
-	char* r = (char*)malloc(sizeof(char) * Len);
-	int i = 0;
-	for(i = Start; i <= End && i < strlen(Src); i++)
-		r[i - Start] = Src[i];
-	r[Len - 1] = '\0';
-	char* r2 = StrTrim(r);
-	free(r);
-	return r2;*/
 };
 
 List* Split(char* SrcStr, char* DelimChars)

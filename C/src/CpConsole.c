@@ -6,6 +6,7 @@
 #include <CpStdLib.h>
 #include <Extensions.h>
 
+//meh, does the trick, probably a better way...
 char* DoAppend(char* src, char* toappend)
 {
 	char* r = (char*)malloc(sizeof(char) * (strlen(src) + strlen(toappend) + 2));
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
 		char* tmpIn = (char*)malloc(sizeof(char) * 5000);
 		tmpIn = fgets(tmpIn, 5000, stdin);
 		char* lowTrim = StrToLowTrim(tmpIn);
-		if(strcmp(lowTrim, ".complete") == 0)
+		if(strcmp(lowTrim, ".complete") == 0)  //User is ready to execute script, compile
 		{
 			void* Script = ObjScript_New();
 			ObjScript_Load(Script, srcText);
@@ -60,11 +61,11 @@ int main(int argc, char* argv[])
 			srcText = (char*)malloc(sizeof(char) * 1);
 			srcText = AddStdHeader(srcText);
 		}
-		else if(strcmp(lowTrim, ".exit") == 0)
+		else if(strcmp(lowTrim, ".exit") == 0) //User wants to close the program
 		{
 			ExitFlag = 1;
 		}
-		else
+		else //Add to the script
 		{
 			srcText = DoAppend(srcText, tmpIn);
 		}

@@ -4,6 +4,19 @@
 #include <libCpScript.Asm.h>
 #include <CpStdLib.h>
 
+/*
+	Compiled script is laid out like this:
+	| A | B | C |
+	
+	A: This compiled exe
+	B: Compiled assembly script
+	C: Size of compiled assembly script
+	
+	1) Reads script size from end of file.
+	2) Reads script from end of file.
+	3) Executes script from Main function.
+*/
+
 int main(int argc, char* argv[])
 {
 	FILE* f = fopen(argv[0], "rb");

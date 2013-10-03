@@ -31,6 +31,8 @@
 AssemblyToken* AssemblyToken_New(short Tok, const char* Val)
 {
 	AssemblyToken* t = (AssemblyToken*)malloc(sizeof(AssemblyToken));
+	
+	//Only allocate space to store a string if necessary.
 	short shouldAllocString = 1;
 
 	t->Tok = Tok;

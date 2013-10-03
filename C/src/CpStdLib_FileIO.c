@@ -28,6 +28,7 @@
 #include <malloc.h>
 #include <string.h>
 
+//This block was found on the net somewhere, author and credit to be added when I figure out where....
 char * Internal_FileGetLine(FILE* f)
 {
     char * line = malloc(100), * linep = line;
