@@ -227,6 +227,7 @@ void AllocateMemoryBlockSet(State* state, char* Id, int Count)
             {
                 MemoryBlockSetHeader_SetOffset(h, i, c);
                 found = 1;
+				break;
             }
         }
 
@@ -256,6 +257,7 @@ void AllocateMemoryBlock(State* state, char* Id)
             h = MemoryBlockHeader_New(Id, c);
             MemoryBlock_SetValue(b, "");
             found = 1;
+			break;
         }
     }
 
@@ -356,6 +358,7 @@ void SetMemoryBlockSetIndex(State* state, char* Id, char* Value)
             int mbOffset = MemoryBlockSetHeader_GetOffset(h, Index - 1);
             MemoryBlock* b = List_MemoryBlockAtIndex(state->_Memory, mbOffset);
             MemoryBlock_SetValue(b, Value);
+			break;
         }
     }
 
@@ -374,6 +377,7 @@ void SetMemoryBlock(State* state, char* Id, char* Value)
         {
             MemoryBlock* b = List_MemoryBlockAtIndex(state->_Memory, h->Offset);
             MemoryBlock_SetValue(b, Value);
+			break;
         }
     }
 };
@@ -404,6 +408,7 @@ char* ReadMemoryBlockSetIndex(State* state, char* Id)
             int mbOffset = MemoryBlockSetHeader_GetOffset(h, Index - 1);
             MemoryBlock* b = List_MemoryBlockAtIndex(state->_Memory, mbOffset);
             rValue = b->Value;
+			break;
         }
     }
 
@@ -425,6 +430,7 @@ char* ReadMemoryBlock(State* state, char* Id)
         {
             MemoryBlock* mb = List_MemoryBlockAtIndex(state->_Memory, h->Offset);
             rValue = mb->Value;
+			break;
         }
     }
     return rValue;
@@ -439,7 +445,10 @@ void ResizeMemoryBlockSet(State* state, char* Id, int NewSize)
     {
         MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
         if(strcmp(h->Name, Id) == 0)
+		{
             hed = h;
+			break;
+		}
     }
 
     if(hed != NULL)
@@ -475,7 +484,10 @@ void FreeMemoryBlockSet(State* state, char* Id)
     {
         MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
         if(strcmp(h->Name, Id) == 0)
+		{
             hed = h;
+			break;
+		}
     }
 
     if(hed != NULL)
@@ -499,6 +511,7 @@ void FreeMemoryBlock(State* state, char* Id)
         {
             MemoryBlock* mb = List_MemoryBlockAtIndex(state->_Memory, h->Offset);
             MemoryBlock_Free(mb);
+			break;
         }
     }
 };
@@ -928,6 +941,7 @@ EXPORT short State_Iterate(void* S)
                         for(i = 0; i < h->IndexOffset->Count; i++)
                             State_PushInt(state, MemoryBlockSetHeader_GetOffset(h, i));
                         State_PushInt(state, h->IndexOffset->Count);
+						break;
                     }
                 }
                 state->_Offset++;
@@ -950,7 +964,10 @@ EXPORT short State_Iterate(void* S)
                 {
                     MemoryBlockHeader* h = List_MemoryBlockHeaderAtIndex(Headers, c);
                     if(strcmp(h->Name, CurrentTok(state)->Val) == 0)
+					{
                         targetOffset = h->Offset;
+						break;
+					}
                 }
                 if(targetOffset == -1)
                 {
@@ -981,7 +998,10 @@ EXPORT short State_Iterate(void* S)
                 {
                     MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
                     if(strcmp(h->Name, CurrentTok(state)->Val) == 0)
+					{
                         hed = h;
+						break;
+					}
                 }
 
                 if(hed == NULL)
@@ -1025,6 +1045,7 @@ EXPORT short State_Iterate(void* S)
                     {
                         h->Offset = State_PopInt(state);
                         found = 1;
+						break;
                     }
                 }
 
@@ -1214,7 +1235,10 @@ EXPORT short State_Iterate(void* S)
                 {
                     LabelDef* d = List_LabelDefAtIndex(state->_Labels, c);
                     if(strcmp(d->Label, labelTitle) == 0)
+					{
                         l = d;
+						break;
+					}
                 }
                 if(l == NULL)
                 {
@@ -1270,7 +1294,10 @@ EXPORT short State_Iterate(void* S)
                 {
                     LabelDef* d = List_LabelDefAtIndex(state->_Labels, c);
                     if(strcmp(d->Label, labelTitle) == 0)
+					{
                         l = d;
+						break;
+					}
                 }
                 if(l == NULL)
                 {
@@ -1395,7 +1422,10 @@ EXPORT short State_Iterate(void* S)
                 {
                     LabelDef* l = List_LabelDefAtIndex(state->_Labels, c);
                     if(strcmp(l->Label, p3->Val) == 0)
+					{
                         newOffset = l->Offset;
+						break;
+					}
                 }
 
                 if(newOffset == -1)
@@ -1526,7 +1556,10 @@ EXPORT void State_LoadMethod(void* S, char* Name)
     {
         LabelDef* l = List_LabelDefAtIndex(state->_Labels, i);
         if(strcmp(l->Label, Name) == 0 && l->Offset >= 0)
+		{
             state->_Offset = l->Offset;
+			break;
+		}
     }
 };
 
