@@ -6,19 +6,38 @@
 
 void ShowHelp()
 {
-	printf("MakeExec [SrcScript] [OutExec]\n");
+	printf("\n");
+	printf("MakeExec -t[asm|obj] [SrcScript] [OutExec]\n\n");
+	printf("Examples:\n");
+	printf("    MakeExe -tasm MyScript.asm MyScriptExe.exe\n");
+	printf("    MakeExe -tobj MyScript.cps MyObjScriptExe.exe\n");
+	printf("\n\n");
 };
 
 int main(int argc, char* argv[])
 {
-	if(argc != 3)
+	if(argc != 4)
 		ShowHelp();
 	else
 	{
-		char* SrcScript = argv[1];
-		char* DestExec = argv[2];
+		short AsmScript = 0;
 		
-		void* Script = ObjScript_New();
+		if(strcmp(argv[1], "-tasm") == 0)
+			AsmScript = 1;
+		else if(strcmp(argv[1], "-tobj") == 0)
+			AsmScript = 0;
+		else
+		{
+			ShowHelp();
+			exit(0);
+		}
+	
+		char* SrcScript = argv[2];
+		char* DestExec = argv[3];
+		
+		void* binData = NULL;
+		long binSize = 0;
+		
 		FILE* srcFile = fopen(SrcScript, "rb");
 		fseek(srcFile, 0, SEEK_END);
 		long srcSize = ftell(srcFile);
@@ -28,16 +47,28 @@ int main(int argc, char* argv[])
 		srcText[srcSize] = '\0';
 		fclose(srcFile);
 		
-		ObjScript_Load(Script, srcText);
-		void* State = State_New(ObjScript_GetAsm(Script));
-		void* binData = NULL;
-		long binSize = 0;
+		if(AsmScript == 0)
+		{
+			void* Script = ObjScript_New();	
+			ObjScript_Load(Script, srcText);
+			void* State = State_New(ObjScript_GetAsm(Script));
 		
-		printf("Compiling Script...\n");
+			printf("Compiling Script...\n");
 		
-		binData = State_Compile(State, &binSize);
-		State_Delete(State);		
-		ObjScript_Delete(Script);
+			binData = State_Compile(State, &binSize);
+			State_Delete(State);		
+			ObjScript_Delete(Script);
+		}
+		else
+		{
+			void* State = State_New(srcText);
+			
+			printf("Compiling Script...\n");
+			
+			binData = State_Compile(State, &binSize);
+			State_Delete(State);
+		}
+		
 		free(srcText);
 		
 		printf("Generating Binary...\n");

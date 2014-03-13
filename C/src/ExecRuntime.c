@@ -19,7 +19,24 @@
 
 int main(int argc, char* argv[])
 {
-	FILE* f = fopen(argv[0], "rb");
+	char* This1 = (char*)malloc(sizeof(char) * (strlen(argv[0]) + 1));
+	char* This2 = (char*)malloc(sizeof(char) * (strlen(argv[0]) + 5));
+	
+	sprintf(This1, "%s", argv[0]);
+	sprintf(This2, "%s.exe", argv[0]);
+		
+	FILE* f = NULL;
+	
+	f = fopen(This1, "rb");
+	if(!f)
+		f = fopen(This2, "rb");
+		
+	if(!f)
+	{
+		printf("FAULT: Could Not Find Self?\n");
+		exit(-1);
+	}
+	
 	fseek(f, sizeof(long) * -1, SEEK_END);
 	long RealSize = 0;
 	fread(&RealSize, sizeof(long), 1, f);
@@ -27,6 +44,9 @@ int main(int argc, char* argv[])
 	void* b = malloc(RealSize);
 	fread(b, 1, RealSize, f);
 	fclose(f);
+	
+	free(This1);
+	free(This2);
 	
 	void* State = State_NewFromCompiled(b, RealSize);
 
