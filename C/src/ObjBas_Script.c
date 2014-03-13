@@ -470,7 +470,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 			case OpLessThan: AppendAsmLine(obj, "CL"); break;
 			case OpLessThanOrEqualTo: AppendAsmLine(obj, "CLE"); break;
 			case OpEqualTo: AppendAsmLine(obj, "CE"); break;
-			case OpNotEqualTo: AppendAsmLine(obj, "CE"); break;
+			case OpNotEqualTo: AppendAsmLine(obj, "CN"); break;
 			case OpNot: AppendAsmLine(obj, "CI"); break;
 		}
 	}
