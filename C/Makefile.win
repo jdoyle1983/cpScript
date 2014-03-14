@@ -67,7 +67,7 @@ ME_CFLAGS = -Wall -O2
 ME_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
 ME_BIN = ..\Build\makeExec.exe
 
-all: static shared cpint cpobjcmp cpconsole er me
+all: static shared cpint cpobjcmp cpconsole er me objheaders
 
 static: $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
 
@@ -82,6 +82,16 @@ cpconsole: $(CPCONSOLE_BIN)
 er: $(ER_BIN)
 
 me: $(ME_BIN)
+
+libdir:
+	cmd /c mkdir ..\\Build\\Lib
+
+objheaders: libdir
+	cmd /c copy /y ObjectBasicHeaders\\*.obh ..\\Build\\Lib
+	
+lightcheaders: libdir
+	cmd /c copy /y LightCHeaders\\*.lch ..\\Build\\Lib
+	cmd /c copy /y LightCLibraries\\*.lcl ..\\Build\\Lib
 
 clean:
 	cmd /c del /f $(STATIC_BIN)
@@ -105,6 +115,9 @@ clean:
 	cmd /c del /f $(CPOBJCMP_OBJDIR)\\*.o
 	cmd /c del /f $(CPCONSOLE_OBJDIR)\\*.o
 	cmd /c del /f $(ER_OBJDIR)\\*.o
+	cmd /c del /f ..\\Build\Lib\\*.obh
+	cmd /c del /f ..\\Build\Lib\\*.lch
+	cmd /c del /f ..\\Build\Lib\\*.lcl
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)

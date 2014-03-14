@@ -80,7 +80,7 @@ CLASS File
 	END METHOD
 	
 	METHOD ReadString()
-		__StdLib__FileIO__ReadString(FileObj)
+		RETURN __StdLib__FileIO__ReadString(FileObj)
 	END METHOD
 	
 END CLASS
