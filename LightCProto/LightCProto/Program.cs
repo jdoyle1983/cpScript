@@ -9,6 +9,21 @@ namespace LightCProto
     {
         static void Main(string[] args)
         {
+            string OutputFile = "Out.asm";
+            List<string> SourceFiles = new List<string>();
+
+            for(int i = 0; i < args.Length; i++)
+            {
+                if(args[i] == "-o")
+                {
+                    i++;
+                    OutputFile = args[i];
+                }
+                else
+                    SourceFiles.Add(args[i]);
+            }
+            
+
         }
     }
 }
