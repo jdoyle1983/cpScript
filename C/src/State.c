@@ -620,8 +620,15 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
         memcpy(&tt, Script + offset, sizeof(char));
         offset += sizeof(char);
         int strIdx = -1;
-        memcpy(&strIdx, Script + offset, sizeof(int));
-        offset += sizeof(int);
+		
+		//Only attempt to get the string index if it's a token that uses a string
+		
+		if(tt == tRegister || tt == tMemoryVar || tt == tLiteral || tt == tQuotedLiteral)
+        {
+			memcpy(&strIdx, Script + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+		
         char* strVal = NULL;
         if(strIdx != -1)
             strVal = List_StringAtIndex(StrValues, strIdx);
@@ -707,15 +714,21 @@ EXPORT void* State_Compile(void* S, long* len)
         CompiledAssemblyToken* ct = List_CompiledAssemblyTokenAtIndex(CmpToks, i);
         char tt = (char)ct->Tok;
         int strIdx = ct->StrIdx;
-
+		
         offset = *len;
         *len += sizeof(char);
         outData = realloc(outData, *len);
         memcpy(outData + offset, &tt, sizeof(char));
         offset = *len;
-        *len += sizeof(int);
-        outData = realloc(outData, *len);
-        memcpy(outData + offset, &strIdx, sizeof(int));
+		
+		//Only write the string index if it's a token that uses a string
+		
+		if(tt == tRegister || tt == tMemoryVar || tt == tLiteral || tt == tQuotedLiteral)
+        {
+			*len += sizeof(int);
+			outData = realloc(outData, *len);
+			memcpy(outData + offset, &strIdx, sizeof(int));
+		}
     }
 
     List_Delete(StrValues);
