@@ -509,6 +509,36 @@ CodeBlock* getCurrentBlock(ObjectBasicScript* obj)
 	return r;
 }
 
+void ParseAsmBlock(ObjectBasicScript* obj)
+{
+	obj->CurrentBlock++;
+	int CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	
+	char* NewLine = (char*)malloc(sizeof(char) * 5000);
+	
+	while(CurrentTokenType != ExEndAsmBlock)
+	{
+		char* AsmLine = (char*)malloc(sizeof(char) * 5000);
+		strcpy(AsmLine, "");
+		
+		int i = 0;
+		
+		for(i = 0; i < List_Count(getCurrentBlock(obj)->Tokens); i++)
+		{
+			strcat(AsmLine, List_TokenAtIndex(getCurrentBlock(obj)->Tokens, i)->Value);
+			strcat(AsmLine, "");
+		}
+		
+		AppendAsmLine(obj, AsmLine);
+		free(AsmLine);
+			
+		obj->CurrentBlock++;
+		CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	}
+	
+	free(NewLine);
+}
+
 void ParseIfBlock(ObjectBasicScript* obj)
 {
 	char* NewLine = (char*)malloc(sizeof(char) * 5000);
@@ -732,6 +762,51 @@ void ParseBlock(ObjectBasicScript* obj)
 		case ExWhile: ParseWhileBlock(obj); break;
 		case ExVar: ParseVarBlock(obj); break;
 		case ExFor: ParseForBlock(obj); break;
+		case ExAsmBlock: ParseAsmBlock(obj); break;
+		case ExAsmPush:
+		{
+			int wasFound = 0;
+			for(e = 0; e < List_Count(obj->CurrentClassVars); e++)
+			{
+				char* cv = List_StringAtIndex(obj->CurrentClassVars, e);
+				if(strcmp(cv, List_TokenAtIndex(thisBlock->Tokens, 1)->Value) == 0)
+				{
+					wasFound = 1;
+					AppendAsm(obj, "PUSHB $");
+					AppendAsmLine(obj, cv);
+				}
+				//free(cv);
+			}
+			if(wasFound == 0)
+			{
+				char* Var = getVarOrLit(obj, List_TokenAtIndex(thisBlock->Tokens, 1)->Value);
+				AppendAsm(obj, "PUSH ");
+				AppendAsmLine(obj, Var);
+				free(Var);
+			}
+		} break;
+		case ExAsmPop:
+		{
+			int wasFound = 0;
+			for(e = 0; e < List_Count(obj->CurrentClassVars); e++)
+			{
+				char* cv = List_StringAtIndex(obj->CurrentClassVars, e);
+				if(strcmp(cv, List_TokenAtIndex(thisBlock->Tokens, 1)->Value) == 0)
+				{
+					wasFound = 1;
+					AppendAsm(obj, "POPB $");
+					AppendAsmLine(obj, cv);
+				}
+				//free(cv);
+			}
+			if(wasFound == 0)
+			{
+				char* Var = getVarOrLit(obj, List_TokenAtIndex(thisBlock->Tokens, 1)->Value);
+				AppendAsm(obj, "POP ");
+				AppendAsmLine(obj, Var);
+				free(Var);
+			}
+		} break;
 		default:
 		{
 			if(List_Count(thisBlock->Tokens) >= 2 && List_TokenAtIndex(thisBlock->Tokens, 1)->Type == Assignment)

@@ -295,6 +295,8 @@ List* Tokenizer_ParseExtended(List* Input)
 			else if(strcmp(tvl, "extends") == 0) List_Add(Toks, Token_NewWithValue(ExExtends, "EXTENDS"));
 			else if(strcmp(tvl, "override") == 0) List_Add(Toks, Token_NewWithValue(ExOverride, "OVERRIDE"));
 			else if(strcmp(tvl, "static") == 0) List_Add(Toks, Token_NewWithValue(ExStatic, "STATIC"));
+			else if(strcmp(tvl, "asmpush") == 0) List_Add(Toks, Token_NewWithValue(ExAsmPush, "ASMPUSH"));
+			else if(strcmp(tvl, "asmpop") == 0) List_Add(Toks, Token_NewWithValue(ExAsmPop, "ASMPOP"));
 			else if(strcmp(tvl, "if") == 0)
 			{
 				Token* lastToken = LastToken(Toks);
@@ -311,6 +313,13 @@ List* Tokenizer_ParseExtended(List* Input)
 					ReplaceLastToken(Toks, Token_NewWithValue(ExEndFunction, "END FUNCTION"));
 				else
 					List_Add(Toks, Token_NewWithValue(ExFunction, "FUNCTION"));
+			}
+			else if(strcmp(tvl, "asmblock") == 0)
+			{
+				if(LastToken(Toks)->Type == ExEnd)
+					ReplaceLastToken(Toks, Token_NewWithValue(ExEndAsmBlock, "END ASMBLOCK"));
+				else
+					List_Add(Toks, Token_NewWithValue(ExAsmBlock, "ASMBLOCK"));
 			}
 			else if(strcmp(tvl, "class") == 0)
 			{

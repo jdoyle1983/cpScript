@@ -45,42 +45,31 @@ namespace LightCProto
 
         //Extended Types
 
-        ExFunction,
-        ExEndFunction,
-
         ExReturn,
 
-        ExVar,
+        ExInt,
+        ExDouble,
+        ExBool,
+        ExString,
+        ExVoid,
+        ExClassInstance,
+        ExClassAction,
 
         ExIf,
         ExElseIf,
         ExElse,
-        ExThen,
-        ExEndIf,
-
-
         ExFor,
-        ExTo,
-        ExStep,
-        ExNext,
-
         ExWhile,
-        ExLoop,
-
-        ExEnd,
-
-        ExClassAction,
 
         ExClass,
-        ExEndClass,
-        ExMethod,
-        ExEndMethod,
-        ExProperty,
-        ExExtends,
+        ExStruct,
         ExOverride,
         ExStatic,
 
-        ExTypeHint,
+        ExPublic,
+        ExPrivate,
+
+        ExInjectAsm,
     }
 
     public class Token
@@ -230,61 +219,29 @@ namespace LightCProto
                 {
                     switch (t.Value.ToLower().Trim())
                     {
-                        case "function":
-                            {
-                                if (LastToken.Type == TokenType.ExEnd)
-                                    ReplaceLastToken(new Token(TokenType.ExEndFunction, "END FUNCTION"));
-                                else
-                                    Toks.Add(new Token(TokenType.ExFunction, "FUNCTION"));
-                            } break;
-                        case "end":
-                            {
-                                Toks.Add(new Token(TokenType.ExEnd, "END"));
-                            } break;
                         case "if":
                             {
-                                if (LastToken.Type == TokenType.ExEnd)
-                                    ReplaceLastToken(new Token(TokenType.ExEndIf, "END IF"));
-                                else if (LastToken.Type == TokenType.ExElse)
-                                    ReplaceLastToken(new Token(TokenType.ExElseIf, "ELSE IF"));
+                                if (LastToken.Type == TokenType.ExElse)
+                                    ReplaceLastToken(new Token(TokenType.ExElseIf, "else if"));
                                 else
-                                    Toks.Add(new Token(TokenType.ExIf, "IF"));
+                                    Toks.Add(new Token(TokenType.ExIf, "if"));
                             } break;
-                        case "else": Toks.Add(new Token(TokenType.ExElse, "ELSE")); break;
-                        case "then": Toks.Add(new Token(TokenType.ExThen, "THEN")); break;
-                        case "while": Toks.Add(new Token(TokenType.ExWhile, "WHILE")); break;
-                        case "loop": Toks.Add(new Token(TokenType.ExLoop, "LOOP")); break;
-                        case "for": Toks.Add(new Token(TokenType.ExFor, "FOR")); break;
-                        case "to": Toks.Add(new Token(TokenType.ExTo, "TO")); break;
-                        case "step": Toks.Add(new Token(TokenType.ExStep, "STEP")); break;
-                        case "next": Toks.Add(new Token(TokenType.ExNext, "NEXT")); break;
-                        case "var": Toks.Add(new Token(TokenType.ExVar, "VAR")); break;
-                        case "return": Toks.Add(new Token(TokenType.ExReturn, "RETURN")); break;
-                        case "class":
-                            {
-                                if (LastToken.Type == TokenType.ExEnd)
-                                    ReplaceLastToken(new Token(TokenType.ExEndClass, "END CLASS"));
-                                else
-                                    Toks.Add(new Token(TokenType.ExClass, "CLASS"));
-                            } break;
-                        case "prop": Toks.Add(new Token(TokenType.ExProperty, "PROP")); break;
-                        case "method":
-                            {
-                                if (LastToken.Type == TokenType.ExEnd)
-                                    ReplaceLastToken(new Token(TokenType.ExEndMethod, "END METHOD"));
-                                else
-                                    Toks.Add(new Token(TokenType.ExMethod, "METHOD"));
-                            } break;
-                        case "extends": Toks.Add(new Token(TokenType.ExExtends, "EXTENDS")); break;
-                        case "override": Toks.Add(new Token(TokenType.ExOverride, "OVERRIDE")); break;
-                        case "static": Toks.Add(new Token(TokenType.ExStatic, "STATIC")); break;
-                        default:
-                            {
-                                if (LastToken.Type == TokenType.Colon)
-                                    ReplaceLastToken(new Token(TokenType.ExTypeHint, t.Value));
-                                else
-                                    Toks.Add(t);
-                            } break;
+                        case "else": Toks.Add(new Token(TokenType.ExElse, "else")); break;
+                        case "while": Toks.Add(new Token(TokenType.ExWhile, "while")); break;
+                        case "for": Toks.Add(new Token(TokenType.ExFor, "for")); break;
+                        case "int": Toks.Add(new Token(TokenType.ExInt, "int")); break;
+                        case "double": Toks.Add(new Token(TokenType.ExDouble, "double")); break;
+                        case "bool": Toks.Add(new Token(TokenType.ExBool, "bool")); break;
+                        case "string": Toks.Add(new Token(TokenType.ExString, "string")); break;
+                        case "return": Toks.Add(new Token(TokenType.ExReturn, "return")); break;
+                        case "class": Toks.Add(new Token(TokenType.ExClass, "class")); break;
+                        case "struct": Toks.Add(new Token(TokenType.ExStruct, "struct")); break;
+                        case "override": Toks.Add(new Token(TokenType.ExOverride, "override")); break;
+                        case "static": Toks.Add(new Token(TokenType.ExStatic, "static")); break;
+                        case "public": Toks.Add(new Token(TokenType.ExPublic, "public")); break;
+                        case "private": Toks.Add(new Token(TokenType.ExPrivate, "private")); break;
+                        case "asm": Toks.Add(new Token(TokenType.ExInjectAsm, "asm")); break;
+                        default: Toks.Add(t); break;
                     }
                 }
                 else

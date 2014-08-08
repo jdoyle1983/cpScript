@@ -102,6 +102,11 @@ enum TokenType
 	ExStatic,
 
 	ExTypeHint,
+	
+	ExAsmBlock,
+	ExEndAsmBlock,
+	ExAsmPush,
+	ExAsmPop,
 };
 
 
