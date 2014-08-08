@@ -118,6 +118,7 @@ clean:
 	cmd /c del /f ..\\Build\Lib\\*.obh
 	cmd /c del /f ..\\Build\Lib\\*.lch
 	cmd /c del /f ..\\Build\Lib\\*.lcl
+	rmdir /Q /S ..\\Build\\Lib
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)
