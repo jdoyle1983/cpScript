@@ -30,7 +30,10 @@ II.........Language Syntax
 	G...........Classes Advanced
 		1...........Extending Existing Classes
 		2...........Static Class Methods
-	H...........The Standard Library
+	H...........Assembly Injection
+		1...........Stack Manipulation
+		2...........Assembly Code Blocks
+	I...........The Standard Library
 		1...........ConsoleIO
 		2...........FileIO
 		3...........Math
@@ -423,8 +426,58 @@ II.		Language Syntax
 					--RIGHT
 					VAR newVAlue = MyClass.MyStaticMethod(10, 10)
 				
+
+		H.	Assembly Injection
+				1.	Stack Manipulation
+					
+					You can push values on the stack via the ASMPUSH keyword.
+					This keyword takes 1 parameter, which is either a variable,
+					class, class property, or a raw value.  This action will
+					be at the exact point in the resulting generated assembly.
+					This is useful for preparing values for use within an
+					assmebly block.
+
+					You can pop values from the stack via the ASMPOP keyword.
+					This keyword takes 1 parameter, which is either a variable,
+					class, or class property.  This does not check to ensure the
+					underlying type is correct, it assumes you know what you are
+					doing.  This action will be at the exact point in the
+					resulting generated assembly.  This is useful for retreiving
+					values generated within and assembly block.
+
+				2.	Assembly Code Blocks
+	
+					Assembly blocks allow you to inject raw assembly directly
+					into your object basic code.  This allows more flexibility
+					in creating complex operations.  Any values you want to expose
+					to the block should be pushed via the ASMPUSH command right
+					before the assembly block, and any results should be
+					immediatly retreived via ASMPOP after the block.  Keeping to
+					this pattern will ensure there is no stack corruption during
+					method calls.
+					
+					Usage Example:
+						
+						var MyVal1 = 1
+						var MyVal2 = 2
+						var MyVal3 = 0
+
+						ASMPUSH MyVal1
+						ASMPUSH MyVal2
+					
+						ASMBLOCK
+							ADD
+							PUSH 8
+							ADD
+						END ASMBLOCK
 				
-		H.	The Standard Library
+						ASMPOP MyVal3	
+
+					The resulting value of MyVal3 would be 11.
+
+					See the AsmDoc.txt file for ASM syntax.
+				
+		I.	The Standard Library
 		
 				1.	ConsoleIO
 				

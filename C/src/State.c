@@ -48,6 +48,10 @@ typedef struct
     Stack* _BlockHeaders;
     List* _Tokens;
     int _Offset;
+	
+	int _DbgLine;
+	int _DbgColumn;
+	char* _DbgFile;
 } State;
 
 typedef struct
@@ -561,6 +565,9 @@ EXPORT void* State_New(char* ScriptText)
     state->_BlockHeaders = Stack_New();
     state->_Offset = -1;
     state->_Tokens = Parse(ScriptText);
+	state->_DbgLine = 0;
+	state->_DbgColumn = 0;
+	state->_DbgFile = NULL;
     State_DoInit(state);
     return state;
 };
@@ -611,6 +618,9 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
     state->_Headers = Stack_New();
     state->_BlockHeaders = Stack_New();
     state->_Offset = -1;
+	state->_DbgLine = 0;
+	state->_DbgColumn = 0;
+	state->_DbgFile = NULL;
 
     state->_Tokens = List_New();
 
@@ -832,6 +842,9 @@ EXPORT void State_Delete(void* S)
     List_Delete(state->_BlockHeaders);
 
     List_Delete(state->_CursorStack);
+	
+	if(state->_DbgFile != NULL)
+		free(state->_DbgFile);
 
     free(state);
 };
@@ -1541,6 +1554,31 @@ EXPORT short State_Iterate(void* S)
                 FreeMemoryBlockSet(state, CurrentTok(state)->Val);
                 state->_Offset++;
             } break;
+			
+			case tDbgLine:
+			{
+				state->_Offset++;
+				state->_DbgLine = atoi(CurrentTok(state)->Val);
+				state->_Offset++;
+			} break;
+			
+			case tDbgColumn:
+			{
+				state->_Offset++;
+				state->_DbgColumn = atoi(CurrentTok(state)->Val);
+				state->_Offset++;
+			} break;
+			
+			case tDbgFile:
+			{
+				if(state->_DbgFile != NULL)
+					free(state->_DbgFile);
+				state->_Offset++;
+				char* SrcVal = CurrentTok(state)->Val;
+				state->_DbgFile = (char*)malloc(sizeof(char) * (strlen(SrcVal) + 1));
+				strcpy(state->_DbgFile, SrcVal);
+				state->_Offset++;
+			} break;
 
             case tEndOfExec:
             {
