@@ -102,6 +102,7 @@ III.	Syntax
 			A. Parameter Index
 			
 				L   = Literal value, quoted or not
+				Li  = Liter value, quoted only
 				La  = Label value, non-quoted literal
 				I   = Integer value
 				@   = Register Variable
@@ -118,6 +119,7 @@ III.	Syntax
 				[7] $
 				[8] La
 				[9] I
+				[0] Li
 		
 			B. Op Codes
 		
@@ -205,6 +207,12 @@ III.	Syntax
 					Push all block data from [7] into the stack.
 				POPB [7]
 					Pop all block data from the stack into [7].
+				DBGL [9]
+					Set the current source debug line to [9].
+				DBGC [9]
+					Set the current source debug column to [9].
+				DBGF [0]
+					Set the current source debug file to [0].
 				EOE
 					End of Execution, halts the entire system.
 			
