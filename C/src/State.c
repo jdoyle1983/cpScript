@@ -1046,7 +1046,7 @@ EXPORT short State_Iterate(void* S)
                 for(i = 0; i < Count; i++)
                     List_AddInt(hed->IndexOffset, -1);
                 for(i = Count - 1; i >= 0; i--)
-                    hed->IndexOffset->Items[i] = (void*)State_PopInt(state);
+                    *((int*)hed->IndexOffset->Items[i]) = State_PopInt(state);
 
                 if(shouldAdd)
                     List_Add(BlockHeaders, hed);
