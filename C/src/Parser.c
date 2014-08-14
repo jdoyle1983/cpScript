@@ -121,9 +121,7 @@ List* Parse(char* Input)
                 else if(strcmp(tVal, ",") == 0) tok = tComma;
                 else if(strcmp(tVal, "eoe") == 0) tok = tEndOfExec;
                 else if(strcmp(tVal, "lib") == 0) tok = tLib;
-				else if(strcmp(tVal, "dbgl") == 0) tok = tDbgLine;
-				else if(strcmp(tVal, "dbgc") == 0) tok = tDbgColumn;
-				else if(strcmp(tVal, "dbgf") == 0) tok = tDbgFile;
+				else if(strcmp(tVal, "dbg") == 0) tok = tDbg;
                 else
                 {
                     if(tVal[0] == '@')

@@ -1555,29 +1555,35 @@ EXPORT short State_Iterate(void* S)
                 state->_Offset++;
             } break;
 			
-			case tDbgLine:
+			case tDbg:
 			{
+				AssemblyToken* tokDbgLine;
+				AssemblyToken* tokDbgColumn;
+				AssemblyToken* tokDbgFile;
+				
 				state->_Offset++;
-				state->_DbgLine = atoi(CurrentTok(state)->Val);
+				
+				tokDbgLine = CurrentTok(state);
+				
 				state->_Offset++;
-			} break;
-			
-			case tDbgColumn:
-			{
 				state->_Offset++;
-				state->_DbgColumn = atoi(CurrentTok(state)->Val);
+				
+				tokDbgColumn = CurrentTok(state);
+				
 				state->_Offset++;
-			} break;
-			
-			case tDbgFile:
-			{
+				state->_Offset++;
+				
+				tokDbgFile = CurrentTok(state);
+				
+				state->_DbgLine = atoi(tokDbgLine->Val);
+				state->_DbgColumn = atoi(tokDbgColumn->Val);
 				if(state->_DbgFile != NULL)
 					free(state->_DbgFile);
+				state->_DbgFile = (char*)malloc(sizeof(char) * (strlen(tokDbgFile->Val) + 1));
+				strcpy(state->_DbgFile, tokDbgFile->Val);
+				
 				state->_Offset++;
-				char* SrcVal = CurrentTok(state)->Val;
-				state->_DbgFile = (char*)malloc(sizeof(char) * (strlen(SrcVal) + 1));
-				strcpy(state->_DbgFile, SrcVal);
-				state->_Offset++;
+				
 			} break;
 
             case tEndOfExec:

@@ -83,9 +83,7 @@ enum Token //Token values
 	
 	tResBlockSet,
 	
-	tDbgLine,
-	tDbgColumn,
-	tDbgFile,
+	tDbg,
 };
 
 #endif

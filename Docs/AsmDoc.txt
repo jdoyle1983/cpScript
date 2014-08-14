@@ -207,12 +207,8 @@ III.	Syntax
 					Push all block data from [7] into the stack.
 				POPB [7]
 					Pop all block data from the stack into [7].
-				DBGL [9]
-					Set the current source debug line to [9].
-				DBGC [9]
-					Set the current source debug column to [9].
-				DBGF [0]
-					Set the current source debug file to [0].
+				DBG [9]a, [9]b, [0]
+					Set debug information, [9]a: Src Debug Line, [9]b: Src Debug Column, [0]: Src Debug Filename
 				EOE
 					End of Execution, halts the entire system.
 			
