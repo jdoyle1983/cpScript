@@ -14,7 +14,7 @@ STATIC_BIN = ..\Build\libCpScript.Asm.a
 
 SHARED_OBJDIR = obj\\libCpScript.Asm\\shared
 SHARED_OBJ = $(SHARED_OBJDIR)\\State.o $(SHARED_OBJDIR)\\Stack.o $(SHARED_OBJDIR)\\Parser.o $(SHARED_OBJDIR)\\MemoryBlockSetHeader.o $(SHARED_OBJDIR)\\MemoryBlockHeader.o $(SHARED_OBJDIR)\\MemoryBlock.o $(SHARED_OBJDIR)\\List.o $(SHARED_OBJDIR)\\LabelDef.o $(SHARED_OBJDIR)\\Extensions.o $(SHARED_OBJDIR)\\AssemblyToken.o 
-SHARED_CFLAGS = -Wall -fPIC -march=native -DBUILDINGDLL
+SHARED_CFLAGS = -Wall -march=native -DBUILDINGDLL
 SHARED_BIN = ..\Build\libCpScript.Asm.Shared.so.$(VERSION)
 
 OBJSTATIC_OBJDIR = obj\\libCpScript.ObjectBasic\\static
@@ -24,7 +24,7 @@ OBJSTATIC_BIN = ..\Build\libCpScript.ObjectBasic.a
 
 OBJSHARED_OBJDIR = obj\\libCpScript.ObjectBasic\\shared
 OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)\\ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)\\ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)\\ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)\\ObjBas_Function.o $(OBJSHARED_OBJDIR)\\ObjBas_Script.o $(OBJSHARED_OBJDIR)\\ObjBas_Token.o $(OBJSTATIC_OBJDIR)\\Stack.o $(OBJSHARED_OBJDIR)\\List.o $(OBJSHARED_OBJDIR)\\Extensions.o
-OBJSHARED_CFLAGS = -Wall -fPIC -march=native -DBUILDINGDLL
+OBJSHARED_CFLAGS = -Wall -march=native -DBUILDINGDLL
 OBJSHARED_BIN = ..\Build\libCpScript.ObjectBasic.Shared.so.$(VERSION)
 
 STDSTATIC_OBJDIR = obj\\libCpStdLib\\static
@@ -34,7 +34,7 @@ STDSTATIC_BIN = ..\Build\libCpStdLib.a
 
 STDSHARED_OBJDIR = obj\\libCpStdLib\\shared
 STDSHARED_OBJ = $(STDSHARED_OBJDIR)\\CpStdLib.o $(STDSHARED_OBJDIR)\\CpStdLib_ConsoleIO.o $(STDSHARED_OBJDIR)\\CpStdLib_FileIO.o $(STDSHARED_OBJDIR)\\CpStdLib_Math.o $(STDSHARED_OBJDIR)\\CpStdLib_Utilities.o
-STDSHARED_CFLAGS = -Wall -fPIC -march=native -DBUILDINGDLL
+STDSHARED_CFLAGS = -Wall -march=native -DBUILDINGDLL
 STDSHARED_CLIBS = -lCpScript.Asm.Shared
 STDSHARED_BIN = ..\Build\libCpStdLib.Shared.so.$(VERSION)
 

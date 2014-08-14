@@ -94,7 +94,6 @@ void MethodStub(void* State)
 void ObjectBasicScript_Delete(ObjectBasicScript* obj)
 {
 	int i = 0;
-	int e = 0;
 	for(i = 0; i < List_Count(obj->Functions); i++)
 		Function_Delete(List_FunctionAtIndex(obj->Functions, i));
 	List_Delete(obj->Functions);
