@@ -105,3 +105,15 @@ void List_Clear(List* list)
     free(list->Items);
     list->Items = (void**)malloc(0);
 };
+
+int List_IntAtIndex(List* list, int idx)
+{
+	return *((int*)List_AtIndex(list, idx));
+};
+
+void List_AddInt(List* list, int item)
+{
+	int* tInt = (int*)malloc(sizeof(int));
+	*tInt = item;
+	List_Add(list, tInt);
+};

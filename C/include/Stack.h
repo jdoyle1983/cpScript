@@ -35,14 +35,14 @@ void* Stack_Peek(Stack* stack);
 void* Stack_Pop(Stack* stack);
 void Stack_Push(Stack* stack, void* item);
 
-#define Stack_PushInt(s, i) Stack_Push(s, (void*)i)
+void Stack_PushInt(Stack* stack, int val);
+int Stack_PeekInt(Stack* stack);
+int Stack_PopInt(Stack* stack);
 
-#define Stack_PeekInt(s) 	(int)Stack_Peek(s)
 #define Stack_PeekString(s) (char*)Stack_Peek(s)
 #define Stack_PeekList(s) 	(List*)Stack_Peek(s)
 #define Stack_PeekToken(s) 	(Token*)Stack_Peek(s)
 
-#define Stack_PopInt(s) 	(int)Stack_Pop(s)
 #define Stack_PopString(s) 	(char*)Stack_Pop(s)
 #define Stack_PopList(s) 	(List*)Stack_Pop(s)
 #define Stack_PopToken(s)	(Token*)Stack_Pop(s)

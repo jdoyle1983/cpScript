@@ -841,6 +841,9 @@ EXPORT void State_Delete(void* S)
     }
     List_Delete(state->_BlockHeaders);
 
+	for(i = 0; i < state->_CursorStack->Count; i++)
+		free((int*)state->_CursorStack->Items[i]);
+		
     List_Delete(state->_CursorStack);
 	
 	if(state->_DbgFile != NULL)

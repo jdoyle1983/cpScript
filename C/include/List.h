@@ -50,14 +50,14 @@ void List_Reverse(List* list);
 
 void List_Clear(List* list);
 
+int List_IntAtIndex(List* list, int idx);
+void List_AddInt(List* list, int item);
+
 /*
 	Shared
 */
 #define List_StringAtIndex(l, i) 				((char*)List_AtIndex(l, i))
 #define List_ListAtIndex(l, i)                  ((List*)List_AtIndex(l, i))
-#define List_IntAtIndex(l, i)                   ((int)List_AtIndex(l, i))
-
-#define List_AddInt(l, i)                       List_Add(l, (void*)i)
 
 /*
 	For ASM
