@@ -25,6 +25,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <libCpScript.Asm.h>
 #include <Stack.h>
 #include <AssemblyToken.h>
@@ -1713,11 +1714,14 @@ EXPORT void* State_Pop(void* S)
 	char* v = State_PopString(S);
 	void* r = NULL;
 	
-	switch(sizeof(void*))
-	{
-		case sizeof(long): r = (void*)atol(v); break;
-		default: r = (void*)atoi(v); break;
-	}
+	#if INTPTR_MAX == INT32_MAX
+		r = (void*)atoi(v);
+	#elif INTPTR_MAX == INT64_MAX
+		r = (void*)atol(v);
+	#else
+		#error "Environment not 32 or 64 bit."
+	#endif
+	
 	return r;
 };
 
@@ -1806,12 +1810,14 @@ EXPORT void State_Push(void* S, void* v)
 {
 	char* p = (char*)malloc(sizeof(char) * 3000);
 	
-	switch(sizeof(v))
-	{
-		case sizeof(long): sprintf(p, "%li", (long)v); break;
-		default: sprintf(p, "%i", (int)v); break;
-	}
-
+	#if INTPTR_MAX == INT32_MAX
+		sprintf(p, "%i", (int)v);
+	#elif INTPTR_MAX == INT64_MAX
+		sprintf(p, "%li", (long)v);
+	#else
+		#error "Environment not 32 or 64 bit."
+	#endif
+	
 	State_PushString(S, p);
 };
 
