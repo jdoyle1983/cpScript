@@ -9,65 +9,65 @@ LIB = -L../Build
 
 STATIC_OBJDIR = obj/libCpScript.Asm/static
 STATIC_OBJ = $(STATIC_OBJDIR)/State.o $(STATIC_OBJDIR)/Stack.o $(STATIC_OBJDIR)/Parser.o $(STATIC_OBJDIR)/MemoryBlockSetHeader.o $(STATIC_OBJDIR)/MemoryBlockHeader.o $(STATIC_OBJDIR)/MemoryBlock.o $(STATIC_OBJDIR)/List.o $(STATIC_OBJDIR)/LabelDef.o $(STATIC_OBJDIR)/Extensions.o $(STATIC_OBJDIR)/AssemblyToken.o 
-STATIC_CFLAGS = -Wall -O2
+STATIC_CFLAGS = -Wall -O2 -ggdb
 STATIC_BIN = ../Build/libCpScript.Asm.a
 
 SHARED_OBJDIR = obj/libCpScript.Asm/shared
 SHARED_OBJ = $(SHARED_OBJDIR)/State.o $(SHARED_OBJDIR)/Stack.o $(SHARED_OBJDIR)/Parser.o $(SHARED_OBJDIR)/MemoryBlockSetHeader.o $(SHARED_OBJDIR)/MemoryBlockHeader.o $(SHARED_OBJDIR)/MemoryBlock.o $(SHARED_OBJDIR)/List.o $(SHARED_OBJDIR)/LabelDef.o $(SHARED_OBJDIR)/Extensions.o $(SHARED_OBJDIR)/AssemblyToken.o 
-SHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
+SHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL -ggdb
 SHARED_BIN = ../Build/libCpScript.Asm.Shared.so.$(VERSION)
 
 OBJSTATIC_OBJDIR = obj/libCpScript.ObjectBasic/static
 OBJSTATIC_OBJ = $(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o $(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o $(OBJSTATIC_OBJDIR)/ObjBas_Function.o $(OBJSTATIC_OBJDIR)/ObjBas_Script.o $(OBJSTATIC_OBJDIR)/ObjBas_Token.o $(OBJSTATIC_OBJDIR)/Stack.o $(OBJSTATIC_OBJDIR)/List.o $(OBJSTATIC_OBJDIR)/Extensions.o
-OBJSTATIC_CFLAGS = -Wall -O2
+OBJSTATIC_CFLAGS = -Wall -O2 -ggdb
 OBJSTATIC_BIN = ../Build/libCpScript.ObjectBasic.a
 
 OBJSHARED_OBJDIR = obj/libCpScript.ObjectBasic/shared
 OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)/ObjBas_Function.o $(OBJSHARED_OBJDIR)/ObjBas_Script.o $(OBJSHARED_OBJDIR)/ObjBas_Token.o $(OBJSHARED_OBJDIR)/Stack.o $(OBJSHARED_OBJDIR)/List.o $(OBJSHARED_OBJDIR)/Extensions.o
-OBJSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
+OBJSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL -ggdb
 OBJSHARED_BIN = ../Build/libCpScript.ObjectBasic.Shared.so.$(VERSION)
 
 STDSTATIC_OBJDIR = obj/libCpStdLib/static
 STDSTATIC_OBJ = $(STDSTATIC_OBJDIR)/CpStdLib.o $(STDSTATIC_OBJDIR)/CpStdLib_ConsoleIO.o $(STDSTATIC_OBJDIR)/CpStdLib_FileIO.o $(STDSTATIC_OBJDIR)/CpStdLib_Math.o $(STDSTATIC_OBJDIR)/CpStdLib_Utilities.o
-STDSTATIC_CFLAGS = -Wall -O2
+STDSTATIC_CFLAGS = -Wall -O2 -ggdb
 STDSTATIC_BIN = ../Build/libCpStdLib.a
 
 STDSHARED_OBJDIR = obj/libCpStdLib/shared
 STDSHARED_OBJ = $(STDSHARED_OBJDIR)/CpStdLib.o $(STDSHARED_OBJDIR)/CpStdLib_ConsoleIO.o $(STDSHARED_OBJDIR)/CpStdLib_FileIO.o $(STDSHARED_OBJDIR)/CpStdLib_Math.o $(STDSHARED_OBJDIR)/CpStdLib_Utilities.o
-STDSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL
+STDSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL -ggdb
 STDSHARED_CLIBS = -lCpScript.Asm.Shared
 STDSHARED_BIN = ../Build/libCpStdLib.Shared.so.$(VERSION)
 
 CPINT_OBJDIR = obj/cpInt
 CPINT_OBJ = $(CPINT_OBJDIR)/CpInt.o
-CPINT_CFLAGS = -Wall -O2
+CPINT_CFLAGS = -Wall -O2 -ggdb
 CPINT_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) -lm
 CPINT_BIN = ../Build/cpInt
 
 CPOBJCMP_OBJDIR = obj/cpObjCmp
 CPOBJCMP_OBJ = $(CPOBJCMP_OBJDIR)/CpObjCmp.o
-CPOBJCMP_CFLAGS = -Wall -O2
+CPOBJCMP_CFLAGS = -Wall -O2 -ggdb
 CPOBJCMP_CLIBS = $(OBJSTATIC_BIN) -lm
 CPOBJCMP_BIN = ../Build/cpObjCmp
 
 CPCONSOLE_OBJDIR = obj/cpConsole
 CPCONSOLE_OBJ = $(CPCONSOLE_OBJDIR)/CpConsole.o
-CPCONSOLE_CFLAGS = -Wall -O2
+CPCONSOLE_CFLAGS = -Wall -O2 -ggdb
 CPCONSOLE_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN) -lm
 CPCONSOLE_BIN = ../Build/cpConsole
 
 ER_OBJDIR = obj/makeExec
 ER_OBJ = $(ER_OBJDIR)/ExecRuntime.o
-ER_CFLAGS = -Wall -O2
+ER_CFLAGS = -Wall -O2 -ggdb
 ER_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) -lm
 ER_BIN = ../Build/execRuntime
 
 ME_OBJ = $(ER_OBJDIR)/MakeExec.o
-ME_CFLAGS = -Wall -O2
+ME_CFLAGS = -Wall -O2 -ggdb
 ME_CLIBS = $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN) -lm
 ME_BIN = ../Build/makeExec
 
-all: static shared cpint cpobjcmp cpconsole er me
+all: static shared cpint cpobjcmp cpconsole er me objheaders
 
 static: $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
 
@@ -82,6 +82,16 @@ cpconsole: $(CPCONSOLE_BIN)
 er: $(ER_BIN)
 
 me: $(ME_BIN)
+
+libdir:
+	mkdir ../Build/Lib
+
+objheaders: libdir
+	cp ObjectBasicHeaders/*.obh ../Build/Lib
+	
+lightcheaders: libdir
+	cp LightCHeaders/*.lch ../Build/Lib
+	cp LightCHeaders/*.lcl ../Build/Lib
 
 clean:
 	rm -f $(STATIC_BIN)
@@ -105,6 +115,10 @@ clean:
 	rm -f $(CPOBJCMP_OBJDIR)/*.o
 	rm -f $(CPCONSOLE_OBJDIR)\\*.o
 	rm -f $(ER_OBJDIR)\\*.o
+	rm -f ../Build/Lib/*.obh
+	rm -f ../Build/Lib/*.lch
+	rm -f ../Build/Lib/*.lcl
+	rmdir ../Build/Lib
 	
 $(CPINT_BIN): $(CPINT_OBJ)
 	$(CP) $(CPINT_CFLAGS) $(CPINT_OBJ) $(CPINT_CLIBS) -o $(CPINT_BIN)
