@@ -1,7 +1,7 @@
-#include Lib\Math.obh
-#include Lib\ConsoleIO.obh
-#include Lib\FileIO.obh
-#include Lib\Utilities.obh
+#include Lib/Math.obh
+#include Lib/ConsoleIO.obh
+#include Lib/FileIO.obh
+#include Lib/Utilities.obh
 
 FUNCTION Main()
 	
