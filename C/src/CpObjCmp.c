@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 #include <libCpScript.ObjectBasic.h>
 
 #define VERSION "1.0.0"
