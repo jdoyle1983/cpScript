@@ -69,7 +69,8 @@ void File_Open(void* State)
     char* filePath = State_PopString(State);
     char* readMode = State_PopString(State);
     FILE* f = fopen(filePath, readMode);
-    State_PushInt(State, (int)f);
+	State_Push(State, f);
+    //State_PushInt(State, (int)f);
     free(filePath);
     free(readMode);
 };
@@ -77,14 +78,14 @@ void File_Open(void* State)
 void File_WriteLine(void* State)
 {
     char* toWrite = State_PopString(State);
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     fprintf(f, "%s\n", toWrite);
     free(toWrite);
 };
 
 void File_ReadLine(void* State)
 {
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     char* toRead = Internal_FileGetLine(f);
     if(toRead == NULL)
         State_PushString(State, "");
@@ -97,13 +98,13 @@ void File_ReadLine(void* State)
 
 void File_Close(void* State)
 {
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     fclose(f);
 };
 
 void File_Eof(void* State)
 {
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     if(feof(f))
         State_PushBool(State, 1);
     else
@@ -112,7 +113,7 @@ void File_Eof(void* State)
 
 void File_ReadBool(void* State)
 {
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     short b = -1;
     fread(&b, sizeof(short), 1, f);
     State_PushBool(State, b);
@@ -120,7 +121,7 @@ void File_ReadBool(void* State)
 
 void File_ReadDouble(void* State)
 {
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     double d = -1;
     fread(&d, sizeof(double), 1, f);
     State_PushDouble(State, d);
@@ -128,7 +129,7 @@ void File_ReadDouble(void* State)
 
 void File_ReadInt(void* State)
 {
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     int i = -1;
     fread(&i, sizeof(int), 1, f);
     State_PushInt(State, i);
@@ -137,7 +138,7 @@ void File_ReadInt(void* State)
 void File_ReadString(void* State)
 {
 	char* strVal = NULL;
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     int strSize = 0;
     fread(&strSize, sizeof(int), 1, f);
     strVal = (char*)malloc(sizeof(char) * (strSize + 1));
@@ -150,28 +151,28 @@ void File_ReadString(void* State)
 void File_WriteBool(void* State)
 {
     short toWrite = State_PopBool(State);
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     fwrite(&toWrite, sizeof(short), 1, f);
 };
 
 void File_WriteDouble(void* State)
 {
     double toWrite = State_PopDouble(State);
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     fwrite(&toWrite, sizeof(double), 1, f);
 };
 
 void File_WriteInt(void* State)
 {
     int toWrite = State_PopInt(State);
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     fwrite(&toWrite, sizeof(int), 1, f);
 };
 
 void File_WriteString(void* State)
 {
     char* toWrite = State_PopString(State);
-    FILE* f = (FILE*)State_PopInt(State);
+    FILE* f = (FILE*)State_Pop(State);
     int strSize = strlen(toWrite);
     fwrite(&strSize, sizeof(int), 1, f);
     fwrite(toWrite, sizeof(char), strSize, f);

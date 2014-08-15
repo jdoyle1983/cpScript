@@ -1689,6 +1689,38 @@ EXPORT char* State_GetStringVariableInScope(void* S, char* n)
     return cVal;
 };
 
+/*
+State* state = (State*)S;
+	char* p = (char*)malloc(sizeof(char) * 3000);
+	
+	switch(sizeof(v))
+	{
+		case sizeof(long): sprintf(p, "%l", (long)v); break;
+		default: sprintf(p, "%i", (int)v); break;
+	}
+
+	State_PushString(S, p);
+	
+	
+	char* v = State_PopString(S);
+    int r = atoi(v);
+    free(v);
+    return r;
+*/
+
+EXPORT void* State_Pop(void* S)
+{
+	char* v = State_PopString(S);
+	void* r = NULL;
+	
+	switch(sizeof(void*))
+	{
+		case sizeof(long): r = (void*)atol(v); break;
+		default: r = (void*)atoi(v); break;
+	}
+	return r;
+};
+
 EXPORT void State_PushInt(void* S, int v)
 {
     char* p = (char*)malloc(sizeof(char) * 3000);
@@ -1761,6 +1793,26 @@ EXPORT void State_SetStringVariableInScope(void* S, char* n, char* v)
     sprintf(ActualName, "%%%s", n);
     SetMemoryBlock((State*)S, ActualName, v);
     free(ActualName);
+};
+
+/*
+char* p = (char*)malloc(sizeof(char) * 3000);
+    sprintf(p, "%d", v);
+    State_PushString(S, p);
+    free(p);
+*/
+
+EXPORT void State_Push(void* S, void* v)
+{
+	char* p = (char*)malloc(sizeof(char) * 3000);
+	
+	switch(sizeof(v))
+	{
+		case sizeof(long): sprintf(p, "%li", (long)v); break;
+		default: sprintf(p, "%i", (int)v); break;
+	}
+
+	State_PushString(S, p);
 };
 
 EXPORT void InteropFreePtr(void* Ptr)
