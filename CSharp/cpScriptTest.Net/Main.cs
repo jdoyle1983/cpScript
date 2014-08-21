@@ -69,7 +69,7 @@ namespace cpScriptTest.Net
 		
 		public static void Main (string[] args)
 		{
-			string Script = "LBL Add2Ints\n" +
+			/*string Script = "LBL Add2Ints\n" +
 							"POP @1\n" + 
 							"POP @2\n" +
 							"PUSH @1\n" +
@@ -122,7 +122,7 @@ namespace cpScriptTest.Net
 							"JMP DoWrite\n" +
 							"PUSH \"End Of Exec\"\n" +
 							"JMP DoWrite\n" +
-							"RTN\n";
+							"RTN\n";*/
 			
 			/*libCpScript.Net.Asm.State state = new libCpScript.Net.Asm.State(Script);
 			state.RegisterFunction("DoWrite", DoWrite);

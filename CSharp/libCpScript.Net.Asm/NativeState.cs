@@ -54,6 +54,9 @@ namespace libCpScript.Net.Asm
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_LoadMethod")]
 		internal static extern  void State_LoadMethod(System.IntPtr StatePtr, System.IntPtr Name) ;
 
+		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_Pop")]
+		internal static extern  System.IntPtr State_Pop(System.IntPtr StatePtr) ;
+		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PopInt")]
 		internal static extern  int State_PopInt(System.IntPtr StatePtr) ;
 
@@ -66,6 +69,9 @@ namespace libCpScript.Net.Asm
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PopString")]
 		internal static extern  System.IntPtr State_PopString(System.IntPtr StatePtr) ;
 
+		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_Push")]
+		internal static extern  void State_Push(System.IntPtr StatePtr, System.IntPtr v);
+		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PushInt")]
 		internal static extern  void State_PushInt(System.IntPtr StatePtr, int v) ;
 

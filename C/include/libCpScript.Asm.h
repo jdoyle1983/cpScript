@@ -43,13 +43,15 @@ EXPORT short State_Iterate(void* State);
 EXPORT void State_RunFromMethod(void* State, char* Name);
 EXPORT void State_LoadMethod(void* State, char* Name);
 
-EXPORT int State_PopInt(void* State);
+EXPORT void* State_Pop(void* State);
+EXPORT long State_PopInt(void* State);
 EXPORT double State_PopDouble(void* State);
 EXPORT short State_PopBool(void* State);
 EXPORT char* State_PopString(void* State);
 EXPORT void* State_Pop(void* State);
 
-EXPORT void State_PushInt(void* State, int v);
+EXPORT void State_Push(void* State, void* v);
+EXPORT void State_PushInt(void* State, long v);
 EXPORT void State_PushDouble(void* State, double v);
 EXPORT void State_PushBool(void* State, short v);
 EXPORT void State_PushString(void* State, char* v);
