@@ -58,7 +58,7 @@ namespace libCpScript.Net.Asm
 		internal static extern  System.IntPtr State_Pop(System.IntPtr StatePtr) ;
 		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PopInt")]
-		internal static extern  int State_PopInt(System.IntPtr StatePtr) ;
+		internal static extern  long State_PopInt(System.IntPtr StatePtr) ;
 
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PopDouble")]
 		internal static extern  double State_PopDouble(System.IntPtr StatePtr) ;
@@ -73,7 +73,7 @@ namespace libCpScript.Net.Asm
 		internal static extern  void State_Push(System.IntPtr StatePtr, System.IntPtr v);
 		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PushInt")]
-		internal static extern  void State_PushInt(System.IntPtr StatePtr, int v) ;
+		internal static extern  void State_PushInt(System.IntPtr StatePtr, long v) ;
 
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_PushDouble")]
 		internal static extern  void State_PushDouble(System.IntPtr StatePtr, double v) ;
@@ -85,7 +85,7 @@ namespace libCpScript.Net.Asm
 		internal static extern  void State_PushString(System.IntPtr StatePtr, System.IntPtr v) ;
 		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_GetIntVariableInScope")]
-		internal static extern  int State_GetIntVariableInScope(System.IntPtr StatePtr, System.IntPtr n) ;
+		internal static extern  long State_GetIntVariableInScope(System.IntPtr StatePtr, System.IntPtr n) ;
 		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_GetDoubleVariableInScope")]
 		internal static extern  double State_GetDoubleVariableInScope(System.IntPtr StatePtr, System.IntPtr n) ;
@@ -97,7 +97,7 @@ namespace libCpScript.Net.Asm
 		internal static extern  System.IntPtr State_GetStringVariableInScope(System.IntPtr StatePtr, System.IntPtr n) ;
 		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_SetIntVariableInScope")]
-		internal static extern  void State_SetIntVariableInScope(System.IntPtr StatePtr, System.IntPtr n, int v);
+		internal static extern  void State_SetIntVariableInScope(System.IntPtr StatePtr, System.IntPtr n, long v);
 		
 		[System.Runtime.InteropServices.DllImportAttribute("libCpScript.Asm.Shared.so", EntryPoint="State_SetDoubleVariableInScope")]
 		internal static extern  void State_SetDoubleVariableInScope(System.IntPtr StatePtr, System.IntPtr n, double v);

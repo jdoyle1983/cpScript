@@ -1,4 +1,9 @@
-VERSION=1.0.0
+VERMAJ = 1
+VERMIN = 0
+VERREL = 0
+VERSION = $(VERMAJ).$(VERMIN).$(VERREL)
+MINORVERSION = $(VERMAJ).$(VERMIN)
+MAJORVERSION = $(VERMAJ)
 
 CC = gcc
 CP = gcc
@@ -16,6 +21,9 @@ SHARED_OBJDIR = obj/libCpScript.Asm/shared
 SHARED_OBJ = $(SHARED_OBJDIR)/State.o $(SHARED_OBJDIR)/Stack.o $(SHARED_OBJDIR)/Parser.o $(SHARED_OBJDIR)/MemoryBlockSetHeader.o $(SHARED_OBJDIR)/MemoryBlockHeader.o $(SHARED_OBJDIR)/MemoryBlock.o $(SHARED_OBJDIR)/List.o $(SHARED_OBJDIR)/LabelDef.o $(SHARED_OBJDIR)/Extensions.o $(SHARED_OBJDIR)/AssemblyToken.o 
 SHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL -ggdb
 SHARED_BIN = ../Build/libCpScript.Asm.Shared.so.$(VERSION)
+SHARED_BIN_MIN = ../Build/libCpScript.Asm.Shared.so.$(MINORVERSION)
+SHARED_BIN_MAJ = ../Build/libCpScript.Asm.Shared.so.$(MAJORVERSION)
+SHARED_BIN_CORE = ../Build/libCpScript.Asm.Shared.so
 
 OBJSTATIC_OBJDIR = obj/libCpScript.ObjectBasic/static
 OBJSTATIC_OBJ = $(OBJSTATIC_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSTATIC_OBJDIR)/ObjBas_ClassDef.o $(OBJSTATIC_OBJDIR)/ObjBas_Evaluator.o $(OBJSTATIC_OBJDIR)/ObjBas_Function.o $(OBJSTATIC_OBJDIR)/ObjBas_Script.o $(OBJSTATIC_OBJDIR)/ObjBas_Token.o $(OBJSTATIC_OBJDIR)/Stack.o $(OBJSTATIC_OBJDIR)/List.o $(OBJSTATIC_OBJDIR)/Extensions.o
@@ -26,6 +34,9 @@ OBJSHARED_OBJDIR = obj/libCpScript.ObjectBasic/shared
 OBJSHARED_OBJ = $(OBJSHARED_OBJDIR)/ObjBas_BlockBuilder.o $(OBJSHARED_OBJDIR)/ObjBas_ClassDef.o $(OBJSHARED_OBJDIR)/ObjBas_Evaluator.o $(OBJSHARED_OBJDIR)/ObjBas_Function.o $(OBJSHARED_OBJDIR)/ObjBas_Script.o $(OBJSHARED_OBJDIR)/ObjBas_Token.o $(OBJSHARED_OBJDIR)/Stack.o $(OBJSHARED_OBJDIR)/List.o $(OBJSHARED_OBJDIR)/Extensions.o
 OBJSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL -ggdb
 OBJSHARED_BIN = ../Build/libCpScript.ObjectBasic.Shared.so.$(VERSION)
+OBJSHARED_BIN_MIN = ../Build/libCpScript.ObjectBasic.Shared.so.$(MINORVERSION)
+OBJSHARED_BIN_MAJ = ../Build/libCpScript.ObjectBasic.Shared.so.$(MAJORVERSION)
+OBJSHARED_BIN_CORE = ../Build/libCpScript.ObjectBasic.Shared.so
 
 STDSTATIC_OBJDIR = obj/libCpStdLib/static
 STDSTATIC_OBJ = $(STDSTATIC_OBJDIR)/CpStdLib.o $(STDSTATIC_OBJDIR)/CpStdLib_ConsoleIO.o $(STDSTATIC_OBJDIR)/CpStdLib_FileIO.o $(STDSTATIC_OBJDIR)/CpStdLib_Math.o $(STDSTATIC_OBJDIR)/CpStdLib_Utilities.o
@@ -37,6 +48,9 @@ STDSHARED_OBJ = $(STDSHARED_OBJDIR)/CpStdLib.o $(STDSHARED_OBJDIR)/CpStdLib_Cons
 STDSHARED_CFLAGS = -Wall -fPIC -DBUILDINGDLL -ggdb
 STDSHARED_CLIBS = -lCpScript.Asm.Shared
 STDSHARED_BIN = ../Build/libCpStdLib.Shared.so.$(VERSION)
+STDSHARED_BIN_MIN = ../Build/libCpStdLib.Shared.so.$(MINORVERSION)
+STDSHARED_BIN_MAJ = ../Build/libCpStdLib.Shared.so.$(MAJORVERSION)
+STDSHARED_BIN_CORE = ../Build/libCpStdLib.Shared.so
 
 CPINT_OBJDIR = obj/cpInt
 CPINT_OBJ = $(CPINT_OBJDIR)/CpInt.o
@@ -71,7 +85,7 @@ all: static shared cpint cpobjcmp cpconsole er me objheaders
 
 static: $(STATIC_BIN) $(STDSTATIC_BIN) $(OBJSTATIC_BIN)
 
-shared: $(SHARED_BIN) $(STDSHARED_BIN) $(OBJSHARED_BIN)
+shared: $(SHARED_BIN) $(STDSHARED_BIN) $(OBJSHARED_BIN) $(SHARED_BIN_MIN) $(STDSHARED_BIN_MIN) $(OBJSHARED_BIN_MIN) $(SHARED_BIN_MAJ) $(STDSHARED_BIN_MAJ) $(OBJSHARED_BIN_MAJ) $(SHARED_BIN_CORE) $(STDSHARED_BIN_CORE) $(OBJSHARED_BIN_CORE)
 
 cpint: $(CPINT_BIN)
 
@@ -96,11 +110,20 @@ lightcheaders: libdir
 clean:
 	rm -f $(STATIC_BIN)
 	rm -f $(SHARED_BIN)
+	rm -f $(SHARED_BIN_MIN)
+	rm -f $(SHARED_BIN_MAJ)
+	rm -f $(SHARED_BIN_CORE)
 	rm -f $(STDSTATIC_BIN)
 	rm -f $(STDSHARED_BIN)
+	rm -f $(STDSHARED_BIN_MIN)
+	rm -f $(STDSHARED_BIN_MAJ)
+	rm -f $(STDSHARED_BIN_CORE)
 	rm -f $(CPINT_BIN)
 	rm -f $(OBJSTATIC_BIN)
 	rm -f $(OBJSHARED_BIN)
+	rm -f $(OBJSHARED_BIN_MIN)
+	rm -f $(OBJSHARED_BIN_MAJ)
+	rm -f $(OBJSHARED_BIN_CORE)
 	rm -f $(CPOBJCMP_BIN)
 	rm -f  $(CPCONSOLE_BIN)
 	rm -f  $(ER_BIN)
@@ -141,17 +164,44 @@ $(STATIC_BIN): $(STATIC_OBJ)
 $(SHARED_BIN): $(SHARED_OBJ)
 	$(CP) -shared $(SHARED_OBJ) -o $(SHARED_BIN)
 	
+$(SHARED_BIN_MIN): $(SHARED_BIN)
+	ln -s $(SHARED_BIN) $(SHARED_BIN_MIN)
+	
+$(SHARED_BIN_MAJ): $(SHARED_BIN)
+	ln -s $(SHARED_BIN) $(SHARED_BIN_MAJ)
+
+$(SHARED_BIN_CORE): $(SHARED_BIN)
+	ln -s $(SHARED_BIN) $(SHARED_BIN_CORE)
+	
 $(OBJSTATIC_BIN): $(OBJSTATIC_OBJ)
 	$(AR) rcs $(OBJSTATIC_BIN) $(OBJSTATIC_OBJ)
 	
 $(OBJSHARED_BIN): $(OBJSHARED_OBJ)
 	$(CP) -shared $(OBJSHARED_OBJ) -o $(OBJSHARED_BIN)
 	
+$(OBJSHARED_BIN_MIN): $(OBJSHARED_BIN)
+	ln -s $(OBJSHARED_BIN) $(OBJSHARED_BIN_MIN)
+	
+$(OBJSHARED_BIN_MAJ): $(OBJSHARED_BIN)
+	ln -s $(OBJSHARED_BIN) $(OBJSHARED_BIN_MAJ)
+
+$(OBJSHARED_BIN_CORE): $(OBJSHARED_BIN)
+	ln -s $(OBJSHARED_BIN) $(OBJSHARED_BIN_CORE)
+	
 $(STDSTATIC_BIN): $(STDSTATIC_OBJ)
 	$(AR) rcs $(STDSTATIC_BIN) $(STDSTATIC_OBJ)
 	
 $(STDSHARED_BIN): $(STDSHARED_OBJ)
 	$(CP) $(SHARED_BIN) -shared $(STDSHARED_OBJ) -o $(STDSHARED_BIN)
+	
+$(STDSHARED_BIN_MIN): $(STDSHARED_BIN)
+	ln -s $(STDSHARED_BIN) $(STDSHARED_BIN_MIN)
+	
+$(STDSHARED_BIN_MAJ): $(STDSHARED_BIN)
+	ln -s $(STDSHARED_BIN) $(STDSHARED_BIN_MAJ)
+
+$(STDSHARED_BIN_CORE): $(STDSHARED_BIN)
+	ln -s $(STDSHARED_BIN) $(STDSHARED_BIN_CORE)
 
 $(STATIC_OBJDIR)/State.o: src/State.c
 	$(CC) $(STATIC_CFLAGS) $(INC) -c src/State.c -o $(STATIC_OBJDIR)/State.o

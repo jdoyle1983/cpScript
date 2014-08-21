@@ -1624,18 +1624,18 @@ EXPORT void State_LoadMethod(void* S, char* Name)
     }
 };
 
-EXPORT int State_PopInt(void* S)
+EXPORT long State_PopInt(void* S)
 {
     char* v = State_PopString(S);
-    int r = atoi(v);
+    int r = atol(v);
     free(v);
     return r;
 };
 
-EXPORT int State_GetIntVariableInScope(void* S, char* n)
+EXPORT long State_GetIntVariableInScope(void* S, char* n)
 {
     char* v = State_GetStringVariableInScope(S, n);
-    int r = atoi(v);
+    int r = atol(v);
     free(v);
     return r;
 };
@@ -1706,18 +1706,18 @@ EXPORT void* State_Pop(void* S)
 	return r;
 };
 
-EXPORT void State_PushInt(void* S, int v)
+EXPORT void State_PushInt(void* S, long v)
 {
     char* p = (char*)malloc(sizeof(char) * 3000);
-    sprintf(p, "%d", v);
+    sprintf(p, "%ld", v);
     State_PushString(S, p);
     free(p);
 };
 
-EXPORT void State_SetIntVariableInScope(void* S, char* n, int v)
+EXPORT void State_SetIntVariableInScope(void* S, char* n, long v)
 {
     char* p = (char*)malloc(sizeof(char) * 3000);
-    sprintf(p, "%d", v);
+    sprintf(p, "%ld", v);
     State_SetStringVariableInScope(S, n, p);
     free(p);
 };
