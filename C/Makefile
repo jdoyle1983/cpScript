@@ -136,8 +136,8 @@ clean:
 	rm -f $(OBJSTATIC_OBJDIR)/*.o
 	rm -f $(OBJSHARED_OBJDIR)/*.o
 	rm -f $(CPOBJCMP_OBJDIR)/*.o
-	rm -f $(CPCONSOLE_OBJDIR)\\*.o
-	rm -f $(ER_OBJDIR)\\*.o
+	rm -f $(CPCONSOLE_OBJDIR)/*.o
+	rm -f $(ER_OBJDIR)/*.o
 	rm -f ../Build/Lib/*.obh
 	rm -f ../Build/Lib/*.lch
 	rm -f ../Build/Lib/*.lcl
