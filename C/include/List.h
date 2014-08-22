@@ -32,6 +32,7 @@ typedef struct
 {
 	int Count;
 	void** Items;
+	int ActualCount;
 } List;
 
 List* List_New(void);
@@ -77,5 +78,6 @@ void List_AddInt(List* list, int item);
 #define List_ClassDefAtIndex(l, i)				((ClassDef*)List_AtIndex(l, i))
 #define List_CodeBlockAtIndex(l, i)				((CodeBlock*)List_AtIndex(l, i))
 #define List_ClassConversionAtIndex(l, i)		((ClassConversion*)List_AtIndex(l, i))
+#define List_ParseMessageAtIndex(l, i)			((ParseMessage*)List_AtIndex(l, i))
 
 #endif

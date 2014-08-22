@@ -52,7 +52,47 @@ typedef struct
 	List* CurrentClassProperties;
 	List* CurrentClassMethods;
 	
+	List* Messages;
+	
 } ObjectBasicScript;
+
+ParseMessage* ParseMessage_New(int msgType, char* msgFile, int msgLine, int msgColumn, int msgErrNum, char* msgErrMessage)
+{
+	ParseMessage* pMsg = (ParseMessage*)malloc(sizeof(ParseMessage));
+
+	pMsg->File = NULL;
+	pMsg->ErrMessage = NULL;
+	
+	pMsg->Type = msgType;
+	pMsg->Line = msgLine;
+	pMsg->Column = msgColumn;
+	pMsg->ErrNum = msgErrNum;
+
+	if(msgFile != NULL)
+	{
+		pMsg->File = (char*)malloc(sizeof(char) * (strlen(msgFile) + 1));
+		strcpy(pMsg->File, msgFile);
+	}
+	
+	if(msgErrMessage != NULL)
+	{
+		pMsg->ErrMessage = (char*)malloc(sizeof(char) * (strlen(msgErrMessage) + 1));
+		strcpy(pMsg->ErrMessage, msgErrMessage);
+	}
+	
+	return pMsg;
+};
+
+void ParseMessage_Delete(ParseMessage* msg)
+{
+	if(msg->File != NULL)
+		free(msg->File);
+		
+	if(msg->ErrMessage != NULL)
+		free(msg->ErrMessage);
+		
+	free(msg);
+};
 
 ObjectBasicScript* ObjectBasicScript_New()
 {
@@ -72,6 +112,8 @@ ObjectBasicScript* ObjectBasicScript_New()
 	obj->CurrentClassVars = List_New();
 	obj->CurrentClassProperties = List_New();
 	obj->CurrentClassMethods = List_New();
+	
+	obj->Messages = List_New();
 	return obj;
 };
 
@@ -117,8 +159,21 @@ void ObjectBasicScript_Delete(ObjectBasicScript* obj)
 	for(i = 0; i < List_Count(obj->CurrentClassMethods); i++)
 		ClassConversion_Delete(List_ClassConversionAtIndex(obj->CurrentClassMethods, i));
 	List_Delete(obj->CurrentClassMethods);
+	for(i = 0; i < List_Count(obj->Messages); i++)
+		ParseMessage_Delete(List_ParseMessageAtIndex(obj->Messages, i));
+	List_Delete(obj->Messages);
+	
 	free(obj);
 };
+
+void AddParseMessage(ObjectBasicScript* obj, int msgType, char* msgFile, int msgLine, int msgColumn, int msgErrNum, char* msgErrMessage)
+{
+	List_Add(obj->Messages, ParseMessage_New(msgType, msgFile, msgLine, msgColumn, msgErrNum, msgErrMessage));
+};
+
+#define AddInfoMessage(a, b, c, d, e, f)		AddParseMessage(a, PM_INFO, b, c, d, e, f)
+#define AddWarnMessage(a, b, c, d, e, f)		AddParseMessage(a, PM_WARN, b, c, d, e, f)
+#define AddErrMessage(a, b, c, d, e, f)			AddParseMessage(a, PM_ERR, b, c, d, e, f)
 
 long NextLabelId(ObjectBasicScript* obj)
 {

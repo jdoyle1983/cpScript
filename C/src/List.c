@@ -30,6 +30,7 @@ List* List_New(void)
 	List* r = (List*)malloc(sizeof(List));
 	r->Count = 0;
 	r->Items = malloc(0);
+	r->ActualCount = 0;
 	return r;
 };
 
@@ -48,14 +49,22 @@ int List_Count(List* list)
 void List_Add(List* list, void* item)
 {
 	list->Count++;
-	list->Items = (void**)realloc(list->Items, sizeof(void*) * list->Count);
+	if(list->Count > list->ActualCount)
+	{
+		list->ActualCount = list->ActualCount + 10;
+		list->Items = (void**)realloc(list->Items, sizeof(void*) * list->ActualCount);
+	}
 	list->Items[list->Count - 1]  = item;
 };
 
 void List_AddInFront(List* list, void* item)
 {
 	list->Count++;
-	list->Items = (void**)realloc(list->Items, sizeof(void*) * list->Count);
+	if(list->Count > list->ActualCount)
+	{
+		list->ActualCount = list->ActualCount + 10;
+		list->Items = (void**)realloc(list->Items, sizeof(void*) * list->ActualCount);
+	}
 	int i = 0;
 	for(i = list->Count - 1; i > 0; i--)
 		list->Items[i] = list->Items[i - 1];
@@ -85,7 +94,11 @@ void List_RemoveAt(List* list, int idx)
 		for(e = idx; e < list->Count - 1; e++)
 			list->Items[e] = list->Items[e + 1];
 		list->Count--;
-		list->Items = (void**)realloc(list->Items, sizeof(void*) * list->Count);
+		if((list->ActualCount - list->Count) >= 10)
+		{
+			list->ActualCount = list->ActualCount - 10;
+			list->Items = (void**)realloc(list->Items, sizeof(void*) * list->ActualCount);
+		}
 	}
 };
 
@@ -102,6 +115,7 @@ void List_Reverse(List* list)
 void List_Clear(List* list)
 {
     list->Count = 0;
+	list->ActualCount = 0;
     free(list->Items);
     list->Items = (void**)malloc(0);
 };
