@@ -32,6 +32,7 @@ typedef struct
 {
 	int Count;
 	void** Items;
+	int ActualCount;
 } List;
 
 List* List_New(void);
@@ -50,14 +51,14 @@ void List_Reverse(List* list);
 
 void List_Clear(List* list);
 
+int List_IntAtIndex(List* list, int idx);
+void List_AddInt(List* list, int item);
+
 /*
 	Shared
 */
 #define List_StringAtIndex(l, i) 				((char*)List_AtIndex(l, i))
 #define List_ListAtIndex(l, i)                  ((List*)List_AtIndex(l, i))
-#define List_IntAtIndex(l, i)                   ((int)List_AtIndex(l, i))
-
-#define List_AddInt(l, i)                       List_Add(l, (void*)i)
 
 /*
 	For ASM
@@ -77,5 +78,6 @@ void List_Clear(List* list);
 #define List_ClassDefAtIndex(l, i)				((ClassDef*)List_AtIndex(l, i))
 #define List_CodeBlockAtIndex(l, i)				((CodeBlock*)List_AtIndex(l, i))
 #define List_ClassConversionAtIndex(l, i)		((ClassConversion*)List_AtIndex(l, i))
+#define List_ParseMessageAtIndex(l, i)			((ParseMessage*)List_AtIndex(l, i))
 
 #endif

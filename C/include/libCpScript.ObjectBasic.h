@@ -34,6 +34,23 @@ extern "C" {
 #define EXPORT
 #endif
 
+enum ParseMessageLevel
+{
+	PM_INFO = 0,
+	PM_WARN = 1,
+	PM_ERR = 2,
+};
+
+typedef struct
+{
+	int Type;
+	char* File;
+	int Line;
+	int Column;
+	int ErrNum;
+	char* ErrMessage;
+} ParseMessage;
+
 EXPORT void* ObjScript_New();
 EXPORT void RegisterFunction(void* ObjScript, char* Name);
 EXPORT void ObjScript_Load(void* ObjScript, char* Script);

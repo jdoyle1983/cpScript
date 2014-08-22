@@ -27,6 +27,7 @@
 #include <string.h>
 #include <Stack.h>
 #include <Extensions.h>
+#include <stdlib.h>
 
 int OpPreced(Token* c)
 {

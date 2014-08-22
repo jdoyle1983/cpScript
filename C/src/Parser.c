@@ -121,6 +121,7 @@ List* Parse(char* Input)
                 else if(strcmp(tVal, ",") == 0) tok = tComma;
                 else if(strcmp(tVal, "eoe") == 0) tok = tEndOfExec;
                 else if(strcmp(tVal, "lib") == 0) tok = tLib;
+				else if(strcmp(tVal, "dbg") == 0) tok = tDbg;
                 else
                 {
                     if(tVal[0] == '@')

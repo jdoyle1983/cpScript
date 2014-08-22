@@ -102,6 +102,7 @@ III.	Syntax
 			A. Parameter Index
 			
 				L   = Literal value, quoted or not
+				Li  = Liter value, quoted only
 				La  = Label value, non-quoted literal
 				I   = Integer value
 				@   = Register Variable
@@ -118,6 +119,7 @@ III.	Syntax
 				[7] $
 				[8] La
 				[9] I
+				[0] Li
 		
 			B. Op Codes
 		
@@ -205,6 +207,8 @@ III.	Syntax
 					Push all block data from [7] into the stack.
 				POPB [7]
 					Pop all block data from the stack into [7].
+				DBG [9]a, [9]b, [0]
+					Set debug information, [9]a: Src Debug Line, [9]b: Src Debug Column, [0]: Src Debug Filename
 				EOE
 					End of Execution, halts the entire system.
 			

@@ -40,3 +40,22 @@ void Stack_Push(Stack* stack, void* item)
 {
 	List_Add(stack, item);
 };
+
+void Stack_PushInt(Stack* stack, int val)
+{
+	List_AddInt(stack, val);
+};
+
+int Stack_PeekInt(Stack* stack)
+{
+	return List_IntAtIndex(stack, stack->Count - 1);
+};
+
+int Stack_PopInt(Stack* stack)
+{
+	int rVal = Stack_PeekInt(stack);
+	int* tVal = Stack_Peek(stack);
+	List_RemoveAt(stack, stack->Count - 1);
+	free(tVal);
+	return rVal;
+};

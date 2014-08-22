@@ -10,6 +10,7 @@ void ShowHelp()
 	printf("MakeExec -t[asm|obj] [SrcScript] [OutExec]\n\n");
 	printf("Examples:\n");
 	printf("    MakeExe -tasm MyScript.asm MyScriptExe.exe\n");
+	printf("    MakeExe -tbin MyScript.bin MyScriptExe.exe\n");
 	printf("    MakeExe -tobj MyScript.cps MyObjScriptExe.exe\n");
 	printf("\n\n");
 };
@@ -22,7 +23,9 @@ int main(int argc, char* argv[])
 	{
 		short AsmScript = 0;
 		
-		if(strcmp(argv[1], "-tasm") == 0)
+		if(strcmp(argv[1], "-tbin") == 0)
+			AsmScript = 2;
+		else if(strcmp(argv[1], "-tasm") == 0)
 			AsmScript = 1;
 		else if(strcmp(argv[1], "-tobj") == 0)
 			AsmScript = 0;
@@ -42,34 +45,43 @@ int main(int argc, char* argv[])
 		fseek(srcFile, 0, SEEK_END);
 		long srcSize = ftell(srcFile);
 		fseek(srcFile, 0, SEEK_SET);
-		char* srcText = (char*)malloc(sizeof(char) * (srcSize + 1));
-		fread(srcText, sizeof(char), srcSize, srcFile);
-		srcText[srcSize] = '\0';
-		fclose(srcFile);
 		
-		if(AsmScript == 0)
+		if(AsmScript == 2)
 		{
-			void* Script = ObjScript_New();	
-			ObjScript_Load(Script, srcText);
-			void* State = State_New(ObjScript_GetAsm(Script));
-		
-			printf("Compiling Script...\n");
-		
-			binData = State_Compile(State, &binSize);
-			State_Delete(State);		
-			ObjScript_Delete(Script);
+			binSize = srcSize;
+			binData = malloc(sizeof(char) * binSize);
+			fread(binData, sizeof(char), binSize, srcFile);
 		}
 		else
 		{
-			void* State = State_New(srcText);
+			char* srcText = (char*)malloc(sizeof(char) * (srcSize + 1));
+			fread(srcText, sizeof(char), srcSize, srcFile);
+			srcText[srcSize] = '\0';
 			
-			printf("Compiling Script...\n");
+			if(AsmScript == 1)
+			{
+				void* State = State_New(srcText);
+				
+				printf("Compiling Script...\n");
+				
+				binData = State_Compile(State, &binSize);
+				State_Delete(State);
+			}
+			else
+			{
+				void* Script = ObjScript_New();	
+				ObjScript_Load(Script, srcText);
+				void* State = State_New(ObjScript_GetAsm(Script));
 			
-			binData = State_Compile(State, &binSize);
-			State_Delete(State);
+				printf("Compiling Script...\n");
+			
+				binData = State_Compile(State, &binSize);
+				State_Delete(State);		
+				ObjScript_Delete(Script);
+			}
+			free(srcText);
 		}
-		
-		free(srcText);
+		fclose(srcFile);
 		
 		printf("Generating Binary...\n");
 		
@@ -95,6 +107,9 @@ int main(int argc, char* argv[])
 			
 			printf("Done!\n");
 		}
+		
+		if(binData != NULL)
+			free(binData);
 	}
 	
 	return 0;

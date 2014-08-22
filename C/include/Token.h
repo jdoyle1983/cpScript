@@ -82,6 +82,8 @@ enum Token //Token values
 	tLib,
 	
 	tResBlockSet,
+	
+	tDbg,
 };
 
 #endif

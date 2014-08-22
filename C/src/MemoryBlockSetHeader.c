@@ -45,16 +45,19 @@ MemoryBlockSetHeader* MemoryBlockSetHeader_New(char* Name, int Count)
 
 void MemoryBlockSetHeader_SetOffset(MemoryBlockSetHeader* Header, int Idx, int Offset)
 {
-    Header->IndexOffset->Items[Idx] = (void*)Offset;
+    *((int*)Header->IndexOffset->Items[Idx]) = Offset;
 };
 
 int MemoryBlockSetHeader_GetOffset(MemoryBlockSetHeader* Header, int Idx)
 {
-    return (int)Header->IndexOffset->Items[Idx];
+    return *((int*)Header->IndexOffset->Items[Idx]);
 };
 
 void MemoryBlockSetHeader_Delete(MemoryBlockSetHeader* Header)
 {
+	int i = 0;
+	for(i = 0; i < Header->IndexOffset->Count; i++)
+		free(Header->IndexOffset->Items[i]);
     List_Delete(Header->IndexOffset);
     if(Header->Name != NULL)
         free(Header->Name);

@@ -25,6 +25,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <libCpScript.Asm.h>
 #include <Stack.h>
 #include <AssemblyToken.h>
@@ -48,6 +49,10 @@ typedef struct
     Stack* _BlockHeaders;
     List* _Tokens;
     int _Offset;
+	
+	int _DbgLine;
+	int _DbgColumn;
+	char* _DbgFile;
 } State;
 
 typedef struct
@@ -561,6 +566,9 @@ EXPORT void* State_New(char* ScriptText)
     state->_BlockHeaders = Stack_New();
     state->_Offset = -1;
     state->_Tokens = Parse(ScriptText);
+	state->_DbgLine = 0;
+	state->_DbgColumn = 0;
+	state->_DbgFile = NULL;
     State_DoInit(state);
     return state;
 };
@@ -611,6 +619,9 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
     state->_Headers = Stack_New();
     state->_BlockHeaders = Stack_New();
     state->_Offset = -1;
+	state->_DbgLine = 0;
+	state->_DbgColumn = 0;
+	state->_DbgFile = NULL;
 
     state->_Tokens = List_New();
 
@@ -831,7 +842,13 @@ EXPORT void State_Delete(void* S)
     }
     List_Delete(state->_BlockHeaders);
 
+	for(i = 0; i < state->_CursorStack->Count; i++)
+		free((int*)state->_CursorStack->Items[i]);
+		
     List_Delete(state->_CursorStack);
+	
+	if(state->_DbgFile != NULL)
+		free(state->_DbgFile);
 
     free(state);
 };
@@ -1030,7 +1047,7 @@ EXPORT short State_Iterate(void* S)
                 for(i = 0; i < Count; i++)
                     List_AddInt(hed->IndexOffset, -1);
                 for(i = Count - 1; i >= 0; i--)
-                    hed->IndexOffset->Items[i] = (void*)State_PopInt(state);
+                    *((int*)hed->IndexOffset->Items[i]) = State_PopInt(state);
 
                 if(shouldAdd)
                     List_Add(BlockHeaders, hed);
@@ -1541,6 +1558,37 @@ EXPORT short State_Iterate(void* S)
                 FreeMemoryBlockSet(state, CurrentTok(state)->Val);
                 state->_Offset++;
             } break;
+			
+			case tDbg:
+			{
+				AssemblyToken* tokDbgLine;
+				AssemblyToken* tokDbgColumn;
+				AssemblyToken* tokDbgFile;
+				
+				state->_Offset++;
+				
+				tokDbgLine = CurrentTok(state);
+				
+				state->_Offset++;
+				state->_Offset++;
+				
+				tokDbgColumn = CurrentTok(state);
+				
+				state->_Offset++;
+				state->_Offset++;
+				
+				tokDbgFile = CurrentTok(state);
+				
+				state->_DbgLine = atoi(tokDbgLine->Val);
+				state->_DbgColumn = atoi(tokDbgColumn->Val);
+				if(state->_DbgFile != NULL)
+					free(state->_DbgFile);
+				state->_DbgFile = (char*)malloc(sizeof(char) * (strlen(tokDbgFile->Val) + 1));
+				strcpy(state->_DbgFile, tokDbgFile->Val);
+				
+				state->_Offset++;
+				
+			} break;
 
             case tEndOfExec:
             {
@@ -1576,18 +1624,18 @@ EXPORT void State_LoadMethod(void* S, char* Name)
     }
 };
 
-EXPORT int State_PopInt(void* S)
+EXPORT long State_PopInt(void* S)
 {
     char* v = State_PopString(S);
-    int r = atoi(v);
+    int r = atol(v);
     free(v);
     return r;
 };
 
-EXPORT int State_GetIntVariableInScope(void* S, char* n)
+EXPORT long State_GetIntVariableInScope(void* S, char* n)
 {
     char* v = State_GetStringVariableInScope(S, n);
-    int r = atoi(v);
+    int r = atol(v);
     free(v);
     return r;
 };
@@ -1642,18 +1690,34 @@ EXPORT char* State_GetStringVariableInScope(void* S, char* n)
     return cVal;
 };
 
-EXPORT void State_PushInt(void* S, int v)
+EXPORT void* State_Pop(void* S)
+{
+	char* v = State_PopString(S);
+	void* r = NULL;
+	
+	#if INTPTR_MAX == INT32_MAX
+		r = (void*)atoi(v);
+	#elif INTPTR_MAX == INT64_MAX
+		r = (void*)atol(v);
+	#else
+		#error "Environment not 32 or 64 bit."
+	#endif
+	
+	return r;
+};
+
+EXPORT void State_PushInt(void* S, long v)
 {
     char* p = (char*)malloc(sizeof(char) * 3000);
-    sprintf(p, "%d", v);
+    sprintf(p, "%ld", v);
     State_PushString(S, p);
     free(p);
 };
 
-EXPORT void State_SetIntVariableInScope(void* S, char* n, int v)
+EXPORT void State_SetIntVariableInScope(void* S, char* n, long v)
 {
     char* p = (char*)malloc(sizeof(char) * 3000);
-    sprintf(p, "%d", v);
+    sprintf(p, "%ld", v);
     State_SetStringVariableInScope(S, n, p);
     free(p);
 };
@@ -1714,6 +1778,21 @@ EXPORT void State_SetStringVariableInScope(void* S, char* n, char* v)
     sprintf(ActualName, "%%%s", n);
     SetMemoryBlock((State*)S, ActualName, v);
     free(ActualName);
+};
+
+EXPORT void State_Push(void* S, void* v)
+{
+	char* p = (char*)malloc(sizeof(char) * 3000);
+	
+	#if INTPTR_MAX == INT32_MAX
+		sprintf(p, "%i", (int)v);
+	#elif INTPTR_MAX == INT64_MAX
+		sprintf(p, "%li", (long)v);
+	#else
+		#error "Environment not 32 or 64 bit."
+	#endif
+	
+	State_PushString(S, p);
 };
 
 EXPORT void InteropFreePtr(void* Ptr)

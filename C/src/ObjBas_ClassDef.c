@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 
 ClassConversion* ClassConversion_New(void)
 {

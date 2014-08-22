@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct
 {
@@ -51,7 +52,47 @@ typedef struct
 	List* CurrentClassProperties;
 	List* CurrentClassMethods;
 	
+	List* Messages;
+	
 } ObjectBasicScript;
+
+ParseMessage* ParseMessage_New(int msgType, char* msgFile, int msgLine, int msgColumn, int msgErrNum, char* msgErrMessage)
+{
+	ParseMessage* pMsg = (ParseMessage*)malloc(sizeof(ParseMessage));
+
+	pMsg->File = NULL;
+	pMsg->ErrMessage = NULL;
+	
+	pMsg->Type = msgType;
+	pMsg->Line = msgLine;
+	pMsg->Column = msgColumn;
+	pMsg->ErrNum = msgErrNum;
+
+	if(msgFile != NULL)
+	{
+		pMsg->File = (char*)malloc(sizeof(char) * (strlen(msgFile) + 1));
+		strcpy(pMsg->File, msgFile);
+	}
+	
+	if(msgErrMessage != NULL)
+	{
+		pMsg->ErrMessage = (char*)malloc(sizeof(char) * (strlen(msgErrMessage) + 1));
+		strcpy(pMsg->ErrMessage, msgErrMessage);
+	}
+	
+	return pMsg;
+};
+
+void ParseMessage_Delete(ParseMessage* msg)
+{
+	if(msg->File != NULL)
+		free(msg->File);
+		
+	if(msg->ErrMessage != NULL)
+		free(msg->ErrMessage);
+		
+	free(msg);
+};
 
 ObjectBasicScript* ObjectBasicScript_New()
 {
@@ -71,6 +112,8 @@ ObjectBasicScript* ObjectBasicScript_New()
 	obj->CurrentClassVars = List_New();
 	obj->CurrentClassProperties = List_New();
 	obj->CurrentClassMethods = List_New();
+	
+	obj->Messages = List_New();
 	return obj;
 };
 
@@ -94,7 +137,6 @@ void MethodStub(void* State)
 void ObjectBasicScript_Delete(ObjectBasicScript* obj)
 {
 	int i = 0;
-	int e = 0;
 	for(i = 0; i < List_Count(obj->Functions); i++)
 		Function_Delete(List_FunctionAtIndex(obj->Functions, i));
 	List_Delete(obj->Functions);
@@ -117,8 +159,21 @@ void ObjectBasicScript_Delete(ObjectBasicScript* obj)
 	for(i = 0; i < List_Count(obj->CurrentClassMethods); i++)
 		ClassConversion_Delete(List_ClassConversionAtIndex(obj->CurrentClassMethods, i));
 	List_Delete(obj->CurrentClassMethods);
+	for(i = 0; i < List_Count(obj->Messages); i++)
+		ParseMessage_Delete(List_ParseMessageAtIndex(obj->Messages, i));
+	List_Delete(obj->Messages);
+	
 	free(obj);
 };
+
+void AddParseMessage(ObjectBasicScript* obj, int msgType, char* msgFile, int msgLine, int msgColumn, int msgErrNum, char* msgErrMessage)
+{
+	List_Add(obj->Messages, ParseMessage_New(msgType, msgFile, msgLine, msgColumn, msgErrNum, msgErrMessage));
+};
+
+#define AddInfoMessage(a, b, c, d, e, f)		AddParseMessage(a, PM_INFO, b, c, d, e, f)
+#define AddWarnMessage(a, b, c, d, e, f)		AddParseMessage(a, PM_WARN, b, c, d, e, f)
+#define AddErrMessage(a, b, c, d, e, f)			AddParseMessage(a, PM_ERR, b, c, d, e, f)
 
 long NextLabelId(ObjectBasicScript* obj)
 {
@@ -509,6 +564,36 @@ CodeBlock* getCurrentBlock(ObjectBasicScript* obj)
 	return r;
 }
 
+void ParseAsmBlock(ObjectBasicScript* obj)
+{
+	obj->CurrentBlock++;
+	int CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	
+	char* NewLine = (char*)malloc(sizeof(char) * 5000);
+	
+	while(CurrentTokenType != ExEndAsmBlock)
+	{
+		char* AsmLine = (char*)malloc(sizeof(char) * 5000);
+		strcpy(AsmLine, "");
+		
+		int i = 0;
+		
+		for(i = 0; i < List_Count(getCurrentBlock(obj)->Tokens); i++)
+		{
+			strcat(AsmLine, List_TokenAtIndex(getCurrentBlock(obj)->Tokens, i)->Value);
+			strcat(AsmLine, "");
+		}
+		
+		AppendAsmLine(obj, AsmLine);
+		free(AsmLine);
+			
+		obj->CurrentBlock++;
+		CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	}
+	
+	free(NewLine);
+}
+
 void ParseIfBlock(ObjectBasicScript* obj)
 {
 	char* NewLine = (char*)malloc(sizeof(char) * 5000);
@@ -732,6 +817,51 @@ void ParseBlock(ObjectBasicScript* obj)
 		case ExWhile: ParseWhileBlock(obj); break;
 		case ExVar: ParseVarBlock(obj); break;
 		case ExFor: ParseForBlock(obj); break;
+		case ExAsmBlock: ParseAsmBlock(obj); break;
+		case ExAsmPush:
+		{
+			int wasFound = 0;
+			for(e = 0; e < List_Count(obj->CurrentClassVars); e++)
+			{
+				char* cv = List_StringAtIndex(obj->CurrentClassVars, e);
+				if(strcmp(cv, List_TokenAtIndex(thisBlock->Tokens, 1)->Value) == 0)
+				{
+					wasFound = 1;
+					AppendAsm(obj, "PUSHB $");
+					AppendAsmLine(obj, cv);
+				}
+				//free(cv);
+			}
+			if(wasFound == 0)
+			{
+				char* Var = getVarOrLit(obj, List_TokenAtIndex(thisBlock->Tokens, 1)->Value);
+				AppendAsm(obj, "PUSH ");
+				AppendAsmLine(obj, Var);
+				free(Var);
+			}
+		} break;
+		case ExAsmPop:
+		{
+			int wasFound = 0;
+			for(e = 0; e < List_Count(obj->CurrentClassVars); e++)
+			{
+				char* cv = List_StringAtIndex(obj->CurrentClassVars, e);
+				if(strcmp(cv, List_TokenAtIndex(thisBlock->Tokens, 1)->Value) == 0)
+				{
+					wasFound = 1;
+					AppendAsm(obj, "POPB $");
+					AppendAsmLine(obj, cv);
+				}
+				//free(cv);
+			}
+			if(wasFound == 0)
+			{
+				char* Var = getVarOrLit(obj, List_TokenAtIndex(thisBlock->Tokens, 1)->Value);
+				AppendAsm(obj, "POP ");
+				AppendAsmLine(obj, Var);
+				free(Var);
+			}
+		} break;
 		default:
 		{
 			if(List_Count(thisBlock->Tokens) >= 2 && List_TokenAtIndex(thisBlock->Tokens, 1)->Type == Assignment)

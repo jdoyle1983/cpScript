@@ -27,8 +27,8 @@ namespace LightCProto
         OpLessThanOrEqualTo,
         OpenParen,
         CloseParen,
-        ScopeIn,
-        ScopeOut,
+        OpenBrace,
+        CloseBrace,
         OpenBracket,
         CloseBracket,
         Comma,
@@ -45,32 +45,31 @@ namespace LightCProto
 
         //Extended Types
 
-        ExExtern,
-
         ExReturn,
 
-        ExVar,
-        ExStruct,
+        ExInt,
+        ExDouble,
+        ExBool,
+        ExString,
+        ExVoid,
+        ExClassInstance,
+        ExClassAction,
 
         ExIf,
         ExElseIf,
         ExElse,
-
         ExFor,
         ExWhile,
 
         ExClass,
+        ExStruct,
         ExOverride,
         ExStatic,
 
-        ExPPInclude,
-        ExPPDefine,
-        ExPPIfDef,
-        ExPPIfNDef,
-        ExPPElseIfDef,
-        ExPPElseIfNDef,
-        ExPPElseDef,
-        ExPPEndDef,
+        ExPublic,
+        ExPrivate,
+
+        ExInjectAsm,
     }
 
     public class Token
@@ -124,8 +123,8 @@ namespace LightCProto
                         case "%": Toks.Add(new Token(TokenType.OpMod, t)); break;
                         case "(": Toks.Add(new Token(TokenType.OpenParen, t)); break;
                         case ")": Toks.Add(new Token(TokenType.CloseParen, t)); break;
-                        case "{": Toks.Add(new Token(TokenType.ScopeIn, t)); break;
-                        case "}": Toks.Add(new Token(TokenType.ScopeOut, t)); break;
+                        case "{": Toks.Add(new Token(TokenType.OpenBrace, t)); break;
+                        case "}": Toks.Add(new Token(TokenType.CloseBrace, t)); break;
                         case "[": Toks.Add(new Token(TokenType.OpenBracket, t)); break;
                         case "]": Toks.Add(new Token(TokenType.CloseBracket, t)); break;
                         case ">": Toks.Add(new Token(TokenType.OpGreaterThan, t)); break;
@@ -134,7 +133,18 @@ namespace LightCProto
                         case "!": Toks.Add(new Token(TokenType.OpNot, t)); break;
                         case ":": Toks.Add(new Token(TokenType.Colon, t)); break;
                         case ";": Toks.Add(new Token(TokenType.SemiColon, t)); break;
-                        case ".": Toks.Add(new Token(TokenType.Period, t)); break;
+                        case ".":
+                            {
+                                if (LastToken != null)
+                                {
+                                    if (LastToken.Type == TokenType.Period)
+                                        ReplaceLastToken(new Token(TokenType.OpCat, ".."));
+                                    else
+                                        Toks.Add(new Token(TokenType.Period, t));
+                                }
+                                else
+                                    Toks.Add(new Token(TokenType.Period, t));
+                            } break;
                         case "=":
                             {
                                 if (LastToken != null)
@@ -193,30 +203,44 @@ namespace LightCProto
             for (int count = 0; count < Input.Length; count++)
             {
                 Token t = Input[count];
-                if (t.Type == TokenType.Literal)
+                if (t.Type == TokenType.Period &&
+                    (count > 0) &&
+                    ((count + 1) < Input.Length) &&
+                    Input[count - 1].Type == TokenType.Literal &&
+                    Input[count + 1].Type == TokenType.Literal)
+                {
+                    string p1 = Input[count - 1].Value;
+                    string p2 = Input[count + 1].Value;
+                    Toks.RemoveAt(Toks.Count - 1);
+                    Toks.Add(new Token(TokenType.ExClassAction, p1 + "." + p2));
+                    count++;
+                }
+                else if (t.Type == TokenType.Literal)
                 {
                     switch (t.Value.ToLower().Trim())
                     {
-                        case "if": Toks.Add(new Token(TokenType.ExIf, "if")); break;
-                        case "elseif": Toks.Add(new Token(TokenType.ExElseIf, "elseif")); break;
+                        case "if":
+                            {
+                                if (LastToken.Type == TokenType.ExElse)
+                                    ReplaceLastToken(new Token(TokenType.ExElseIf, "else if"));
+                                else
+                                    Toks.Add(new Token(TokenType.ExIf, "if"));
+                            } break;
                         case "else": Toks.Add(new Token(TokenType.ExElse, "else")); break;
                         case "while": Toks.Add(new Token(TokenType.ExWhile, "while")); break;
                         case "for": Toks.Add(new Token(TokenType.ExFor, "for")); break;
-                        case "var": Toks.Add(new Token(TokenType.ExVar, "var")); break;
+                        case "int": Toks.Add(new Token(TokenType.ExInt, "int")); break;
+                        case "double": Toks.Add(new Token(TokenType.ExDouble, "double")); break;
+                        case "bool": Toks.Add(new Token(TokenType.ExBool, "bool")); break;
+                        case "string": Toks.Add(new Token(TokenType.ExString, "string")); break;
                         case "return": Toks.Add(new Token(TokenType.ExReturn, "return")); break;
                         case "class": Toks.Add(new Token(TokenType.ExClass, "class")); break;
+                        case "struct": Toks.Add(new Token(TokenType.ExStruct, "struct")); break;
                         case "override": Toks.Add(new Token(TokenType.ExOverride, "override")); break;
                         case "static": Toks.Add(new Token(TokenType.ExStatic, "static")); break;
-                        case "extern": Toks.Add(new Token(TokenType.ExExtern, "extern")); break;
-                        case "struct": Toks.Add(new Token(TokenType.ExStruct, "struct")); break;
-                        case "#include": Toks.Add(new Token(TokenType.ExPPInclude, "#include")); break;
-                        case "#define": Toks.Add(new Token(TokenType.ExPPDefine, "#define")); break;
-                        case "#ifdef": Toks.Add(new Token(TokenType.ExPPIfDef, "#ifdef")); break;
-                        case "#ifndef": Toks.Add(new Token(TokenType.ExPPIfNDef, "#ifndef")); break;
-                        case "#elseifdef": Toks.Add(new Token(TokenType.ExPPElseIfDef, "#elseifdef")); break;
-                        case "#elseifndef": Toks.Add(new Token(TokenType.ExPPElseIfNDef, "#elseifndef")); break;
-                        case "#elsedef": Toks.Add(new Token(TokenType.ExPPElseDef, "#elsedef")); break;
-                        case "#enddef": Toks.Add(new Token(TokenType.ExPPEndDef, "#enddef")); break;
+                        case "public": Toks.Add(new Token(TokenType.ExPublic, "public")); break;
+                        case "private": Toks.Add(new Token(TokenType.ExPrivate, "private")); break;
+                        case "asm": Toks.Add(new Token(TokenType.ExInjectAsm, "asm")); break;
                         default: Toks.Add(t); break;
                     }
                 }

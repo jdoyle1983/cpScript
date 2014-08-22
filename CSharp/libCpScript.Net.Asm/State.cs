@@ -98,15 +98,23 @@ namespace libCpScript.Net.Asm
 			Marshal.FreeHGlobal (AnsiName);
 		}
 
-		public int PopInt ()
+		public object Pop ()
+		{
+			GCHandle tmpHandle = GCHandle.FromIntPtr(NativeState.State_Pop(_State));
+			object ReturnValue = tmpHandle.Target;
+			tmpHandle.Free();
+			return ReturnValue;
+		}
+		
+		public long PopInt ()
 		{
 			return NativeState.State_PopInt (_State);
 		}
 		
-		public int GetIntVariableInScope (string Name)
+		public long GetIntVariableInScope (string Name)
 		{
 			IntPtr AnsiName = Marshal.StringToHGlobalAnsi(Name);
-			int r = NativeState.State_GetIntVariableInScope(_State, AnsiName);
+			long r = NativeState.State_GetIntVariableInScope(_State, AnsiName);
 			Marshal.FreeHGlobal(AnsiName);
 			return r;
 		}
@@ -156,12 +164,18 @@ namespace libCpScript.Net.Asm
 			return r;
 		}
 
-		public void PushInt (int v)
+		public void Push (object Obj)
+		{
+			GCHandle tmpHandle = GCHandle.Alloc(Obj);
+			NativeState.State_Push(_State, GCHandle.ToIntPtr(tmpHandle));
+		}
+		
+		public void PushInt (long v)
 		{
 			NativeState.State_PushInt(_State, v);
 		}
 		
-		public void SetIntVariableInScope (string Name, int v)
+		public void SetIntVariableInScope (string Name, long v)
 		{
 			IntPtr AnsiName = Marshal.StringToHGlobalAnsi (Name);
 			NativeState.State_SetIntVariableInScope(_State, AnsiName, v);
