@@ -98,49 +98,49 @@ er: $(ER_BIN)
 me: $(ME_BIN)
 
 libdir:
-	cmd /c mkdir ..\\Build\\Lib
+	mkdir ..\\Build\\Lib
 
 objheaders: libdir
-	cmd /c copy /y ObjectBasicHeaders\\*.obh ..\\Build\\Lib
+	copy /y ObjectBasicHeaders\\*.obh ..\\Build\\Lib
 	
 lightcheaders: libdir
-	cmd /c copy /y LightCHeaders\\*.lch ..\\Build\\Lib
-	cmd /c copy /y LightCLibraries\\*.lcl ..\\Build\\Lib
+	copy /y LightCHeaders\\*.lch ..\\Build\\Lib
+	copy /y LightCLibraries\\*.lcl ..\\Build\\Lib
 
 clean:
-	cmd /c del /f $(STATIC_BIN)
-	cmd /c del /f $(SHARED_BIN)
-	cmd /c del /f $(SHARED_BIN_MIN)
-	cmd /c del /f $(SHARED_BIN_MAJ)
-	cmd /c del /f $(SHARED_BIN_CORE)
-	cmd /c del /f $(STDSTATIC_BIN)
-	cmd /c del /f $(STDSHARED_BIN)
-	cmd /c del /f $(STDSHARED_BIN_MIN)
-	cmd /c del /f $(STDSHARED_BIN_MAJ)
-	cmd /c del /f $(STDSHARED_BIN_CORE)
-	cmd /c del /f $(CPINT_BIN)
-	cmd /c del /f $(OBJSTATIC_BIN)
-	cmd /c del /f $(OBJSHARED_BIN)
-	cmd /c del /f $(OBJSHARED_BIN_MIN)
-	cmd /c del /f $(OBJSHARED_BIN_MAJ)
-	cmd /c del /f $(OBJSHARED_BIN_CORE)
-	cmd /c del /f $(CPOBJCMP_BIN)
-	cmd /c del /f $(CPCONSOLE_BIN)
-	cmd /c del /f $(ER_BIN)
-	cmd /c del /f $(ME_BIN)
-	cmd /c del /f $(STATIC_OBJDIR)\\*.o
-	cmd /c del /f $(SHARED_OBJDIR)\\*.o
-	cmd /c del /f $(STDSTATIC_OBJDIR)\\*.o
-	cmd /c del /f $(STDSHARED_OBJDIR)\\*.o
-	cmd /c del /f $(CPINT_OBJDIR)\\*.o
-	cmd /c del /f $(OBJSTATIC_OBJDIR)\\*.o
-	cmd /c del /f $(OBJSHARED_OBJDIR)\\*.o
-	cmd /c del /f $(CPOBJCMP_OBJDIR)\\*.o
-	cmd /c del /f $(CPCONSOLE_OBJDIR)\\*.o
-	cmd /c del /f $(ER_OBJDIR)\\*.o
-	cmd /c del /f ..\\Build\Lib\\*.obh
-	cmd /c del /f ..\\Build\Lib\\*.lch
-	cmd /c del /f ..\\Build\Lib\\*.lcl
+	del /f $(STATIC_BIN)
+	del /f $(SHARED_BIN)
+	del /f $(SHARED_BIN_MIN)
+	del /f $(SHARED_BIN_MAJ)
+	del /f $(SHARED_BIN_CORE)
+	del /f $(STDSTATIC_BIN)
+	del /f $(STDSHARED_BIN)
+	del /f $(STDSHARED_BIN_MIN)
+	del /f $(STDSHARED_BIN_MAJ)
+	del /f $(STDSHARED_BIN_CORE)
+	del /f $(CPINT_BIN)
+	del /f $(OBJSTATIC_BIN)
+	del /f $(OBJSHARED_BIN)
+	del /f $(OBJSHARED_BIN_MIN)
+	del /f $(OBJSHARED_BIN_MAJ)
+	del /f $(OBJSHARED_BIN_CORE)
+	del /f $(CPOBJCMP_BIN)
+	del /f $(CPCONSOLE_BIN)
+	del /f $(ER_BIN)
+	del /f $(ME_BIN)
+	del /f $(STATIC_OBJDIR)\\*.o
+	del /f $(SHARED_OBJDIR)\\*.o
+	del /f $(STDSTATIC_OBJDIR)\\*.o
+	del /f $(STDSHARED_OBJDIR)\\*.o
+	del /f $(CPINT_OBJDIR)\\*.o
+	del /f $(OBJSTATIC_OBJDIR)\\*.o
+	del /f $(OBJSHARED_OBJDIR)\\*.o
+	del /f $(CPOBJCMP_OBJDIR)\\*.o
+	del /f $(CPCONSOLE_OBJDIR)\\*.o
+	del /f $(ER_OBJDIR)\\*.o
+	del /f ..\\Build\Lib\\*.obh
+	del /f ..\\Build\Lib\\*.lch
+	del /f ..\\Build\Lib\\*.lcl
 	rmdir /Q /S ..\\Build\\Lib
 	
 $(CPINT_BIN): $(CPINT_OBJ)
@@ -165,13 +165,13 @@ $(SHARED_BIN): $(SHARED_OBJ)
 	$(CP) -shared $(SHARED_OBJ) -o $(SHARED_BIN)
 	
 $(SHARED_BIN_MIN): $(SHARED_BIN)
-	cmd /c copy /y $(SHARED_BIN) $(SHARED_BIN_MIN)
+	copy /y $(SHARED_BIN) $(SHARED_BIN_MIN)
 	
 $(SHARED_BIN_MAJ): $(SHARED_BIN)
-	cmd /c copy /y $(SHARED_BIN) $(SHARED_BIN_MAJ)
+	copy /y $(SHARED_BIN) $(SHARED_BIN_MAJ)
 
 $(SHARED_BIN_CORE): $(SHARED_BIN)
-	cmd /c copy /y $(SHARED_BIN) $(SHARED_BIN_CORE)
+	copy /y $(SHARED_BIN) $(SHARED_BIN_CORE)
 	
 $(OBJSTATIC_BIN): $(OBJSTATIC_OBJ)
 	$(AR) rcs $(OBJSTATIC_BIN) $(OBJSTATIC_OBJ)
@@ -180,13 +180,13 @@ $(OBJSHARED_BIN): $(OBJSHARED_OBJ)
 	$(CP) -shared $(OBJSHARED_OBJ) -o $(OBJSHARED_BIN)
 	
 $(OBJSHARED_BIN_MIN): $(OBJSHARED_BIN)
-	cmd /c copy /y $(OBJSHARED_BIN) $(OBJSHARED_BIN_MIN)
+	copy /y $(OBJSHARED_BIN) $(OBJSHARED_BIN_MIN)
 	
 $(OBJSHARED_BIN_MAJ): $(OBJSHARED_BIN)
-	cmd /c copy /y $(OBJSHARED_BIN) $(OBJSHARED_BIN_MAJ)
+	copy /y $(OBJSHARED_BIN) $(OBJSHARED_BIN_MAJ)
 
 $(OBJSHARED_BIN_CORE): $(OBJSHARED_BIN)
-	cmd /c copy /y $(OBJSHARED_BIN) $(OBJSHARED_BIN_CORE)
+	copy /y $(OBJSHARED_BIN) $(OBJSHARED_BIN_CORE)
 	
 $(STDSTATIC_BIN): $(STDSTATIC_OBJ)
 	$(AR) rcs $(STDSTATIC_BIN) $(STDSTATIC_OBJ)
@@ -195,13 +195,13 @@ $(STDSHARED_BIN): $(STDSHARED_OBJ)
 	$(CP) $(SHARED_BIN) -shared $(STDSHARED_OBJ) -o $(STDSHARED_BIN)
 
 $(STDSHARED_BIN_MIN): $(STDSHARED_BIN)
-	cmd /c copy /y $(STDSHARED_BIN) $(STDSHARED_BIN_MIN)
+	copy /y $(STDSHARED_BIN) $(STDSHARED_BIN_MIN)
 	
 $(STDSHARED_BIN_MAJ): $(STDSHARED_BIN)
-	cmd /c copy /y $(STDSHARED_BIN) $(STDSHARED_BIN_MAJ)
+	copy /y $(STDSHARED_BIN) $(STDSHARED_BIN_MAJ)
 
 $(STDSHARED_BIN_CORE): $(STDSHARED_BIN)
-	cmd /c copy /y $(STDSHARED_BIN) $(STDSHARED_BIN_CORE)
+	copy /y $(STDSHARED_BIN) $(STDSHARED_BIN_CORE)
 
 $(STATIC_OBJDIR)\\State.o: src\\State.c
 	$(CC) $(STATIC_CFLAGS) $(INC) -c src\\State.c -o $(STATIC_OBJDIR)\\State.o
