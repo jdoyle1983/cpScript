@@ -7,7 +7,7 @@
 void ShowHelp()
 {
 	printf("\n");
-	printf("MakeExec -t[asm|obj] [SrcScript] [OutExec]\n\n");
+	printf("MakeExec -t[asm|bin|obj] [SrcScript] [OutExec]\n\n");
 	printf("Examples:\n");
 	printf("    MakeExe -tasm MyScript.asm MyScriptExe.exe\n");
 	printf("    MakeExe -tbin MyScript.bin MyScriptExe.exe\n");
