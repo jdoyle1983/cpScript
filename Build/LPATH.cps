@@ -2,16 +2,33 @@
 #include Lib/FileIO.obh
 #include Lib/Utilities.obh
 
+CLASS Route
+	
+	PROP Dest
+	PROP Cost
+	
+	METHOD Init()
+		Dest = 0
+		Cost = 0
+	END METHOD
+	
+	METHOD Initialize(dest, cost)
+		Dest = dest
+		Cost = cost
+	END METHOD
+	
+END CLASS
+
+
 FUNCTION Main()
 	VAR StartTime = Time.GetTimeOfDay()
 	
-	VAR i = 0
-	FOR i = 1 TO 10000
-	NEXT 
+	
+	
+	
 	
 	VAR EndTime = Time.GetTimeOfDay()
 	VAR TotalTime = Time.GetDiff(EndTime, StartTime)
-	
 	VAR TotalMs = Time.GetMilliSeconds(TotalTime)
 	
 	Time.FreeTimeOfDay(StartTime)
