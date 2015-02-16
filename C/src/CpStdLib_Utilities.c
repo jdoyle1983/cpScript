@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+#include <sys/time.h>
 
 typedef struct
 {
@@ -94,8 +95,8 @@ void Utilities_Array_Resize(void* State)
 
 void Utilities_Array_SetItem(void* State)
 {
+	char* ArrayValue = State_PopString(State);
     int ArrayIndex = State_PopInt(State);
-    char* ArrayValue = State_PopString(State);
     CpArray* a = (CpArray*)State_Pop(State);
     if(ArrayIndex >= 0 && ArrayIndex < a->Count)
     {
@@ -113,4 +114,36 @@ void Utilities_Array_GetItem(void* State)
         State_PushString(State, a->Items[ArrayIndex]);
     else
         State_PushString(State, "");
+};
+
+void Utilities_Time_GetTimeOfDay(void* State)
+{
+	struct timeval* thisTime = malloc(sizeof(struct timeval));
+	gettimeofday(thisTime, NULL);
+	State_Push(State, thisTime);
+};
+
+void Utilities_Time_Diff(void* State)
+{
+	struct timeval* secondTime = (struct timeval*)State_Pop(State);
+	struct timeval* firstTime = (struct timeval*)State_Pop(State);
+	
+	struct timeval* diffTime = malloc(sizeof(struct timeval));
+	diffTime->tv_sec = secondTime->tv_sec - firstTime->tv_sec;
+	
+	diffTime->tv_usec = secondTime->tv_usec - firstTime->tv_usec;
+	
+	State_Push(State, diffTime);
+};
+
+void Utiltiess_Time_GetMilliseconds(void* State)
+{
+	struct timeval* thisTime = (struct timeval*)State_Pop(State);
+	State_PushInt(State, (thisTime->tv_sec * 1000) + (thisTime->tv_usec / 1000));
+};
+
+void Utilities_Time_FreeTimeOfDay(void* State)
+{
+	struct timeval* thisTime = (struct timeval*)State_Pop(State);
+	free(thisTime);
 };

@@ -67,5 +67,9 @@ EXPORT void CpStdLib_InstallUtilities(void* State)
     State_RegisterFunction(State, "__StdLib__Utilities__Array__Resize", &Utilities_Array_Resize, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__SetItem", &Utilities_Array_SetItem, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__GetItem", &Utilities_Array_GetItem, 0);
+	State_RegisterFunction(State, "__StdLib__Utilities__Time__GetTimeOfDay", &Utilities_Time_GetTimeOfDay, 0);
+	State_RegisterFunction(State, "__StdLib__Utilities__Time__GetTimeDiff", &Utilities_Time_Diff, 0);
+	State_RegisterFunction(State, "__StdLib__Utilities__Time__GetTimeMilliSeconds", &Utiltiess_Time_GetMilliseconds, 0);
+	State_RegisterFunction(State, "__StdLib__Utilities__Time__FreeTimeOfDay", &Utilities_Time_FreeTimeOfDay, 0);
 };
 

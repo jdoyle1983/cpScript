@@ -31,4 +31,9 @@ void Utilities_Array_Resize(void* State);
 void Utilities_Array_SetItem(void* State);
 void Utilities_Array_GetItem(void* State);
 
+void Utilities_Time_GetTimeOfDay(void* State);
+void Utilities_Time_Diff(void* State);
+void Utiltiess_Time_GetMilliseconds(void* State);
+void Utilities_Time_FreeTimeOfDay(void* State);
+
 #endif

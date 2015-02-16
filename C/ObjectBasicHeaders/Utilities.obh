@@ -4,6 +4,10 @@
 #HostFunction __StdLib__Utilities__Array__Resize
 #HostFunction __StdLib__Utilities__Array__SetItem
 #HostFunction __StdLib__Utilities__Array__GetItem
+#HostFunction __StdLib__Utilities__Time__GetTimeOfDay
+#HostFunction __StdLib__Utilities__Time__GetTimeDiff
+#HostFunction __StdLib__Utilities__Time__GetTimeMilliSeconds
+#HostFunction __StdLib__Utilities__Time__FreeTimeOfDay
 
 CLASS Array
 
@@ -37,4 +41,24 @@ CLASS Array
 		RETURN __StdLib__Utilities__Array__GetItem(ArrayId, idx)
 	END METHOD
 
+END CLASS
+
+CLASS Time
+
+	METHOD STATIC GetTimeOfDay()
+		RETURN __StdLib__Utilities__Time__GetTimeOfDay()
+	END METHOD
+	
+	METHOD STATIC GetDiff(FirstTimeOfDay, SecondTimeOfDay)
+		RETURN __StdLib__Utilities__Time__GetTimeDiff(FirstTimeOfDay, SecondTimeOfDay)
+	END METHOD
+	
+	METHOD STATIC GetMilliSeconds(TimeOfDay)
+		RETURN __StdLib__Utilities__Time__GetTimeMilliSeconds(TimeOfDay)
+	END METHOD
+	
+	METHOD STATIC FreeTimeOfDay(TimeOfDay)
+		__StdLib__Utilities__Time__FreeTimeOfDay(TimeOfDay)
+	END METHOD
+	
 END CLASS
