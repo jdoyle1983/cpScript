@@ -748,8 +748,8 @@ EXPORT void* State_Compile(void* S, long* len)
         free(List_CompiledAssemblyTokenAtIndex(CmpToks, i));
 
     List_Delete(CmpToks);
-
-    return outData;
+	
+	return outData;
 };
 
 /*EXPORT void* State_Compile(void* S, long* len)

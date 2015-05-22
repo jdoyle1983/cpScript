@@ -24,7 +24,10 @@ FUNCTION Main()
 	VAR StartTime = Time.GetTimeOfDay()
 	
 	
-	
+	VAR Counter = 0
+	FOR Counter = 1 TO 10000
+		Console.WriteLine(Counter)
+	NEXT Counter
 	
 	
 	VAR EndTime = Time.GetTimeOfDay()

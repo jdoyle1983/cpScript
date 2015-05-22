@@ -4,6 +4,8 @@
 #include <libCpScript.Asm.h>
 #include <libCpScript.ObjectBasic.h>
 
+const char* MagicEnding = "CpExecCompiled87765643";
+
 void ShowHelp()
 {
 	printf("\n");
@@ -103,6 +105,7 @@ int main(int argc, char* argv[])
 			fwrite(runtimeBin, 1, runtimeSize, exec);
 			fwrite(binData, 1, binSize, exec);
 			fwrite(&binSize, sizeof(long), 1, exec);
+			fwrite(MagicEnding, sizeof(char), strlen(MagicEnding), exec);
 			fclose(exec);
 			
 			printf("Done!\n");

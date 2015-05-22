@@ -17,6 +17,8 @@
 	3) Executes script from Main function.
 */
 
+const char* MagicEnding = "CpExecCompiled87765643";
+
 int main(int argc, char* argv[])
 {
 	char* This1 = (char*)malloc(sizeof(char) * (strlen(argv[0]) + 1));
@@ -37,10 +39,20 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 	
-	fseek(f, sizeof(long) * -1, SEEK_END);
+	char MagicEndingTest[50];
+	fseek(f, sizeof(char) * strlen(MagicEnding) * -1, SEEK_END);
+	fread(MagicEndingTest, sizeof(char), strlen(MagicEnding), f);
+	MagicEndingTest[strlen(MagicEnding)] = '\0';
+	if(strcmp(MagicEnding, MagicEndingTest) != 0)
+	{
+		printf("FAULT: Missing Magic! (Compilation Issue?)\n");
+		exit(-2);
+	}
+	
+	fseek(f, (sizeof(long) + (sizeof(char) * strlen(MagicEnding))) * -1, SEEK_END);
 	long RealSize = 0;
 	fread(&RealSize, sizeof(long), 1, f);
-	fseek(f, (RealSize + sizeof(long)) * -1, SEEK_END);
+	fseek(f, (RealSize + sizeof(long) + (sizeof(char) * strlen(MagicEnding))) * -1, SEEK_END);
 	void* b = malloc(RealSize);
 	fread(b, 1, RealSize, f);
 	fclose(f);
