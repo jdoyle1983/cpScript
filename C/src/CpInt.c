@@ -77,14 +77,7 @@ int main(int argc, char* argv[])
     void* cmpBuffer = NULL;
     long cmpLen = 0;
 
-    if( srcBuffer[0] != 'C' ||
-        srcBuffer[1] != 'P' ||
-        srcBuffer[2] != 'A' ||
-        srcBuffer[3] != 'S' ||
-        srcBuffer[4] != 'M' ||
-        srcBuffer[5] != 'C' ||
-        srcBuffer[6] != 'M' ||
-        srcBuffer[7] != 'P' )
+    if(srcBuffer[0] != 'C' || srcBuffer[1] != 'A' || srcBuffer[2] != 'C')
     {
         void* State = State_New(srcBuffer);
         cmpBuffer = State_Compile(State, &cmpLen);

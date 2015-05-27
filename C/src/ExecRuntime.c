@@ -70,5 +70,7 @@ int main(int argc, char* argv[])
 	State_RunFromMethod(State, "Main");
 	State_Delete(State);
 	
+	free(b);
+	
 	return 0;
 };

@@ -584,15 +584,16 @@ EXPORT void* State_NewFromCompiled(void* StoredScript, long Len)
 	
     if( Magic[0] != 'C' || Magic[1] != 'A' || Magic[2] != 'C')
         return NULL;
-
-	long OrigLen = 0;
 		
-	void* CmpScript = malloc(Len - (sizeof(char) * 3) - sizeof(long));
-	memcpy(&OrigLen, StoredScript + (sizeof(char) * 3), sizeof(long));
-	memcpy(CmpScript, StoredScript + (sizeof(char) * 3) + sizeof(long), Len - ((sizeof(char) * 3) + sizeof(long)));
-
-	void* Script = malloc(OrigLen);
-	uncompress(Script, &OrigLen, CmpScript, (Len - (sizeof(char) * 3) - sizeof(long)));
+	uLong orgLen = 0;
+	uLong cmpLen = Len - ((sizeof(char) * 3) + sizeof(uLong));
+	
+	unsigned char* CmpScript = malloc(Len - (sizeof(char) * 3) - sizeof(uLong));
+	memcpy(&orgLen, StoredScript + (sizeof(char) * 3), sizeof(uLong));
+	memcpy(CmpScript, StoredScript + (sizeof(char) * 3) + sizeof(uLong), cmpLen);
+	
+	void* Script = malloc(orgLen);
+	uncompress(Script, &orgLen, CmpScript, cmpLen);
 	
 	offset = 0;
 	
@@ -701,7 +702,7 @@ EXPORT void* State_Compile(void* S, long* len)
 
     int offset = 0;
     void* outData = malloc(sizeof(int));
-    *len = sizeof(int)
+    *len = sizeof(int);
     int tLen = List_Count(StrValues);
     memcpy(outData + offset, &tLen, sizeof(int));
     offset = *len;
@@ -753,18 +754,20 @@ EXPORT void* State_Compile(void* S, long* len)
 
     List_Delete(CmpToks);
 	
-	uLong cmpLen = compressBound(*len);
+	uLong orgLen = *len;
+	uLong cmpLen = compressBound(orgLen);
 	unsigned char* cmpData = (mz_uint8*)malloc((size_t)cmpLen);
 	compress(cmpData, &cmpLen, (const unsigned char*)outData, *len);
 	
-	void* resultData = malloc(cmpLen + (sizeof(char) * 3) + sizeof(long));
+	void* resultData = malloc(cmpLen + (sizeof(char) * 3) + sizeof(uLong));
 	memcpy(resultData, Magic, 3);
-	memcpy(resultData + (sizeof(char) * 3), len, sizeof(long));
-	memcpy(resultData + (sizeof(char) * 3) + sizeof(long), cmpData, cmpLen);
+	memcpy(resultData + (sizeof(char) * 3), &orgLen, sizeof(uLong));
+	memcpy(resultData + (sizeof(char) * 3) + sizeof(uLong), cmpData, cmpLen);
 	
 	free(cmpData);
+	free(outData);
 	
-	*len = cmpLen + (sizeof(char) * 3) + sizeof(long);
+	*len = cmpLen + (sizeof(char) * 3) + sizeof(uLong);
 	
 	return resultData;
 };

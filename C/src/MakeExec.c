@@ -62,21 +62,22 @@ int main(int argc, char* argv[])
 			
 			if(AsmScript == 1)
 			{
-				void* State = State_New(srcText);
-				
 				printf("Compiling Script...\n");
+			
+				void* State = State_New(srcText);
 				
 				binData = State_Compile(State, &binSize);
 				State_Delete(State);
 			}
 			else
 			{
-				void* Script = ObjScript_New();	
+				void* Script = ObjScript_New();
+				
+				printf("Compiling Script...\n");
+				
 				ObjScript_Load(Script, srcText);
 				void* State = State_New(ObjScript_GetAsm(Script));
-			
-				printf("Compiling Script...\n");
-			
+						
 				binData = State_Compile(State, &binSize);
 				State_Delete(State);		
 				ObjScript_Delete(Script);
