@@ -2,8 +2,16 @@
 #include Lib/FileIO.obh
 #include Lib/Utilities.obh
 
-CLASS Route
+CLASS Node
+	PROP ArrayPrimitive
 	
+	METHOD Init()
+		Array Tmp
+		ArrayPrimitive = Tmp.GetPrimitiveType()
+	END METHOD
+END CLASS
+
+CLASS Route
 	PROP Dest
 	PROP Cost
 	
@@ -16,7 +24,16 @@ CLASS Route
 		Dest = dest
 		Cost = cost
 	END METHOD
+END CLASS
+
+CLASS LongestPathFinder
+	METHOD Init()
+	END METHOD
 	
+	METHOD ReadPlaces(FilePath)
+		Array Lines
+		
+	END METHOD
 END CLASS
 
 

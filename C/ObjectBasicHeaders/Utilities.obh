@@ -20,6 +20,15 @@ CLASS Array
 		ArrayId = __StdLib__Utilities__Array__New(0)
 	END METHOD
 	
+	METHOD FromPrimitiveType(PrimitiveType)
+		__StdLib__Utilities__Array__Free(ArrayId)
+		ArrayId = PrimitiveType
+	END METHOD
+	
+	METHOD GetPrimitiveType()
+		RETURN ArrayId
+	END METHOD
+	
 	METHOD Free()
 		__StdLib__Utilities__Array__Free(ArrayId)
 	END METHOD
