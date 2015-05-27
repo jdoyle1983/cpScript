@@ -20,8 +20,8 @@ CLASS Array
 		ArrayId = -1
 	END METHOD
 	
-	METHOD FromReturn(systemId)
-		ArrayId = systemId
+	METHOD FromReturn(SystemId)
+		ArrayId = SystemId
 	END METHOD
 	
 	METHOD Alloc(size)

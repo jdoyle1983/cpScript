@@ -75,6 +75,7 @@ void Utilities_Array_Free(void* State)
 void Utilities_Array_Count(void* State)
 {
     CpArray* a = (CpArray*)State_Pop(State);
+    printf("DBG: Array Count: %d\n", a->Count);
     State_PushInt(State, a->Count);
 };
 

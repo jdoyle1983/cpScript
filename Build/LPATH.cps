@@ -30,6 +30,19 @@ FUNCTION Main()
 	NEXT Counter
 	
 	
+	VAR BaseString = "1 2 3 4 5"
+	VAR DelimString = " "
+	
+	VAR ResultArr = String.Split(BaseString, DelimString)
+	Array Res
+	Res.FromReturn(ResultArr)
+	Console.WriteLine(Res.Size())
+	Counter = 0
+	VAR TotalSize = Res.Size() - 1
+	FOR Counter = 0 TO TotalSize
+		Console.WriteLine(Res.GetItem(Counter))
+	NEXT Counter
+	
 	VAR EndTime = Time.GetTimeOfDay()
 	VAR TotalTime = Time.GetDiff(EndTime, StartTime)
 	VAR TotalMs = Time.GetMilliSeconds(TotalTime)

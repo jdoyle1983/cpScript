@@ -174,7 +174,7 @@ List* Split(char* SrcStr, char* DelimChars)
 		}
 	}
 
-	if(start < strlen(SrcStr) - 1)
+	if(start < strlen(SrcStr))
 		List_Add(r, SubStr(SrcStr, start, strlen(SrcStr) - 1));
 	return r;
 };
@@ -200,7 +200,7 @@ List* SplitAndKeep(char* SrcStr, char* DelimChars)
 		}
 	}
 
-	if(start < strlen(SrcStr) - 1)
+	if(start < strlen(SrcStr))
 		List_Add(r, SubStr(SrcStr, start, strlen(SrcStr) - 1));
 	return r;
 };
