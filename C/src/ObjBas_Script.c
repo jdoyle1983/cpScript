@@ -1018,9 +1018,10 @@ void ParseClasses(ObjectBasicScript* obj)
 			if(mdef->IsStatic == 0)
 				AppendAsmLine(obj, "POPB $this");
 			int total = List_Count(mdef->Parameters);
-			while(total > 0)
+			int counter = 0;
+			for(counter = 0; counter < total; counter++)
 			{
-				FunctionParam* thisParam = List_FunctionParamAtIndex(mdef->Parameters, total - 1);
+				FunctionParam* thisParam = List_FunctionParamAtIndex(mdef->Parameters, counter);
 				if(thisParam->IsClassVar == 1)
 				{
 					sprintf(thisResult, "POPB $%s", thisParam->VarName);
@@ -1046,10 +1047,9 @@ void ParseClasses(ObjectBasicScript* obj)
 				}
 				else
 				{
-					sprintf(thisResult, "POP @%d", total);
+					sprintf(thisResult, "POP @%d", counter + 1);
 					AppendAsmLine(obj, thisResult);					
 				}
-				total--;
 				obj->RegisterCount++;
 			}
 			
