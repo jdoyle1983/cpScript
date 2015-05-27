@@ -8,6 +8,9 @@
 #HostFunction __StdLib__Utilities__Time__GetTimeDiff
 #HostFunction __StdLib__Utilities__Time__GetTimeMilliSeconds
 #HostFunction __StdLib__Utilities__Time__FreeTimeOfDay
+#HostFunction __StdLib__Utilities__String__Trim
+#HostFunction __StdLib__Utilities__String__Split
+#HostFunction __StdLib__Utilities__String__SplitAndKeep
 
 CLASS Array
 
@@ -15,6 +18,10 @@ CLASS Array
 	
 	METHOD Init()
 		ArrayId = -1
+	END METHOD
+	
+	METHOD FromReturn(systemId)
+		ArrayId = systemId
 	END METHOD
 	
 	METHOD Alloc(size)
@@ -61,4 +68,20 @@ CLASS Time
 		__StdLib__Utilities__Time__FreeTimeOfDay(TimeOfDay)
 	END METHOD
 	
+END CLASS
+
+CLASS String
+
+	METHOD STATIC Trim(StrToTrim)
+		RETURN __StdLib__Utilities__String__Trim(StrToTrim)
+	END METHOD
+	
+	METHOD STATIC Split(StrToSplit, Delims)
+		RETURN __StdLib__Utilities__String__Split(StrToSplit, Delims)
+	END METHOD
+	
+	METHOD STATIC SplitAndKeep(StrToSplit, Delims)
+		RETURN __StdLib__Utilities__String__SplitAndKeep(StrToSplit, Delims)
+	END METHOD
+
 END CLASS

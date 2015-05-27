@@ -23,6 +23,7 @@
 
 #include <CpStdLib_Utilities.h>
 #include <libCpScript.Asm.h>
+#include <Extensions.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
@@ -34,6 +35,17 @@ typedef struct
     char** Items;
     int Count;
 } CpArray;
+
+CpArray* Utilities_ListToArray(List* SrcList)
+{
+	int i = 0;
+	CpArray* a = (CpArray*)malloc(sizeof(CpArray));
+	a->Count = List_Count(SrcList);
+	a->Items = (char**)malloc(sizeof(char *) * a->Count);
+	for(i = 0; i < a->Count; i++)
+		a->Items[i] = (char*)List_AtIndex(SrcList, i);
+	return a;
+};
 
 void Utilities_Array_New(void* State)
 {
@@ -125,8 +137,8 @@ void Utilities_Time_GetTimeOfDay(void* State)
 
 void Utilities_Time_Diff(void* State)
 {
-	struct timeval* secondTime = (struct timeval*)State_Pop(State);
 	struct timeval* firstTime = (struct timeval*)State_Pop(State);
+	struct timeval* secondTime = (struct timeval*)State_Pop(State);
 	
 	struct timeval* diffTime = malloc(sizeof(struct timeval));
 	diffTime->tv_sec = secondTime->tv_sec - firstTime->tv_sec;
@@ -146,4 +158,38 @@ void Utilities_Time_FreeTimeOfDay(void* State)
 {
 	struct timeval* thisTime = (struct timeval*)State_Pop(State);
 	free(thisTime);
+};
+
+void Utilities_String_Trim(void* State)
+{
+	char* StrValue = State_PopString(State);
+	char* TrmValue = StrTrim(StrValue);
+	free(StrValue);
+	State_PushString(State, TrmValue);
+};
+
+void Utilities_String_Split(void* State)
+{
+	char* Delims = State_PopString(State);
+	char* Target = State_PopString(State);
+	
+	List* Values = Split(Target, Delims);
+	
+	CpArray* ResultArray = Utilities_ListToArray(Values);
+	List_Delete(Values);
+	
+	State_Push(State, ResultArray);
+};
+
+void Utilities_String_SplitAndKeep(void* State)
+{
+	char* Delims = State_PopString(State);
+	char* Target = State_PopString(State);
+	
+	List* Values = SplitAndKeep(Target, Delims);
+	
+	CpArray* ResultArray = Utilities_ListToArray(Values);
+	List_Delete(Values);
+	
+	State_Push(State, ResultArray);
 };

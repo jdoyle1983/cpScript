@@ -36,4 +36,8 @@ void Utilities_Time_Diff(void* State);
 void Utiltiess_Time_GetMilliseconds(void* State);
 void Utilities_Time_FreeTimeOfDay(void* State);
 
+void Utilities_String_Trim(void* State);
+void Utilities_String_Split(void* State);
+void Utilities_String_SplitAndKeep(void* State);
+
 #endif
