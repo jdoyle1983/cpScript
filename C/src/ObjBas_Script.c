@@ -369,6 +369,56 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 			case ExClassAction:
 			{
 				int e = 0;
+				if(obj->CurrentFunction != NULL)
+				{
+					List* Parts = Split(t->Value, ".");
+					FunctionParam* TargetParam = NULL;
+					ClassDef* TargetClassType = NULL;
+					
+					int ParamCount = List_Count(obj->CurrentFunction->Parameters);
+					for(e = 0; e < ParamCount; e++)
+					{
+						FunctionParam* thisParam = List_FunctionParamAtIndex(obj->CurrentFunction->Parameters, e);
+						if(strcmp(thisParam->VarName, List_StringAtIndex(Parts, 0)) == 0)
+						{
+							TargetParam = thisParam;
+							break;
+						}
+					}
+					
+					if(TargetParam != NULL)
+					{
+						int ClassCount = List_Count(obj->Classes);
+						for(e = 0; e < ClassCount; e++)
+						{
+							ClassDef* thisClass = List_ClassDefAtIndex(obj->Classes, e);
+							if(strcmp(thisClass->Name, TargetParam->ClassName) == 0)
+							{
+								TargetClassType = thisClass;
+								break;
+							}
+						}
+					}
+					
+					if(TargetClassType != NULL)
+					{
+						int PropertyCount = List_Count(TargetClassType->Properties);
+						for(e = 0; e < PropertyCount; e++)
+						{
+							if(strcmp(List_StringAtIndex(TargetClassType->Properties, e), List_StringAtIndex(Parts, 1)) == 0)
+							{
+								char* tmpOutput = (char*)malloc(sizeof(char) * 5000);
+								sprintf(tmpOutput, "PUSH $%s:%d", List_StringAtIndex(Parts, 0), e + 1);
+								AppendAsmLine(obj, tmpOutput);
+								break;
+							}
+						}
+					}
+					
+					free(List_StringAtIndex(Parts, 0));
+					free(List_StringAtIndex(Parts, 1));
+					List_Delete(Parts);
+				}
 				for(e = 0; e < List_Count(obj->CurrentClassProperties); e++)
 				{
 					ClassConversion* con = List_ClassConversionAtIndex(obj->CurrentClassProperties, e);
@@ -1090,15 +1140,13 @@ void ParseFunctions(ObjectBasicScript* obj)
 				{
 					FunctionParam* thisParam = List_FunctionParamAtIndex(parms, List_Count(parms) - 1);
 					thisParam->IsClassVar = 1;
-					thisParam->ClassName = (char*)malloc(sizeof(char) * (strlen(t->Value) + 1));
-					strcpy(thisParam->ClassName, t->Value);
+					FunctionParam_SetClassName(thisParam, t->Value);
 				}
 				else if(t->Type != OpenParen && t->Type != CloseParen && t->Type != Comma)
 				{
 					FunctionParam* p = FunctionParam_New();
 					p->IsClassVar = 0;
-					p->VarName = (char*)malloc(sizeof(char) * (strlen(t->Value) + 1));
-					strcpy(p->VarName, t->Value);
+					FunctionParam_SetVarName(p, t->Value);
 					List_Add(parms, p);
 				}
 			}

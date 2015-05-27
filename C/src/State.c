@@ -884,6 +884,7 @@ char* GetActualVal(State* state, char* Src)
         rVal = ReadMemoryBlockSetIndex(state, Src);
     else
         rVal = Src;
+	
     return rVal;
 };
 

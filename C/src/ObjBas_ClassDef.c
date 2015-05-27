@@ -276,6 +276,9 @@ List* ClassDef_ParseClassDefs(List* Blocks)
 						Token* thisTok = List_TokenAtIndex(thisBlock->Tokens, tIdx);
 						if(thisTok->Type == ExTypeHint)
 						{
+							FunctionParam* p = List_AtIndex(mdef->Parameters, List_Count(mdef->Parameters) - 1);
+							p->IsClassVar = 1;
+							FunctionParam_SetClassName(p, thisTok->Value);							
 						}
 						else if(thisTok->Type != OpenParen && thisTok->Type != Comma)
 						{

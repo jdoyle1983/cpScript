@@ -36,15 +36,16 @@ typedef struct
     int Count;
 } CpArray;
 
-CpArray* Utilities_ListToArray(List* SrcList)
+void Utilities_ListToArray(List* SrcList, CpArray* DestArray)
 {
 	int i = 0;
-	CpArray* a = (CpArray*)malloc(sizeof(CpArray));
-	a->Count = List_Count(SrcList);
-	a->Items = (char**)malloc(sizeof(char *) * a->Count);
-	for(i = 0; i < a->Count; i++)
-		a->Items[i] = (char*)List_AtIndex(SrcList, i);
-	return a;
+	for(i = 0; i < DestArray->Count; i++)
+		free(DestArray->Items[i]);
+	free(DestArray->Items);
+	DestArray->Count = List_Count(SrcList);
+	DestArray->Items = (char**)malloc(sizeof(char*) * DestArray->Count);
+	for(i = 0; i < DestArray->Count; i++)
+		DestArray->Items[i] = (char*)List_AtIndex(SrcList, i);
 };
 
 void Utilities_Array_New(void* State)
@@ -75,7 +76,6 @@ void Utilities_Array_Free(void* State)
 void Utilities_Array_Count(void* State)
 {
     CpArray* a = (CpArray*)State_Pop(State);
-    printf("DBG: Array Count: %d\n", a->Count);
     State_PushInt(State, a->Count);
 };
 
@@ -171,26 +171,22 @@ void Utilities_String_Trim(void* State)
 
 void Utilities_String_Split(void* State)
 {
+	CpArray* DestArray = (CpArray*)State_Pop(State);
 	char* Delims = State_PopString(State);
 	char* Target = State_PopString(State);
-	
 	List* Values = Split(Target, Delims);
-	
-	CpArray* ResultArray = Utilities_ListToArray(Values);
+	Utilities_ListToArray(Values, DestArray);
 	List_Delete(Values);
-	
-	State_Push(State, ResultArray);
 };
 
 void Utilities_String_SplitAndKeep(void* State)
 {
+	CpArray* DestArray = (CpArray*)State_Pop(State);
 	char* Delims = State_PopString(State);
 	char* Target = State_PopString(State);
 	
 	List* Values = SplitAndKeep(Target, Delims);
 	
-	CpArray* ResultArray = Utilities_ListToArray(Values);
+	Utilities_ListToArray(Values, DestArray);
 	List_Delete(Values);
-	
-	State_Push(State, ResultArray);
 };

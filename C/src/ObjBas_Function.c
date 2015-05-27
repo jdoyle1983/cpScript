@@ -55,6 +55,16 @@ void FunctionParam_SetClassName(FunctionParam* p, char* className)
 	strcpy(p->ClassName, className);
 };
 
+char* FunctionParam_FullName(FunctionParam* p)
+{
+	char* Res = (char*)malloc(sizeof(char) * (strlen(p->ClassName) + strlen(p->VarName) + 2));
+	strcpy(Res, p->ClassName);
+	strcat(Res, ".");
+	strcat(Res, p->VarName);
+	return Res;
+};
+
+
 void FunctionParam_Delete(FunctionParam* p)
 {
 	if(p->VarName != NULL)

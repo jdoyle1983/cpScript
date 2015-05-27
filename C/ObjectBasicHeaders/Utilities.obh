@@ -20,10 +20,6 @@ CLASS Array
 		ArrayId = -1
 	END METHOD
 	
-	METHOD FromReturn(SystemId)
-		ArrayId = SystemId
-	END METHOD
-	
 	METHOD Alloc(size)
 		ArrayId = __StdLib__Utilities__Array__New(size)
 	END METHOD
@@ -76,12 +72,12 @@ CLASS String
 		RETURN __StdLib__Utilities__String__Trim(StrToTrim)
 	END METHOD
 	
-	METHOD STATIC Split(StrToSplit, Delims)
-		RETURN __StdLib__Utilities__String__Split(StrToSplit, Delims)
+	METHOD STATIC Split(StrToSplit, Delims, ResultArray:Array)
+		__StdLib__Utilities__String__Split(StrToSplit, Delims, ResultArray.ArrayId)
 	END METHOD
 	
-	METHOD STATIC SplitAndKeep(StrToSplit, Delims)
-		RETURN __StdLib__Utilities__String__SplitAndKeep(StrToSplit, Delims)
+	METHOD STATIC SplitAndKeep(StrToSplit, Delims, ResultArray:Array)
+		RETURN __StdLib__Utilities__String__SplitAndKeep(StrToSplit, Delims, ResultArray.ArrayId)
 	END METHOD
 
 END CLASS

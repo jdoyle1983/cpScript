@@ -25,7 +25,7 @@ FUNCTION Main()
 	
 	
 	VAR Counter = 0
-	FOR Counter = 1 TO 10000
+	FOR Counter = 1 TO 1000
 		Console.WriteLine(Counter)
 	NEXT Counter
 	
@@ -33,9 +33,12 @@ FUNCTION Main()
 	VAR BaseString = "1 2 3 4 5"
 	VAR DelimString = " "
 	
-	VAR ResultArr = String.Split(BaseString, DelimString)
 	Array Res
-	Res.FromReturn(ResultArr)
+	Res.Alloc(0)
+	
+	String.Split(BaseString, DelimString, Res)
+	
+	
 	Console.WriteLine(Res.Size())
 	Counter = 0
 	VAR TotalSize = Res.Size() - 1

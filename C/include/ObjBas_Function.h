@@ -36,6 +36,7 @@ typedef struct
 FunctionParam* FunctionParam_New();
 void FunctionParam_SetVarName(FunctionParam* p, char* varName);
 void FunctionParam_SetClassName(FunctionParam* p, char* className);
+char* FunctionParam_FullName(FunctionParam* p);
 void FunctionParam_Delete(FunctionParam* p);
 
 
