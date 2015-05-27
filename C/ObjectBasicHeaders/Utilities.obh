@@ -17,11 +17,7 @@ CLASS Array
 	PROP ArrayId
 	
 	METHOD Init()
-		ArrayId = -1
-	END METHOD
-	
-	METHOD Alloc(size)
-		ArrayId = __StdLib__Utilities__Array__New(size)
+		ArrayId = __StdLib__Utilities__Array__New(0)
 	END METHOD
 	
 	METHOD Free()

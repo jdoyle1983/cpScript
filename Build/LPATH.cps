@@ -34,8 +34,7 @@ FUNCTION Main()
 	VAR DelimString = " "
 	
 	Array Res
-	Res.Alloc(0)
-	
+
 	String.Split(BaseString, DelimString, Res)
 	
 	
@@ -56,5 +55,7 @@ FUNCTION Main()
 	
 	Console.Write(TotalMs)
 	Console.WriteLine("ms Execution")
+	
+	Res.Free()
 	
 END FUNCTION

@@ -41,7 +41,7 @@ FUNCTION Main()
 	Console.WriteLine("Creating Array")
 	Array testArray
 	Console.WriteLine("Setting Array Size To 10")
-	testArray.Alloc(10)
+	testArray.Resize(10)
 	Console.WriteLine("Array Size: " .. testArray.Size())
 	Console.WriteLine("Setting Array Size To 5")
 	testArray.Resize(5)
