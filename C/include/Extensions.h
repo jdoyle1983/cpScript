@@ -37,6 +37,7 @@ char* StrToLower(char* SrcStr);
 short StrStartsWith(char* SrcStr, char* TestStr);
 char* StrCat(char* SrcStr, char* CatStr);
 char* StrCopy(char* SrcStr);
+char* StrCopyAnd(char* SrcStr, char* AddStr);
 
 char* ReadFileContents(const char* FilePath);
 

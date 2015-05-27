@@ -644,10 +644,7 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
         if(strIdx != -1)
             strVal = List_StringAtIndex(StrValues, strIdx);
         else
-        {
-            strVal = (char*)malloc(sizeof(char) * 1);
-            strVal[0] = '\0';
-        }
+			strVal = NULL;
         AssemblyToken* Tok = AssemblyToken_New(tt, strVal);
         List_Add(state->_Tokens, Tok);
     }

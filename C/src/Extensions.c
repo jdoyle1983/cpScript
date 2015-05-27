@@ -89,8 +89,7 @@ char* StrTrim(char* SrcStr)
 char* StrToLower(char* SrcStr)
 {
 	int i = 0;
-    char* r = (char*)malloc(sizeof(char) * (strlen(SrcStr) + 1));
-    strcpy(r, SrcStr);
+    char* r = StrCopy(SrcStr);
     for(i = 0; i < strlen(r); i++)
         r[i] = tolower(r[i]);
     return r;
@@ -129,6 +128,14 @@ char* StrCopy(char* SrcStr)
 {
 	char* r = (char*)malloc(sizeof(char) * (strlen(SrcStr) + 1));
 	strcpy(r, SrcStr);
+	return r;
+};
+
+char* StrCopyAnd(char* SrcStr, char* AddStr)
+{
+	char* r = (char*)malloc(sizeof(char) * (strlen(SrcStr) + strlen(AddStr) + 1));
+	strcpy(r, SrcStr);
+	strcat(r, AddStr);
 	return r;
 };
 

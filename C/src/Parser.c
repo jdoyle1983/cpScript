@@ -36,7 +36,11 @@ List* Parse(char* Input)
     char quoteChar = 0;
     char* quotedString = NULL;
 
-    List* pToks = SplitAndKeep(Input, " ,\n\r\'\"");
+    List* pToks = NULL;
+	if(Input != NULL)
+		pToks = SplitAndKeep(Input, " ,\n\r\'\"");
+	else
+		pToks = List_New();
     int a = 0;
 
     for(a = 0; a < pToks->Count; a++)
@@ -145,10 +149,7 @@ List* Parse(char* Input)
             }
             else
             {
-                char* NewString = (char*)malloc(sizeof(char) * (strlen(quotedString) + strlen(s) + 1));
-                strcpy(NewString, quotedString);
-                strcat(NewString, s);
-                free(quotedString);
+				char* NewString = StrCopyAnd(quotedString, s);
                 quotedString = NewString;
             }
         }

@@ -70,6 +70,7 @@ int main(int argc, char* argv[])
     }
 
     fread(srcBuffer, srcLen, 1, srcFile);
+	srcBuffer[srcLen] = '\0';
     fclose(srcFile);
 
     short didCompile = 0;
