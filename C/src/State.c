@@ -749,47 +749,6 @@ EXPORT void* State_Compile(void* S, long* len)
 	return outData;
 };
 
-/*EXPORT void* State_Compile(void* S, long* len)
-{
-    State* state = (State*)S;
-    int i = 0;
-    int offset = 0;
-    char Magic[] = "CPASMCMP";
-    void* outData = malloc(sizeof(char) * 8);
-    *len = sizeof(char) * 8;
-    memcpy(outData, Magic, *len);
-    offset = *len;
-    *len += sizeof(int);
-    outData = realloc(outData, *len);
-    memcpy(outData + offset, &state->_Tokens->Count, sizeof(int));
-    offset = *len;
-    for(i = 0; i < state->_Tokens->Count; i++)
-    {
-        AssemblyToken* t = List_AssemblyTokenAtIndex(state->_Tokens, i);
-        char tt = (char)t->Tok;
-        int sl = 0;
-        *len += sizeof(char);
-        outData = realloc(outData, *len);
-        memcpy(outData + offset, &tt, sizeof(char));
-        offset = *len;
-        if(tt == tRegister || tt == tMemoryVar || tt == tLiteral || tt == tQuotedLiteral)
-            sl = strlen(t->Val);
-        *len += sizeof(int);
-        outData = realloc(outData, *len);
-        memcpy(outData + offset, &sl, sizeof(int));
-        offset = *len;
-        if(sl > 0)
-        {
-            *len += sizeof(char) * strlen(t->Val);
-            outData = realloc(outData, *len);
-            memcpy(outData + offset, t->Val, sizeof(char) * strlen(t->Val));
-            offset = *len;
-        }
-    }
-
-    return outData;
-};*/
-
 EXPORT void State_Delete(void* S)
 {
     State* state = (State*)S;
