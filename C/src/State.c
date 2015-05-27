@@ -37,6 +37,7 @@
 #include <MemoryBlockSetHeader.h>
 #include <Parser.h>
 #include <Token.h>
+#include <miniz.c>
 
 typedef struct
 {
@@ -573,21 +574,28 @@ EXPORT void* State_New(char* ScriptText)
     return state;
 };
 
-EXPORT void* State_NewFromCompiled(void* Script, long Len)
+EXPORT void* State_NewFromCompiled(void* StoredScript, long Len)
 {
     int i = 0;
     int offset = 0;
 
-    char* Magic = malloc(sizeof(char) * 8);
-    memcpy(Magic, Script, sizeof(char) * 8);
-    if( Magic[0] != 'C' || Magic[1] != 'P' ||
-        Magic[2] != 'A' || Magic[3] != 'S' ||
-        Magic[4] != 'M' || Magic[5] != 'C' ||
-        Magic[6] != 'M' || Magic[7] != 'P')
+    char* Magic = malloc(sizeof(char) * 3);
+    memcpy(Magic, StoredScript, sizeof(char) * 3);
+	
+    if( Magic[0] != 'C' || Magic[1] != 'A' || Magic[2] != 'C')
         return NULL;
 
-    offset += sizeof(char) * 8;
+	long OrigLen = 0;
+		
+	void* CmpScript = malloc(Len - (sizeof(char) * 3) - sizeof(long));
+	memcpy(&OrigLen, StoredScript + (sizeof(char) * 3), sizeof(long));
+	memcpy(CmpScript, StoredScript + (sizeof(char) * 3) + sizeof(long), Len - ((sizeof(char) * 3) + sizeof(long)));
 
+	void* Script = malloc(OrigLen);
+	uncompress(Script, &OrigLen, CmpScript, (Len - (sizeof(char) * 3) - sizeof(long)));
+	
+	offset = 0;
+	
     List* StrValues = List_New();
 
     int StrLen = 0;
@@ -652,6 +660,9 @@ EXPORT void* State_NewFromCompiled(void* Script, long Len)
     for(i = 0; i < List_Count(StrValues); i++)
         free(List_StringAtIndex(StrValues, i));
     List_Delete(StrValues);
+	
+	free(Script);
+	free(CmpScript);
 
     State_DoInit(state);
 
@@ -686,15 +697,11 @@ EXPORT void* State_Compile(void* S, long* len)
         List_Add(CmpToks, ct);
     }
 
-    char Magic[] = "CPASMCMP";
+    char Magic[] = "CAC";
 
     int offset = 0;
-    void* outData = malloc(sizeof(char) * 8);
-    *len = sizeof(char) * 8;
-    memcpy(outData, Magic, *len);
-    offset = *len;
-    *len += sizeof(int);
-    outData = realloc(outData, *len);
+    void* outData = malloc(sizeof(int));
+    *len = sizeof(int)
     int tLen = List_Count(StrValues);
     memcpy(outData + offset, &tLen, sizeof(int));
     offset = *len;
@@ -746,7 +753,20 @@ EXPORT void* State_Compile(void* S, long* len)
 
     List_Delete(CmpToks);
 	
-	return outData;
+	uLong cmpLen = compressBound(*len);
+	unsigned char* cmpData = (mz_uint8*)malloc((size_t)cmpLen);
+	compress(cmpData, &cmpLen, (const unsigned char*)outData, *len);
+	
+	void* resultData = malloc(cmpLen + (sizeof(char) * 3) + sizeof(long));
+	memcpy(resultData, Magic, 3);
+	memcpy(resultData + (sizeof(char) * 3), len, sizeof(long));
+	memcpy(resultData + (sizeof(char) * 3) + sizeof(long), cmpData, cmpLen);
+	
+	free(cmpData);
+	
+	*len = cmpLen + (sizeof(char) * 3) + sizeof(long);
+	
+	return resultData;
 };
 
 EXPORT void State_Delete(void* S)
