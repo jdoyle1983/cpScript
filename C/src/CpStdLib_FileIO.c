@@ -92,7 +92,6 @@ void File_ReadLine(void* State)
     else
     {
         State_PushString(State, toRead);
-		printf("DBG: Read Value: '%s'\n", toRead);
         free(toRead);
     }
 };

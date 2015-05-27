@@ -45,9 +45,9 @@ CLASS File
 	
 	METHOD ReadAllLines()
 		Array LineArray
-		WHILE (__StdLib__FileIO__Eof(FileObj) = 0)
+		WHILE (__StdLib__FileIO__Eof(FileObj) == 0)
 			LineArray.Resize(LineArray.Size() + 1)
-			LineArray.Set(LineArray.Size() - 1, __StdLib__FileIO__ReadLine(FileObj))
+			LineArray.SetItem(LineArray.Size() - 1, __StdLib__FileIO__ReadLine(FileObj))
 		LOOP
 		RETURN LineArray.GetPrimitiveType()
 	END METHOD
