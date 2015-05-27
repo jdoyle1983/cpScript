@@ -43,6 +43,15 @@ CLASS File
 		RETURN __StdLib__FileIO__ReadLine(FileObj)
 	END METHOD
 	
+	METHOD ReadAllLines()
+		Array LineArray
+		WHILE (__StdLib__FileIO__Eof(FileObj) = 0)
+			LineArray.Resize(LineArray.Size() + 1)
+			LineArray.Set(LineArray.Size() - 1, __StdLib__FileIO__ReadLine(FileObj))
+		LOOP
+		RETURN LineArray.GetPrimitiveType()
+	END METHOD
+	
 	METHOD Close()
 		__StdLib__FileIO__Close(FileObj)
 	END METHOD

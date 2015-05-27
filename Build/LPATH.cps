@@ -9,6 +9,7 @@ CLASS Node
 		Array Tmp
 		ArrayPrimitive = Tmp.GetPrimitiveType()
 	END METHOD
+	
 END CLASS
 
 CLASS Route
@@ -61,6 +62,19 @@ FUNCTION Main()
 	FOR Counter = 0 TO TotalSize
 		Console.WriteLine(Res.GetItem(Counter))
 	NEXT Counter
+	
+	File readFile
+	readFile.OpenRead("./agraph")
+	VAR PrimVal = readFile.ReadAllLines()
+	
+	Array readArray
+	readArray.FromPrimitiveType(PrimVal)
+	
+	Counter = 0
+	TotalSize = readArray.Size() - 1
+	FOR Counter = 0 to TotalSize
+		Console.WriteLine(readArray.GetItem(Counter))
+	NEXT COUNTER
 	
 	VAR EndTime = Time.GetTimeOfDay()
 	VAR TotalTime = Time.GetDiff(EndTime, StartTime)

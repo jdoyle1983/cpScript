@@ -16,8 +16,4 @@ CLASS Console
 		RETURN __StdLib__ConsoleIO__ReadLine()
 	END METHOD
 	
-	METHOD STATIC ReadAllLines(TargetArray:Array)
-		
-	END METHOD
-	
 END CLASS
