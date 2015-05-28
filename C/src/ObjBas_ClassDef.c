@@ -33,6 +33,7 @@ ClassConversion* ClassConversion_New(void)
 {
 	ClassConversion* cc = (ClassConversion*)malloc(sizeof(ClassConversion));
 	cc->IsStatic = 0;
+	cc->IsSelf = 0;
 	cc->Input = NULL;
 	cc->Output = NULL;
 	return cc;
@@ -42,6 +43,7 @@ ClassConversion* ClassConversion_Copy(ClassConversion* src)
 {
 	ClassConversion* cc = ClassConversion_New();
 	cc->IsStatic = src->IsStatic;
+	cc->IsSelf = src->IsSelf;
 	cc->Input = (char*)malloc(sizeof(char) * (strlen(src->Input) + 1));
 	cc->Output = (char*)malloc(sizeof(char) * (strlen(src->Output) + 1));
 	strcpy(cc->Input, src->Input);

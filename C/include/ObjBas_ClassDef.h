@@ -29,6 +29,7 @@
 typedef struct
 {
 	short IsStatic;
+	short IsSelf;
 	char* Input;
 	char* Output;
 } ClassConversion;

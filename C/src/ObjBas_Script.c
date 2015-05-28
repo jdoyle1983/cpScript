@@ -443,6 +443,8 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 								free(List_StringAtIndex(splitList, a));
 							List_Delete(splitList);
 						}
+						else if(con->IsSelf == 0)
+							AppendAsmLine(obj, "PUSHB $this");
 						AppendAsm(obj, "JMP ");
 						AppendAsmLine(obj, con->Output);
 					}
@@ -476,6 +478,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 			{
 				short found = 0;
 				int e = 0;
+				
 				for(e = 0; e < List_Count(obj->Functions); e++)
 				{
 					Function* f = List_FunctionAtIndex(obj->Functions, e);
@@ -551,6 +554,23 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 							found = 1;
 							AppendAsm(obj, "PUSHB $");
 							AppendAsmLine(obj, cv);
+						}
+					}
+				}
+				
+				if(found == 0)
+				{
+					for(e = 0; e < List_Count(obj->CurrentClassMethods); e++)
+					{
+						ClassConversion* con = List_ClassConversionAtIndex(obj->CurrentClassMethods, e);
+						if(strcmp(con->Input, t->Value) == 0)
+						{
+							if(con->IsSelf == 1)
+								AppendAsmLine(obj, "PUSHB $this");
+							AppendAsm(obj, "JMP ");
+							AppendAsmLine(obj, con->Output);
+							found = 1;
+							break;
 						}
 					}
 				}
@@ -1053,6 +1073,7 @@ void ParseClasses(ObjectBasicScript* obj)
 	int e = 0;
 	int a = 0;
 	int b = 0;
+	int z = 0;
 	for(i = 0; i < List_Count(obj->Classes); i++)
 	{
 		ClassDef* def = List_ClassDefAtIndex(obj->Classes, i);
@@ -1106,6 +1127,17 @@ void ParseClasses(ObjectBasicScript* obj)
 			obj->CurrentBlock = 0;
 			obj->CurrentClass = def;
 			obj->CurrentFunction = mdef;
+			
+			List* conv = ClassDef_GetInstanceMethods(def);
+			
+			for(z = 0; z < List_Count(conv); z++)
+			{
+				ClassConversion* cc = List_ClassConversionAtIndex(conv, z);
+				cc->IsSelf = 1;
+				List_Add(obj->CurrentClassMethods, cc);
+			}
+			
+			List_Delete(conv);
 			
 			while(obj->CurrentBlock < List_Count(mdef->Blocks))
 				ParseBlock(obj);
