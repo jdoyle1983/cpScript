@@ -93,6 +93,7 @@ FUNCTION Main()
 	Array readArray
 	readArray.FromPrimitiveType(PrimVal)
 	
+	
 	Counter = 0
 	TotalSize = readArray.Size() - 1
 	FOR Counter = 0 to TotalSize
