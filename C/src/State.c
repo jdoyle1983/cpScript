@@ -222,29 +222,44 @@ void AllocateMemoryBlockSet(State* state, char* Id, int Count)
     MemoryBlockSetHeader* h = MemoryBlockSetHeader_New(Id, Count);
 	List* Headers = (List*)Stack_Peek(state->_BlockHeaders);
     int i = 0;
-    for(i = 0; i < Count; i++)
-    {
-        short found = 0;
-        int c  = 0;
-        for(c = 0; c < state->_Memory->Count; c++)
-        {
-            MemoryBlock* b = List_MemoryBlockAtIndex(state->_Memory, c);
-            if(b->Used == 0)
-            {
-                MemoryBlockSetHeader_SetOffset(h, i, c);
-                found = 1;
-				break;
-            }
-        }
-
-        if(found == 0)
-        {
-            MemoryBlock* mb = MemoryBlock_New();
-            MemoryBlock_SetValue(mb, "");
-            List_Add(state->_Memory, mb);
-            MemoryBlockSetHeader_SetOffset(h, i, state->_Memory->Count - 1);
-        }
-    }
+	
+	int ContStart = -1;
+	int ContCount = 0;
+	for(i = 0; i < state->_Memory->Count; i++)
+	{
+		if(ContCount >= Count)
+			break;
+			
+		MemoryBlock* b = List_MemoryBlockAtIndex(state->_Memory, i);
+		if(b->Used == 0)
+		{
+			if(ContCount == 0)
+				ContStart = i;
+			ContCount++;
+		}
+		else
+		{
+			ContStart = -1;
+			ContCount = 0;
+		}
+	}
+	
+	for(i = 0; i < Count; i++)
+	{
+		if(ContStart != -1)
+		{
+			MemoryBlockSetHeader_SetOffset(h, i, i + ContStart);
+			MemoryBlock* b = List_MemoryBlockAtIndex(state->_Memory, Count + ContStart);
+			MemoryBlock_SetValue(b, "");
+		}
+		else
+		{
+			MemoryBlock* mb = MemoryBlock_New();
+			MemoryBlock_SetValue(mb, "");
+			List_Add(state->_Memory, mb);
+			MemoryBlockSetHeader_SetOffset(h, i, state->_Memory->Count - 1);
+		}
+	}
 
     List_Add(Headers, h);
 };
