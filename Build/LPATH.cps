@@ -4,18 +4,7 @@
 
 --https://raw.githubusercontent.com/logicchains/LPATHBench/master/cs.cs
 
-CLASS Storable
-	METHOD Init()
-	END METHOD
-	
-	METHOD ToDataString()
-	END METHOD
-	
-	METHOD FromDataString(DataString)
-	END METHOD
-END CLASS
-
-CLASS Route EXTENDS Storable
+CLASS Route
 	PROP Dest
 	PROP Cost
 	
@@ -29,12 +18,12 @@ CLASS Route EXTENDS Storable
 		Cost = inCost
 	END METHOD
 	
-	METHOD OVERRIDE ToDataString()
+	METHOD ToDataString()
 		VAR Enc = Dest .. "," .. Cost
 		RETURN Enc
 	END METHOD
 	
-	METHOD OVERRIDE FromDataString(DataString)
+	METHOD FromDataString(DataString)
 		Array Results
 		String.Split(DataString, ",", Results)
 		Dest = Results.GetItem(0)
@@ -99,10 +88,8 @@ CLASS LongestPathFinder
 					Nodes.ResizeY(NewSize)
 				END IF
 				
-				Console.WriteLine(".")
 				VAR DataString = tRoute.ToDataString()
 				Nodes.SetItem(tNode, NewSize - 1, DataString)
-				Console.WriteLine("@")
 			END IF
 			
 			Nums.Free()
