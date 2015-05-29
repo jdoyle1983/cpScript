@@ -368,6 +368,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 		{
 			case ExClassAction:
 			{
+				short WasFound = 0;
 				int e = 0;
 				if(obj->CurrentFunction != NULL)
 				{
@@ -428,7 +429,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 						AppendAsmLine(obj, con->Output);
 					}
 				}
-				for(e = 0; e < List_Count(obj->CurrentClassMethods); e++)
+				for(e = 0; e < List_Count(obj->CurrentClassMethods) && WasFound == 0; e++)
 				{
 					ClassConversion* con = List_ClassConversionAtIndex(obj->CurrentClassMethods, e);
 					if(strcmp(con->Input, t->Value) == 0)
@@ -447,6 +448,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 							AppendAsmLine(obj, "PUSHB $this");
 						AppendAsm(obj, "JMP ");
 						AppendAsmLine(obj, con->Output);
+						WasFound = 1;
 					}
 				}
 				for(e = 0; e < List_Count(obj->Classes); e++)
@@ -679,6 +681,7 @@ void ParseIfBlock(ObjectBasicScript* obj)
 	AppendAsmLine(obj, NewLine);
 	obj->CurrentBlock++;
 	int CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	int DidEmitSkipId = 0;
 	while(CurrentTokenType != ExEndIf)
 	{
 		if(CurrentTokenType == ExElseIf)
@@ -686,6 +689,7 @@ void ParseIfBlock(ObjectBasicScript* obj)
 			sprintf(NewLine, "LJMP _EndIf%ld", EndIfId);
 			AppendAsmLine(obj, NewLine);
 			sprintf(NewLine, "LBL _Skip%ld", SkipId);
+			DidEmitSkipId = 1;
 			AppendAsmLine(obj, NewLine);
 			EvaluateExpression(obj, 1);
 			sprintf(NewLine, "POP @%ld", CmpReg);
@@ -700,12 +704,18 @@ void ParseIfBlock(ObjectBasicScript* obj)
 			sprintf(NewLine, "LJMP _EndIf%ld", EndIfId);
 			AppendAsmLine(obj, NewLine);
 			sprintf(NewLine, "LBL _Skip%ld", SkipId);
+			DidEmitSkipId = 1;
 			AppendAsmLine(obj, NewLine);
 			obj->CurrentBlock++;
 		}
 		else
 			ParseBlock(obj);
 		CurrentTokenType = List_TokenAtIndex(getCurrentBlock(obj)->Tokens, 0)->Type;
+	}
+	if(DidEmitSkipId == 0)
+	{
+		sprintf(NewLine, "LBL _Skip%ld", SkipId);
+		AppendAsmLine(obj, NewLine);
 	}
 	sprintf(NewLine, "LBL _EndIf%ld", EndIfId);
 	AppendAsmLine(obj, NewLine);
