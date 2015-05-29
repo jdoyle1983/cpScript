@@ -67,10 +67,21 @@ EXPORT void CpStdLib_InstallUtilities(void* State)
     State_RegisterFunction(State, "__StdLib__Utilities__Array__Resize", &Utilities_Array_Resize, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__SetItem", &Utilities_Array_SetItem, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array__GetItem", &Utilities_Array_GetItem, 0);
+
+	State_RegisterFunction(State, "__StdLib__Utilities__Array2D__New", &Utilities_Array2D_New, 0);
+    State_RegisterFunction(State, "__StdLib__Utilities__Array2D__Free", &Utilities_Array2D_Free, 0);
+    State_RegisterFunction(State, "__StdLib__Utilities__Array2D__XCount", &Utilities_Array2D_XCount, 0);
+	State_RegisterFunction(State, "__StdLib__Utilities__Array2D__YCount", &Utilities_Array2D_YCount, 0);
+    State_RegisterFunction(State, "__StdLib__Utilities__Array2D__ResizeX", &Utilities_Array2D_ResizeX, 0);
+	State_RegisterFunction(State, "__StdLib__Utilities__Array2D__ResizeY", &Utilities_Array2D_ResizeY, 0);
+    State_RegisterFunction(State, "__StdLib__Utilities__Array2D__SetItem", &Utilities_Array2D_SetItem, 0);
+    State_RegisterFunction(State, "__StdLib__Utilities__Array2D__GetItem", &Utilities_Array2D_GetItem, 0);
+	
 	State_RegisterFunction(State, "__StdLib__Utilities__Time__GetTimeOfDay", &Utilities_Time_GetTimeOfDay, 0);
 	State_RegisterFunction(State, "__StdLib__Utilities__Time__GetTimeDiff", &Utilities_Time_Diff, 0);
 	State_RegisterFunction(State, "__StdLib__Utilities__Time__GetTimeMilliSeconds", &Utiltiess_Time_GetMilliseconds, 0);
 	State_RegisterFunction(State, "__StdLib__Utilities__Time__FreeTimeOfDay", &Utilities_Time_FreeTimeOfDay, 0);
+	
 	State_RegisterFunction(State, "__StdLib__Utilities__String__Trim", &Utilities_String_Trim, 0);
 	State_RegisterFunction(State, "__StdLib__Utilities__String__Split", &Utilities_String_Split, 0);
 	State_RegisterFunction(State, "__StdLib__Utilities__String__SplitAndKeep", &Utilities_String_SplitAndKeep, 0);

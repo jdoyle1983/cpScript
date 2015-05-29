@@ -31,6 +31,15 @@ void Utilities_Array_Resize(void* State);
 void Utilities_Array_SetItem(void* State);
 void Utilities_Array_GetItem(void* State);
 
+void Utilities_Array2D_New(void* State);
+void Utilities_Array2D_Free(void* State);
+void Utilities_Array2D_XCount(void* State);
+void Utilities_Array2D_YCount(void* State);
+void Utilities_Array2D_ResizeX(void* State);
+void Utilities_Array2D_ResizeY(void* State);
+void Utilities_Array2D_SetItem(void* State);
+void Utilities_Array2D_GetItem(void* State);
+
 void Utilities_Time_GetTimeOfDay(void* State);
 void Utilities_Time_Diff(void* State);
 void Utiltiess_Time_GetMilliseconds(void* State);

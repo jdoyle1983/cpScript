@@ -4,10 +4,21 @@
 #HostFunction __StdLib__Utilities__Array__Resize
 #HostFunction __StdLib__Utilities__Array__SetItem
 #HostFunction __StdLib__Utilities__Array__GetItem
+
+#HostFunction __StdLib__Utilities__Array2D__New
+#HostFunction __StdLib__Utilities__Array2D__Free
+#HostFunction __StdLib__Utilities__Array2D__XCount
+#HostFunction __StdLib__Utilities__Array2D__YCount
+#HostFunction __StdLib__Utilities__Array2D__ResizeX
+#HostFunction __StdLib__Utilities__Array2D__ResizeY
+#HostFunction __StdLib__Utilities__Array2D__SetItem
+#HostFunction __StdLib__Utilities__Array2D__GetItem
+
 #HostFunction __StdLib__Utilities__Time__GetTimeOfDay
 #HostFunction __StdLib__Utilities__Time__GetTimeDiff
 #HostFunction __StdLib__Utilities__Time__GetTimeMilliSeconds
 #HostFunction __StdLib__Utilities__Time__FreeTimeOfDay
+
 #HostFunction __StdLib__Utilities__String__Trim
 #HostFunction __StdLib__Utilities__String__Split
 #HostFunction __StdLib__Utilities__String__SplitAndKeep
@@ -47,6 +58,53 @@ CLASS Array
 	
 	METHOD GetItem(idx)
 		RETURN __StdLib__Utilities__Array__GetItem(ArrayId, idx)
+	END METHOD
+
+END CLASS
+
+CLASS Array2D
+
+	PROP ArrayId
+	
+	METHOD Init()
+		ArrayId = __StdLib__Utilities__Array2D__New(0, 0)
+	END METHOD
+	
+	METHOD FromPrimitiveType(PrimitiveType)
+		__StdLib__Utilities__Array2D__Free(ArrayId)
+		ArrayId = PrimitiveType
+	END METHOD
+	
+	METHOD GetPrimitiveType()
+		RETURN ArrayId
+	END METHOD
+	
+	METHOD Free()
+		__StdLib__Utilities__Array2D__Free(ArrayId)
+	END METHOD
+	
+	METHOD ResizeX(newsize)
+		__StdLib__Utilities__Array2D__ResizeX(ArrayId, newsize)
+	END METHOD
+	
+	METHOD ResizeY(newsize)
+		__StdLib__Utilities__Array2D__ResizeY(ArrayId, newsize)
+	END METHOD
+	
+	METHOD XSize()
+		RETURN __StdLib__Utilities__Array2D__XCount(ArrayId)
+	END METHOD
+	
+	METHOD YSize()
+		RETURN __StdLib__Utilities__Array2D__YCount(ArrayId)
+	END METHOD
+	
+	METHOD SetItem(x, y, val)
+		__StdLib__Utilities__Array2D__SetItem(ArrayId, x, y, val)
+	END METHOD
+	
+	METHOD GetItem(x, y)
+		RETURN __StdLib__Utilities__Array2D__GetItem(ArrayId, x, y)
 	END METHOD
 
 END CLASS

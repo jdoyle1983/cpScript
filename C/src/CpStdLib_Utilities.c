@@ -36,6 +36,13 @@ typedef struct
     int Count;
 } CpArray;
 
+typedef struct
+{
+	char** Items;
+	int XCount;
+	int YCount;
+} CpArray2D;
+
 void Utilities_ListToArray(List* SrcList, CpArray* DestArray)
 {
 	int i = 0;
@@ -124,6 +131,148 @@ void Utilities_Array_GetItem(void* State)
     int ArrayIndex = State_PopInt(State);
     CpArray* a = (CpArray*)State_Pop(State);
     if(ArrayIndex >= 0 && ArrayIndex < a->Count)
+        State_PushString(State, a->Items[ArrayIndex]);
+    else
+        State_PushString(State, "");
+};
+
+int GetArray2DPos(CpArray2D* Array, int X, int Y)
+{
+	return (X * Array->XCount) + Y;
+};
+
+int GetArray2DSize(CpArray2D* Array)
+{
+	return Array->XCount * Array->YCount;
+};
+
+void Utilities_Array2D_New(void* State)
+{
+	int i = 0;
+	int YSize = State_PopInt(State);
+    int XSize = State_PopInt(State);
+    CpArray2D* a = (CpArray2D*)malloc(sizeof(CpArray2D));
+	a->XCount = XSize;
+	a->YCount = YSize;
+    a->Items = (char**)malloc(sizeof(char*) * GetArray2DSize(a));
+    for(i = 0; i < GetArray2DSize(a); i++)
+    {
+        a->Items[i] = (char*)malloc(sizeof(char) * 2);
+        strcpy(a->Items[i], "");
+    }
+    State_Push(State, a);
+};
+
+void Utilities_Array2D_Free(void* State)
+{
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+    int i = 0;
+    for(i = 0; i < GetArray2DSize(a); i++)
+        free(a->Items[i]);
+    free(a->Items);
+    free(a);
+};
+
+void Utilities_Array2D_XCount(void* State)
+{
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+    State_PushInt(State, a->XCount);
+};
+
+void Utilities_Array2D_YCount(void* State)
+{
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+    State_PushInt(State, a->YCount);
+};
+
+void Utilities_Array2D_ResizeX(void* State)
+{
+	int newSize = State_PopInt(State);
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+
+    int origSize = a->XCount;
+	int x = 0;
+	int y = 0;
+	
+    if(newSize < origSize)
+    {
+        for(x = newSize; x < origSize; x++)
+			for(y = 0; y < a->YCount; y++)
+				free(a->Items[GetArray2DPos(a, x, y)]);
+    }
+
+	a->XCount = newSize;
+    a->Items = (char**)realloc(a->Items, sizeof(char*) * GetArray2DSize(a));
+
+    if(newSize > origSize)
+    {
+		for(x = origSize; x < newSize; x++)
+		{
+			for(y = 0; y < a->YCount; y++)
+			{
+				a->Items[GetArray2DPos(a, x, y)] = (char*)malloc(sizeof(char) * 2);
+				strcpy(a->Items[GetArray2DPos(a, x, y)], "");
+			}
+		}
+    }
+};
+
+void Utilities_Array2D_ResizeY(void* State)
+{
+	int newSize = State_PopInt(State);
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+
+    int origSize = a->YCount;
+	int x = 0;
+	int y = 0;
+	
+    if(newSize < origSize)
+    {
+		for(x = 0; x < a->XCount; x++)
+			for(y = newSize; y < origSize; y++)
+				free(a->Items[GetArray2DPos(a, x, y)]);
+    }
+
+	a->YCount = newSize;
+    a->Items = (char**)realloc(a->Items, sizeof(char*) * GetArray2DSize(a));
+
+    if(newSize > origSize)
+    {
+		for(x = 0; x < a->XCount; x++)
+		{
+			for(y = origSize; y < newSize; y++)
+			{
+				a->Items[GetArray2DPos(a, x, y)] = (char*)malloc(sizeof(char) * 2);
+				strcpy(a->Items[GetArray2DPos(a, x, y)], "");
+			}
+		}
+    }
+};
+
+void Utilities_Array2D_SetItem(void* State)
+{
+	char* ArrayValue = State_PopString(State);
+	int ArrayIndexY = State_PopInt(State);
+    int ArrayIndexX = State_PopInt(State);
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+	
+	int ArrayIndex = GetArray2DPos(a, ArrayIndexX, ArrayIndexY);
+	
+    if(ArrayIndex >= 0 && ArrayIndex < GetArray2DSize(a))
+    {
+        free(a->Items[ArrayIndex]);
+        a->Items[ArrayIndex] = (char*)malloc(sizeof(char) * (strlen(ArrayValue) + 1));
+        strcpy(a->Items[ArrayIndex], ArrayValue);
+    }
+};
+
+void Utilities_Array2D_GetItem(void* State)
+{
+	int ArrayIndexY = State_PopInt(State);
+    int ArrayIndexX = State_PopInt(State);
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+	int ArrayIndex = GetArray2DPos(a, ArrayIndexX, ArrayIndexY);
+    if(ArrayIndex >= 0 && ArrayIndex < GetArray2DSize(a))
         State_PushString(State, a->Items[ArrayIndex]);
     else
         State_PushString(State, "");
