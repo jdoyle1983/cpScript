@@ -9,6 +9,7 @@
 #HostFunction __StdLib__Utilities__Array2D__Free
 #HostFunction __StdLib__Utilities__Array2D__XCount
 #HostFunction __StdLib__Utilities__Array2D__YCount
+#HostFunction __StdLib__Utilities__Array2D__Resize
 #HostFunction __StdLib__Utilities__Array2D__ResizeX
 #HostFunction __StdLib__Utilities__Array2D__ResizeY
 #HostFunction __StdLib__Utilities__Array2D__SetItem
@@ -81,6 +82,10 @@ CLASS Array2D
 	
 	METHOD Free()
 		__StdLib__Utilities__Array2D__Free(ArrayId)
+	END METHOD
+	
+	METHOD Resize(newXSize, newYSize)
+		__StdLib__Utilities__Array2D__Resize(ArrayId, newXSize, newYSize)
 	END METHOD
 	
 	METHOD ResizeX(newsize)

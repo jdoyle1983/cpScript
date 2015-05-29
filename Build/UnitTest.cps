@@ -79,6 +79,34 @@ FUNCTION Main()
 	Console.WriteLine("Array Deleted.")
 	Console.WriteLine("")
 	Console.WriteLine("")
+	Console.WriteLine("Array2D Create...")
+	Array2D 2dArray
+	Console.WriteLine("Resize X,Y to 3,5...")
+	2dArray.Resize(3,5)
+	Console.WriteLine("Resizing Complete.")
+	VAR xs = 2dArray.XSize()
+	VAR ys = 2dArray.YSize()
+	Console.WriteLine("Read Size of " .. xs .. "," .. ys)
+	xs = xs - 1
+	ys = ys - 1
+	Console.WriteLine("Writing Values To Array...")
+	VAR x = 0
+	VAR y = 0
+	FOR x = 0 TO 2
+		FOR y = 0 TO 5
+			2dArray.SetItem(x, y, "Item (" .. x .. "," .. y .. ")")
+		NEXT y
+	NEXT x
+	Console.WriteLine("Reading Back Values...")
+	FOR x = 0 TO xs
+		FOR y = 0 TO ys
+			Console.WriteLine(2dArray.GetItem(x, y))
+		NEXT y
+	NEXT x
+	Console.WriteLine("Deleting Array2D.")
+	2dArray.Free()
+	Console.WriteLine("")
+	Console.WriteLine("")
 	Console.WriteLine("Unit Test Complete.")
 	
 END FUNCTION

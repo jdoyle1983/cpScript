@@ -43,27 +43,6 @@ CLASS Route EXTENDS Storable
 	END METHOD
 END CLASS
 
-CLASS Node EXTENDS Storable
-	PROP Neighbors
-	
-	METHOD Init()
-		Array NeighborsArray
-		Neighbors = NeighborsArray.GetPrimitiveType()
-	END METHOD
-	
-	METHOD OVERRIDE ToDataString()
-		RETURN Neighbors
-	END METHOD
-	
-	METHOD OVERRIDE FromDataString(DataString)
-		Neighbors = DataString
-	END METHOD
-	
-	METHOD GetNeighborsArrayPrimitive()
-		RETURN Neighbors
-	END METHOD
-END CLASS
-
 CLASS LongestPathFinder
 
 	PROP Iterations
@@ -72,65 +51,74 @@ CLASS LongestPathFinder
 	END METHOD
 	
 	METHOD ReadPlaces(FilePath)
+
+		Array2D Nodes	
 		File readFile
 		readFile.OpenRead(FilePath)
-		VAR ArrPrim = readFile.ReadAllLines()
+		VAR FileArrPrim = readFile.ReadAllLines()
 		readFile.Close()
 		Array Lines
-		Lines.FromPrimitiveType(ArrPrim)
+		Lines.FromPrimitiveType(FileArrPrim)
 		
 		VAR NumNodes = Lines.GetItem(0)
-		Console.WriteLine(NumNodes)
-		Array Nodes
-		Nodes.Resize(NumNodes)
-		Array Routes
-		Routes.Resize(NumNodes)
+		
+		Array NodeCount
+		NodeCount.Resize(NumNodes)
+		
+		Nodes.Resize(NumNodes, 0)
+		
 		NumNodes = NumNodes - 1
 		
 		VAR i = 0
 		FOR i = 0 TO NumNodes
-			Node newNode
-			Nodes.SetItem(i, newNode.ToDataString())
-			Array routesArray
-			Routes.SetItem(i, routesArray.GetPrimitiveType())
+			NodeCount.SetItem(i, 0)
 		NEXT i
 		
 		VAR LineCount = Lines.Size()
+		
 		FOR i = 1 to LineCount - 1
 			Array Nums
 			String.Split(Lines.GetItem(i), " ", Nums)
 			
 			IF Nums.Size() >= 3 THEN
+			
 				VAR tNode = Nums.GetItem(0)
 				VAR tNeighbor = Nums.GetItem(1)
 				VAR tCost = Nums.GetItem(2)
-				VAR RouteArrPrim = Routes.GetItem(tNode)
-				Array RouteArray
-				RouteArray.FromPrimitiveType(RouteArrPrim)
+				
 				Route tRoute
 				tRoute.SetData(tNeighbor, tCost)
-				RouteArray.Resize(RouteArray.Size() + 1)
-				RouteArray.SetItem(RouteArray.Size() - 1, tRoute.ToDataString())
+				
+				VAR NewSize = NodeCount.GetItem(tNode) + 1
+				
+				NodeCount.SetItem(tNode, NewSize)
+				
+				VAR MaxSize = Nodes.YSize()
+				
+				IF NewSize > MaxSize THEN
+					Nodes.ResizeY(NewSize)
+				END IF
+				
+				Console.WriteLine(".")
+				VAR DataString = tRoute.ToDataString()
+				Nodes.SetItem(tNode, NewSize - 1, DataString)
+				Console.WriteLine("@")
 			END IF
+			
+			Nums.Free()
 		NEXT i
 		
-		VAR RouteCount = Routes.Size() - 1
-		FOR i = 0 TO RouteCount
-			Node tNode
-			tNode.FromDataString(Nodes.GetItem(i))
-			VAR NArrPrim = tNode.GetNeighborsArrayPrimitive()
-			Array NArr
-			NArr.FromPrimitiveType(NArrPrim)
-			VAR RouteArrPrim = Routes.GetItem(i)
-			Array RouteArr
-			RouteArr.FromPrimitiveType(RouteArrPrim)
-			NArr.Resize(RouteArr.Size())
-			VAR ArCounter = 0
-			VAR ArSize = RouteArr.Size() - 1
-			FOR ArCounter = 0 TO ArSize
-				NArr.SetItem(ArCounter, RouteArr.GetItem(ArCounter))
-			NEXT ArCounter
+		VAR TotalY = Nodes.YSize() - 1
+		VAR ThisItemSize = 9999999
+		VAR e = 0
+		FOR i = 0 TO NumNodes
+			ThisItemSize = NodeCount.GetItem(i)
+			FOR e = ThisItemSize TO TotalY
+				Nodes.SetItem(i, e, "-1")
+			NEXT e
 		NEXT i
+		
+		NodeCount.Free()
 		
 		RETURN Nodes.GetPrimitiveType()
 	END METHOD
@@ -149,26 +137,27 @@ CLASS LongestPathFinder
 		VArr.FromPrimitiveType(VisitedPrim)
 		VArr.SetItem(NodeIndex, 1)
 
-		Array NArr
-		NArr.FromPrimitiveType(NodesArrPrim)
-		
-		Node TNode
-		TNode.FromDataString(NArr.GetItem(NodeIndex))
-		
-		Array NRoute
-		NRoute.FromPrimitiveType(TNode.GetNeighborsArrayPrimitive())
+		Array2D Nodes
+		Nodes.FromPrimitiveType(NodesArrPrim)
 		
 		VAR i = 0
-		VAR NeighborsLen = NRoute.Size() - 1
+		VAR NeighborsLen = Nodes.YSize() - 1
+		
+		Console.WriteLine(NeighborsLen)
 		
 		FOR i = 0 TO NeighborsLen	
-			Route ThisRoute
-			ThisRoute.FromDataString(NRoute.GetItem(i))
+			Console.WriteLine(NodeIndex .. "," .. i)
+			VAR BaseData = Nodes.GetItem(NodeIndex, i)
+			Console.WriteLine(BaseData)
+			IF BaseData != "-1" THEN 
+				Route ThisRoute
+				ThisRoute.FromDataString(BaseData)
 			
-			IF VArr.GetItem(ThisRoute.Dest) != 1 THEN
-				VAR Dist = ThisRoute.Cost + GetLongestPath(NodesArrPrim, ThisRoute.Dest, VisitedPrim)
-				IF Dist > Max THEN
-					Max = Dist
+				IF VArr.GetItem(ThisRoute.Dest) != 1 THEN
+					VAR Dist = ThisRoute.Cost + GetLongestPath(NodesArrPrim, ThisRoute.Dest, VisitedPrim)
+					IF Dist > Max THEN
+						Max = Dist
+					END IF
 				END IF
 			END IF
 		NEXT i
@@ -181,16 +170,16 @@ FUNCTION Main()
 	LongestPathFinder PathFinder
 	VAR NodePrim = PathFinder.ReadPlaces("./agraph")
 
-	Array Nodes
+	Array2D Nodes
 	Nodes.FromPrimitiveType(NodePrim)
 	
 	Array Visited
 	Visited.Resize(Nodes.Size())
 	
-	Console.WriteLine("Nodes.Size() = " .. Nodes.Size())
+	Console.WriteLine("Nodes.Size = " .. Nodes.XSize() .. "," .. Nodes.YSize())
 	
 	VAR i = 0
-	VAR c = Nodes.Size() - 1
+	VAR c = Nodes.XSize() - 1
 	
 	FOR i = 0 to c
 		Visited.SetItem(i, 0)

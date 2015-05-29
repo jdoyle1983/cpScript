@@ -72,6 +72,7 @@ EXPORT void CpStdLib_InstallUtilities(void* State)
     State_RegisterFunction(State, "__StdLib__Utilities__Array2D__Free", &Utilities_Array2D_Free, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array2D__XCount", &Utilities_Array2D_XCount, 0);
 	State_RegisterFunction(State, "__StdLib__Utilities__Array2D__YCount", &Utilities_Array2D_YCount, 0);
+	State_RegisterFunction(State, "__StdLib__Utilities__Array2D__Resize", &Utilities_Array2D_Resize, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array2D__ResizeX", &Utilities_Array2D_ResizeX, 0);
 	State_RegisterFunction(State, "__StdLib__Utilities__Array2D__ResizeY", &Utilities_Array2D_ResizeY, 0);
     State_RegisterFunction(State, "__StdLib__Utilities__Array2D__SetItem", &Utilities_Array2D_SetItem, 0);

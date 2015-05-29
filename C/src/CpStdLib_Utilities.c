@@ -136,14 +136,14 @@ void Utilities_Array_GetItem(void* State)
         State_PushString(State, "");
 };
 
-int GetArray2DPos(CpArray2D* Array, int X, int Y)
+int Get2DPos(int XSize, int YSize, int X, int Y)
 {
-	return (X * Array->XCount) + Y;
+	return (X * YSize) + Y;
 };
 
-int GetArray2DSize(CpArray2D* Array)
+int Get2DSize(int XSize, int YSize)
 {
-	return Array->XCount * Array->YCount;
+	return XSize * YSize;
 };
 
 void Utilities_Array2D_New(void* State)
@@ -154,8 +154,8 @@ void Utilities_Array2D_New(void* State)
     CpArray2D* a = (CpArray2D*)malloc(sizeof(CpArray2D));
 	a->XCount = XSize;
 	a->YCount = YSize;
-    a->Items = (char**)malloc(sizeof(char*) * GetArray2DSize(a));
-    for(i = 0; i < GetArray2DSize(a); i++)
+    a->Items = (char**)malloc(sizeof(char*) * Get2DSize(a->XCount, a->YCount));
+    for(i = 0; i < Get2DSize(a->XCount, a->YCount); i++)
     {
         a->Items[i] = (char*)malloc(sizeof(char) * 2);
         strcpy(a->Items[i], "");
@@ -167,7 +167,7 @@ void Utilities_Array2D_Free(void* State)
 {
     CpArray2D* a = (CpArray2D*)State_Pop(State);
     int i = 0;
-    for(i = 0; i < GetArray2DSize(a); i++)
+    for(i = 0; i < Get2DSize(a->XCount, a->YCount); i++)
         free(a->Items[i]);
     free(a->Items);
     free(a);
@@ -185,68 +185,73 @@ void Utilities_Array2D_YCount(void* State)
     State_PushInt(State, a->YCount);
 };
 
+void ResizeArray2D(CpArray2D* a, int newXSize, int newYSize)
+{
+	int x = 0;
+	int y = 0;
+	char** tmpStorage = (char**)malloc(sizeof(char*) * Get2DSize(newXSize, newYSize));
+	
+	if(newXSize < a->XCount)
+	{
+		for(x = newXSize; x < a->XCount; x++)
+			for(y = 0; y < a->YCount; y++)
+				free(a->Items[Get2DPos(a->XCount, a->YCount, x, y)]);
+	}
+
+	if(newYSize < a->YCount)
+	{
+		for(x = 0; x < a->XCount; x++)
+			for(y = newYSize; y < a->YCount; y++)
+				free(a->Items[Get2DPos(a->XCount, a->YCount, x, y)]);
+	}
+
+	for(x = 0; x < newXSize; x++)
+	{
+		for(y = 0; y < newYSize; y++)
+		{
+			if(x < a->XCount && y < a->YCount)
+			{
+				int pd = Get2DPos(newXSize, newYSize, x, y);
+				int ps = Get2DPos(a->XCount, a->YCount, x, y);
+				tmpStorage[pd] = a->Items[ps];
+			}
+			else
+			{
+				tmpStorage[Get2DPos(newXSize, newYSize, x, y)] = (char*)malloc(sizeof(char) * 2);
+				strcpy(tmpStorage[Get2DPos(newXSize, newYSize, x, y)], "");
+			}
+		}
+	}
+
+	free(a->Items);
+	a->Items = tmpStorage;
+	a->XCount = newXSize;
+	a->YCount = newYSize;
+};
+
+void Utilities_Array2D_Resize(void* State)
+{
+	int newYSize = State_PopInt(State);
+	int newXSize = State_PopInt(State);
+    CpArray2D* a = (CpArray2D*)State_Pop(State);
+	
+	ResizeArray2D(a, newXSize, newYSize);
+};
+
 void Utilities_Array2D_ResizeX(void* State)
 {
 	int newSize = State_PopInt(State);
     CpArray2D* a = (CpArray2D*)State_Pop(State);
-
-    int origSize = a->XCount;
-	int x = 0;
-	int y = 0;
 	
-    if(newSize < origSize)
-    {
-        for(x = newSize; x < origSize; x++)
-			for(y = 0; y < a->YCount; y++)
-				free(a->Items[GetArray2DPos(a, x, y)]);
-    }
-
-	a->XCount = newSize;
-    a->Items = (char**)realloc(a->Items, sizeof(char*) * GetArray2DSize(a));
-
-    if(newSize > origSize)
-    {
-		for(x = origSize; x < newSize; x++)
-		{
-			for(y = 0; y < a->YCount; y++)
-			{
-				a->Items[GetArray2DPos(a, x, y)] = (char*)malloc(sizeof(char) * 2);
-				strcpy(a->Items[GetArray2DPos(a, x, y)], "");
-			}
-		}
-    }
+	ResizeArray2D(a, newSize, a->YCount);
 };
 
 void Utilities_Array2D_ResizeY(void* State)
 {
 	int newSize = State_PopInt(State);
     CpArray2D* a = (CpArray2D*)State_Pop(State);
-
-    int origSize = a->YCount;
-	int x = 0;
-	int y = 0;
 	
-    if(newSize < origSize)
-    {
-		for(x = 0; x < a->XCount; x++)
-			for(y = newSize; y < origSize; y++)
-				free(a->Items[GetArray2DPos(a, x, y)]);
-    }
-
-	a->YCount = newSize;
-    a->Items = (char**)realloc(a->Items, sizeof(char*) * GetArray2DSize(a));
-
-    if(newSize > origSize)
-    {
-		for(x = 0; x < a->XCount; x++)
-		{
-			for(y = origSize; y < newSize; y++)
-			{
-				a->Items[GetArray2DPos(a, x, y)] = (char*)malloc(sizeof(char) * 2);
-				strcpy(a->Items[GetArray2DPos(a, x, y)], "");
-			}
-		}
-    }
+	ResizeArray2D(a, a->XCount, newSize);
 };
 
 void Utilities_Array2D_SetItem(void* State)
@@ -255,10 +260,10 @@ void Utilities_Array2D_SetItem(void* State)
 	int ArrayIndexY = State_PopInt(State);
     int ArrayIndexX = State_PopInt(State);
     CpArray2D* a = (CpArray2D*)State_Pop(State);
-	
-	int ArrayIndex = GetArray2DPos(a, ArrayIndexX, ArrayIndexY);
-	
-    if(ArrayIndex >= 0 && ArrayIndex < GetArray2DSize(a))
+
+	int ArrayIndex = Get2DPos(a->XCount, a->YCount, ArrayIndexX, ArrayIndexY);
+
+    if(ArrayIndex >= 0 && ArrayIndex < Get2DSize(a->XCount, a->YCount))
     {
         free(a->Items[ArrayIndex]);
         a->Items[ArrayIndex] = (char*)malloc(sizeof(char) * (strlen(ArrayValue) + 1));
@@ -271,8 +276,8 @@ void Utilities_Array2D_GetItem(void* State)
 	int ArrayIndexY = State_PopInt(State);
     int ArrayIndexX = State_PopInt(State);
     CpArray2D* a = (CpArray2D*)State_Pop(State);
-	int ArrayIndex = GetArray2DPos(a, ArrayIndexX, ArrayIndexY);
-    if(ArrayIndex >= 0 && ArrayIndex < GetArray2DSize(a))
+	int ArrayIndex = Get2DPos(a->XCount, a->YCount, ArrayIndexX, ArrayIndexY);
+    if(ArrayIndex >= 0 && ArrayIndex < Get2DSize(a->XCount, a->YCount))
         State_PushString(State, a->Items[ArrayIndex]);
     else
         State_PushString(State, "");
