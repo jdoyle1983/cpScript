@@ -88,12 +88,12 @@ CLASS Array2D
 		__StdLib__Utilities__Array2D__Resize(ArrayId, newXSize, newYSize)
 	END METHOD
 	
-	METHOD ResizeX(newsize)
-		__StdLib__Utilities__Array2D__ResizeX(ArrayId, newsize)
+	METHOD ResizeX(newXSize)
+		__StdLib__Utilities__Array2D__ResizeX(ArrayId, newXSize)
 	END METHOD
 	
-	METHOD ResizeY(newsize)
-		__StdLib__Utilities__Array2D__ResizeY(ArrayId, newsize)
+	METHOD ResizeY(newYSize)
+		__StdLib__Utilities__Array2D__ResizeY(ArrayId, newYSize)
 	END METHOD
 	
 	METHOD XSize()

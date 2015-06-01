@@ -111,13 +111,6 @@ CLASS LongestPathFinder
 	END METHOD
 	
 	METHOD GetLongestPath(NodesArrPrim, NodeIndex, VisitedPrim)
-		
-		Iterations = Iterations + 1
-		
-		IF Iterations % 1000 == 0 THEN
-			Console.WriteLine("Iterations: " .. Iterations)
-		END IF
-		
 		VAR Max = 0
 
 		Array VArr
@@ -130,12 +123,8 @@ CLASS LongestPathFinder
 		VAR i = 0
 		VAR NeighborsLen = Nodes.YSize() - 1
 		
-		Console.WriteLine(NeighborsLen)
-		
 		FOR i = 0 TO NeighborsLen	
-			Console.WriteLine(NodeIndex .. "," .. i)
 			VAR BaseData = Nodes.GetItem(NodeIndex, i)
-			Console.WriteLine(BaseData)
 			IF BaseData != "-1" THEN 
 				Route ThisRoute
 				ThisRoute.FromDataString(BaseData)
@@ -156,14 +145,12 @@ END CLASS
 FUNCTION Main()
 	LongestPathFinder PathFinder
 	VAR NodePrim = PathFinder.ReadPlaces("./agraph")
-
+	
 	Array2D Nodes
 	Nodes.FromPrimitiveType(NodePrim)
 	
 	Array Visited
-	Visited.Resize(Nodes.Size())
-	
-	Console.WriteLine("Nodes.Size = " .. Nodes.XSize() .. "," .. Nodes.YSize())
+	Visited.Resize(Nodes.XSize())
 	
 	VAR i = 0
 	VAR c = Nodes.XSize() - 1
@@ -182,7 +169,7 @@ FUNCTION Main()
 	Time.FreeTimeOfDay(StartTime)
 	Time.FreeTimeOfDay(EndTime)
 	Time.FreeTimeOfDay(TotalTime)
-	Console.WriteLine(Result .. " LANGUAGE ObjectBasic / AsmScript " .. TotalMs .. " ms")
+	Console.WriteLine(Result .. " LANGUAGE ObjectBasic / AsmScript " .. TotalMs .. " ms, Iterations = " .. PathFinder.Iterations)
 
 	Nodes.Free()
 	Visited.Free()
