@@ -61,7 +61,7 @@ namespace NewRuntimeProto
 
         internal string ReadRegister(string RegisterText)
         {
-            switch(RegisterText.Trim().ToLower())
+            switch(RegisterText.Trim())
             {
                 case "@0": return ReadRegister(0);
                 case "@1": return ReadRegister(1);
@@ -86,7 +86,7 @@ namespace NewRuntimeProto
 
         internal void WriteRegister(string RegisterText, string Value)
         {
-            switch (RegisterText.Trim().ToLower())
+            switch (RegisterText.Trim())
             {
                 case "@0": SetRegister(0, Value); break;
                 case "@1": SetRegister(1, Value); break;
