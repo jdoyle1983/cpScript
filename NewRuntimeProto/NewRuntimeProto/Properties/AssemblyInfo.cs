@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NewRuntimeProto")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Ariel Corporation")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("NewRuntimeProto")]
-[assembly: AssemblyCopyright("Copyright © Ariel Corporation 2015")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
