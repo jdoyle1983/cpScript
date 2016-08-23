@@ -1,34 +1,48 @@
+--This is very much a work in progress
+
 #include Lib/ConsoleIO.obh
 #include Lib/FileIO.obh
 #include Lib/Utilities.obh
 
 --https://raw.githubusercontent.com/logicchains/LPATHBench/master/cs.cs
 
-CLASS Route
-	PROP Dest
-	PROP Cost
+CLASS Node
+	PROP RouteArrPrim
 	
 	METHOD Init()
-		Dest = -1
-		Cost = -1
+		Array Arr
+		RouteArrPrim = Arr.GetPrimitiveType()
 	END METHOD
 	
-	METHOD SetData(inDest, inCost)
-		Dest = inDest
-		Cost = inCost
+	METHOD GetRouteArrayPrim()
+		RETURN RouteArrPrim
+	END METHOD
+	
+	METHOD AddRouteStr(strData)
+		Array Arr
+		Arr.FromPrimitiveType(RouteArrPrim)
+		Arr.Resize(Arr.Size() + 1)
+		Arr.SetItem(Arr.Size() - 1, strData)
+	END METHOD
+	
+	METHOD GetRouteStr(index)
+		Array Arr
+		Arr.FromPrimitiveType(RouteArrPrim)
+		RETURN Arr.GetItem(index)
 	END METHOD
 	
 	METHOD ToDataString()
-		VAR Enc = Dest .. "," .. Cost
-		RETURN Enc
+		RETURN RouteArrPrim
 	END METHOD
 	
 	METHOD FromDataString(DataString)
-		Array Results
-		String.Split(DataString, ",", Results)
-		Dest = Results.GetItem(0)
-		Cost = Results.GetItem(1)
-		Results.Free()
+		RouteArrPrim = DataString
+	END METHOD
+	
+	METHOD Free()
+		Array Arr
+		Arr.FromPrimitiveType(RouteArrPrim)
+		Arr.Free()
 	END METHOD
 END CLASS
 
@@ -41,7 +55,6 @@ CLASS LongestPathFinder
 	
 	METHOD ReadPlaces(FilePath)
 
-		Array2D Nodes	
 		File readFile
 		readFile.OpenRead(FilePath)
 		VAR FileArrPrim = readFile.ReadAllLines()
@@ -51,63 +64,55 @@ CLASS LongestPathFinder
 		
 		VAR NumNodes = Lines.GetItem(0)
 		
-		Array NodeCount
-		NodeCount.Resize(NumNodes)
+		Array Nodes
+		Nodes.Resize(NumNodes)
 		
-		Nodes.Resize(NumNodes, 0)
-		
-		NumNodes = NumNodes - 1
+		Array Routes
+		Routes.Resize(NumNodes)
 		
 		VAR i = 0
-		FOR i = 0 TO NumNodes
-			NodeCount.SetItem(i, 0)
+		VAR e = 0
+		
+		FOR i = 0 TO NumNodes - 1
+			Node thisNode
+			Nodes.SetItem(i, thisNode.ToDataString())
+			Array thisRoute
+			Routes.SetItem(i, thisRoute.GetPrimitiveType())
 		NEXT i
 		
-		VAR LineCount = Lines.Size()
-		
-		FOR i = 1 to LineCount - 1
+		FOR i = 1 TO LineCount - 1
 			Array Nums
 			String.Split(Lines.GetItem(i), " ", Nums)
 			
 			IF Nums.Size() >= 3 THEN
-			
-				VAR tNode = Nums.GetItem(0)
-				VAR tNeighbor = Nums.GetItem(1)
-				VAR tCost = Nums.GetItem(2)
+				VAR node = Nums.GetItem(0)
+				VAR neighbour = Nums.GetItem(1)
+				VAR cost = Nums.GetItem(2)
 				
-				Route tRoute
-				tRoute.SetData(tNeighbor, tCost)
-				
-				VAR NewSize = NodeCount.GetItem(tNode) + 1
-				
-				NodeCount.SetItem(tNode, NewSize)
-				
-				VAR MaxSize = Nodes.YSize()
-				
-				IF NewSize > MaxSize THEN
-					Nodes.ResizeY(NewSize)
-				END IF
-				
-				VAR DataString = tRoute.ToDataString()
-				Nodes.SetItem(tNode, NewSize - 1, DataString)
+				Array routesArray
+				routesArray.FromPrimitiveType(Routes.GetItem(node))
+				routesArray.Resize(routesArray.Size() + 1)
+				routesArray.SetItem(routesArray.Size() - 1, neighbour .. "," .. cost)
 			END IF
 			
 			Nums.Free()
 		NEXT i
 		
-		VAR TotalY = Nodes.YSize() - 1
-		VAR ThisItemSize = 9999999
-		VAR e = 0
-		FOR i = 0 TO NumNodes
-			ThisItemSize = NodeCount.GetItem(i)
-			FOR e = ThisItemSize TO TotalY
-				Nodes.SetItem(i, e, "-1")
+		FOR i = 0 TO Routes.Size() - 1
+			Node thisNode
+			thisNode.FromDataString(Nodes.GetItem(i))
+			Array thisRoute
+			thisRoute.FromPrimitiveType(Routes.GetItem(i))
+			FOR e = 0 TO thisRoute.Size() - 1
+				thisNode.AddRouteStr(thisRoute.GetItem(e))
 			NEXT e
+			thisRoute.Free()
 		NEXT i
 		
-		NodeCount.Free()
+		Routes.Free()
 		
 		RETURN Nodes.GetPrimitiveType()
+		
 	END METHOD
 	
 	METHOD GetLongestPath(NodesArrPrim, NodeIndex, VisitedPrim)
@@ -117,25 +122,24 @@ CLASS LongestPathFinder
 		VArr.FromPrimitiveType(VisitedPrim)
 		VArr.SetItem(NodeIndex, 1)
 
-		Array2D Nodes
+		Array Nodes
 		Nodes.FromPrimitiveType(NodesArrPrim)
 		
-		VAR i = 0
-		VAR NeighborsLen = Nodes.YSize() - 1
+		Array Neighbors
+		Neighbors.FromPrimitiveType(Nodes.GetItem(NodeIndex))
 		
-		FOR i = 0 TO NeighborsLen	
-			VAR BaseData = Nodes.GetItem(NodeIndex, i)
-			IF BaseData != "-1" THEN 
-				Route ThisRoute
-				ThisRoute.FromDataString(BaseData)
-			
-				IF VArr.GetItem(ThisRoute.Dest) != 1 THEN
-					VAR Dist = ThisRoute.Cost + GetLongestPath(NodesArrPrim, ThisRoute.Dest, VisitedPrim)
-					IF Dist > Max THEN
-						Max = Dist
-					END IF
+		VAR i = 0
+		
+		FOR i = 0 TO Neighbors.Size() - 1
+			Array DestCost
+			String.Split(Neighbors.GetItem(i), ",", DestCost)
+			IF VArr.GetItem(DestCost.GetItem(0)) <> 1 THEN
+				VAR Dist = DestCost.GetItem(1) + GetLongestPath(NodesArrPrim, DestCost.GetItem(0), VisitedPrim)
+				IF Dist > Max THEN
+					Max = Dist
 				END IF
 			END IF
+			DestCost.Free()
 		NEXT i
 		VArr.SetItem(NodeIndex, 0)
 		RETURN Max
@@ -145,10 +149,9 @@ END CLASS
 FUNCTION Main()
 	LongestPathFinder PathFinder
 	VAR NodePrim = PathFinder.ReadPlaces("./agraph")
-	
-	Array2D Nodes
+	Array Nodes
 	Nodes.FromPrimitiveType(NodePrim)
-	
+		
 	Array Visited
 	Visited.Resize(Nodes.XSize())
 	
