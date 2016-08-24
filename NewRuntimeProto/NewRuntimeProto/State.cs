@@ -4,6 +4,36 @@ using System.Text;
 
 namespace NewRuntimeProto
 {
+    internal class MemoryBlock
+    {
+        public bool Used { get; set; }
+        public string Value { get; set; }
+
+        public MemoryBlock()
+        {
+            Used = false;
+            Value = "";
+        }
+
+        public MemoryBlock(string initialValue)
+        {
+            Used = true;
+            Value = initialValue;
+        }
+
+        public void ReAlloc(string newValue)
+        {
+            Used = true;
+            Value = newValue;
+        }
+
+        public void Free()
+        {
+            Used = false;
+            Value = "";
+        }
+    }
+
     public class State
     {
         internal static char[] SplitChars = {
@@ -20,7 +50,7 @@ namespace NewRuntimeProto
         internal string[] Script;
         internal List<List<string>> ScriptPart;
         internal string[] Register = { "", "", "", "", "", "", "", "", "", "", "", "" };
-        internal string[] Memory;
+        internal MemoryBlock[] Memory;
         internal List<string> Stack;
         internal Dictionary<string, int> LabelOffsets;
         internal int CurrentScriptOffset = -1;
@@ -29,7 +59,7 @@ namespace NewRuntimeProto
         {
             Script = new string[0];
             ScriptPart = new List<List<string>>();
-            Memory = new string[0];
+            Memory = new MemoryBlock[0];
             Stack = new List<string>();
             LabelOffsets = new Dictionary<string, int>();
         }
@@ -99,7 +129,7 @@ namespace NewRuntimeProto
         public void Reset()
         {
             Register[0] = Register[1] = Register[2] = Register[3] = Register[4] = Register[5] = Register[6] = Register[7] = Register[8] = Register[9] = Register[10] = Register[11] = "";
-            Memory = new string[0];
+            Memory = new MemoryBlock[0];
             CurrentScriptOffset = -1;
             Stack.Clear();
         }
@@ -143,18 +173,73 @@ namespace NewRuntimeProto
                         for (int i = 11; i >= 0; i--)
                             Register[i] = StackPop();
                     } break;
+                case "alloc":
+                    {
+
+                    } break;
+                case "free":
+                    {
+
+                    } break;
             }
 
             return true;
         }
 
         #region Memory Management
+        public long AllocateMemory(long allocationSize)
+        {
+            long blockStart = -1;
+            long blockSize = -1;
+
+            for(long i = 0; i < Memory.LongLength; i++)
+            {
+                if(!Memory[i].Used)
+                {
+                    if (blockStart == -1)
+                    {
+                        blockStart = i;
+                        blockSize = 1;
+                    }
+                    else
+                        blockSize++;
+
+                    if (blockSize == allocationSize)
+                        break;
+                }
+                else
+                {
+                    blockStart = -1;
+                    blockSize = -1;
+                }
+            }
+
+            if(blockStart != -1 && blockSize == allocationSize)
+            {
+                for (long i = blockSize; i < blockStart + blockSize; i++)
+                    Memory[i].ReAlloc("");
+                return blockStart;
+            }
+            else
+            {
+                blockStart = Memory.LongLength;
+                MemoryBlock[] NewMemory = new MemoryBlock[Memory.LongLength + blockSize];
+                for (long i = 0; i < blockStart; i++)
+                    NewMemory[i] = Memory[i];
+                for (long i = blockStart; i < NewMemory.LongLength; i++)
+                    NewMemory[i] = new MemoryBlock("");
+                Memory = NewMemory;
+                return blockStart;
+            }
+        }
 
         public string ReadMemoryOffset(long Offset)
         {
             if (Offset < 0 || Offset >= Memory.LongLength)
                 throw new Exception("Read Outside Memory Allocated.");
-            return Memory[Offset];
+            if(!Memory[Offset].Used)
+                throw new Exception("Attempt to Read UnInitialized Memory.");
+            return Memory[Offset].Value;
         }
 
         public void WriteMemoryOffset(long Offset, string Value)
