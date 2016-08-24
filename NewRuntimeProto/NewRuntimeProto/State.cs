@@ -233,6 +233,18 @@ namespace NewRuntimeProto
             }
         }
 
+        public void FreeMemory(long offset, long size)
+        {
+            if (offset < 0 || offset >= Memory.LongLength || (offset + size) > Memory.LongLength)
+                throw new Exception("Free Outside Memory Allocated.");
+            for(long i = offset; i < offset + size; i++)
+            {
+                if (!Memory[i].Used)
+                    throw new Exception("Attempt to Free Unused Memory.");
+                Memory[i].Free();
+            }
+        }
+
         public string ReadMemoryOffset(long Offset)
         {
             if (Offset < 0 || Offset >= Memory.LongLength)
@@ -244,25 +256,13 @@ namespace NewRuntimeProto
 
         public void WriteMemoryOffset(long Offset, string Value)
         {
-            if (Offset < 0)
+            if (Offset < 0 || Offset >= Memory.LongLength)
                 throw new Exception("Write Outside Bounds.");
 
-            if(Offset >= Memory.LongLength)
-            {
-                long OldSize = Memory.LongLength;
-                long NewSize = Offset + 1;
+            if (!Memory[Offset].Used)
+                throw new Exception("Attemp to Write to UnInitialized Memory.");
 
-                string[] NewMemory = new string[NewSize];
-
-                for (long i = 0; i < OldSize; i++)
-                    NewMemory[i] = Memory[i];
-                for (long i = OldSize; i < NewSize; i++)
-                    NewMemory[i] = "";
-
-                Memory = NewMemory;
-            }
-
-            Memory[Offset] = Value;
+            Memory[Offset].Value = Value;
         }
 
         #endregion
