@@ -64,10 +64,10 @@ namespace NewRuntimeProto
             LabelOffsets = new Dictionary<string, int>();
         }
 
-        public void Load(string AsmText)
+        public void Load(string asmText)
         {
             //Split script by line breaks
-            string[] SrcLines = AsmText.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] SrcLines = asmText.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
             //Find genuine code lines, removing comments (lines beginning with ;) and the like.
             List<string> CleanLines = new List<string>();
@@ -187,7 +187,7 @@ namespace NewRuntimeProto
         }
 
         #region Memory Management
-        public long AllocateMemory(long allocationSize)
+        public long AllocateMemory(long size)
         {
             long blockStart = -1;
             long blockSize = -1;
@@ -204,7 +204,7 @@ namespace NewRuntimeProto
                     else
                         blockSize++;
 
-                    if (blockSize == allocationSize)
+                    if (blockSize == size)
                         break;
                 }
                 else
@@ -214,7 +214,7 @@ namespace NewRuntimeProto
                 }
             }
 
-            if(blockStart != -1 && blockSize == allocationSize)
+            if(blockStart != -1 && blockSize == size)
             {
                 for (long i = blockSize; i < blockStart + blockSize; i++)
                     Memory[i].ReAlloc("");
@@ -245,40 +245,40 @@ namespace NewRuntimeProto
             }
         }
 
-        public string ReadMemoryOffset(long Offset)
+        public string ReadMemoryOffset(long offset)
         {
-            if (Offset < 0 || Offset >= Memory.LongLength)
+            if (offset < 0 || offset >= Memory.LongLength)
                 throw new Exception("Read Outside Memory Allocated.");
-            if(!Memory[Offset].Used)
+            if(!Memory[offset].Used)
                 throw new Exception("Attempt to Read UnInitialized Memory.");
-            return Memory[Offset].Value;
+            return Memory[offset].Value;
         }
 
-        public void WriteMemoryOffset(long Offset, string Value)
+        public void WriteMemoryOffset(long offset, string value)
         {
-            if (Offset < 0 || Offset >= Memory.LongLength)
+            if (offset < 0 || offset >= Memory.LongLength)
                 throw new Exception("Write Outside Bounds.");
 
-            if (!Memory[Offset].Used)
+            if (!Memory[offset].Used)
                 throw new Exception("Attemp to Write to UnInitialized Memory.");
 
-            Memory[Offset].Value = Value;
+            Memory[offset].Value = value;
         }
 
         #endregion
 
         #region Register Management
 
-        public string ReadRegister(short RegisterIndex)
+        public string ReadRegister(short registerIndex)
         {
-            if (RegisterIndex < 0 || RegisterIndex >= 12)
+            if (registerIndex < 0 || registerIndex >= 12)
                 throw new Exception("Invalid Register");
-            return Register[RegisterIndex];
+            return Register[registerIndex];
         }
 
-        internal string ReadRegister(string RegisterText)
+        internal string ReadRegister(string registerText)
         {
-            switch(RegisterText.Trim())
+            switch(registerText.Trim())
             {
                 case "@0": return ReadRegister(0);
                 case "@1": return ReadRegister(1);
@@ -294,28 +294,28 @@ namespace NewRuntimeProto
             }
         }
 
-        public void SetRegister(short RegisterIndex, string Value)
+        public void SetRegister(short registerIndex, string value)
         {
-            if (RegisterIndex < 0 || RegisterIndex >= 12)
+            if (registerIndex < 0 || registerIndex >= 12)
                 throw new Exception("Invalid Register");
-            Register[RegisterIndex] = Value;
+            Register[registerIndex] = value;
         }
 
-        internal void WriteRegister(string RegisterText, string Value)
+        internal void WriteRegister(string registerText, string value)
         {
-            switch (RegisterText.Trim())
+            switch (registerText.Trim())
             {
-                case "@0": SetRegister(0, Value); break;
-                case "@1": SetRegister(1, Value); break;
-                case "@2": SetRegister(2, Value); break;
-                case "@3": SetRegister(3, Value); break;
-                case "@4": SetRegister(4, Value); break;
-                case "@5": SetRegister(5, Value); break;
-                case "@6": SetRegister(6, Value); break;
-                case "@7": SetRegister(7, Value); break;
-                case "@8": SetRegister(8, Value); break;
-                case "@9": SetRegister(9, Value); break;
-                default: SetRegister(-1, Value); break;
+                case "@0": SetRegister(0, value); break;
+                case "@1": SetRegister(1, value); break;
+                case "@2": SetRegister(2, value); break;
+                case "@3": SetRegister(3, value); break;
+                case "@4": SetRegister(4, value); break;
+                case "@5": SetRegister(5, value); break;
+                case "@6": SetRegister(6, value); break;
+                case "@7": SetRegister(7, value); break;
+                case "@8": SetRegister(8, value); break;
+                case "@9": SetRegister(9, value); break;
+                default: SetRegister(-1, value); break;
             }
         }
 
@@ -323,9 +323,9 @@ namespace NewRuntimeProto
 
         #region Stack Management
 
-        public void StackPush(string Value)
+        public void StackPush(string value)
         {
-            Stack.Add(Value);
+            Stack.Add(value);
         }
 
         public string StackPeek()
