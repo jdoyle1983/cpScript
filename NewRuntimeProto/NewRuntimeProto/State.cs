@@ -181,6 +181,42 @@ namespace NewRuntimeProto
                     {
 
                     } break;
+                case "add":
+                    {
+
+                    } break;
+                case "sub":
+                    {
+
+                    } break;
+                case "mul":
+                    {
+
+                    } break;
+                case "div":
+                    {
+
+                    } break;
+                case "mod":
+                    {
+
+                    } break;
+                case "inc":
+                    {
+
+                    } break;
+                case "dec":
+                    {
+
+                    } break;
+                case "jumpl":           //Jump to label
+                    {
+
+                    } break;
+                case "jumpo":           //Jump to relative offset 
+                    {
+
+                    } break;
             }
 
             return true;
