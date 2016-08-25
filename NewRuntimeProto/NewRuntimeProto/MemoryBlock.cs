@@ -8,16 +8,19 @@ namespace NewRuntimeProto
     public class MemoryBlock
     {
         public bool Used { get; set; }
+        public bool Fixed { get; set; }
         public string Value { get; set; }
 
         public MemoryBlock()
         {
             Used = false;
+            Fixed = false;
             Value = "";
         }
 
-        public MemoryBlock(string initialValue)
+        public MemoryBlock(string initialValue, bool isFixed = false)
         {
+            Fixed = isFixed;
             Used = true;
             Value = initialValue;
         }
@@ -28,10 +31,13 @@ namespace NewRuntimeProto
             Value = newValue;
         }
 
-        public void Free()
+        public bool Free()
         {
+            if (Fixed)
+                return false;
             Used = false;
             Value = "";
+            return true;
         }
     }
 }

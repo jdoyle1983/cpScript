@@ -8,9 +8,9 @@ namespace NewRuntimeProto
     {
         internal static char[] SplitChars = {
                                                 ' ',
-                                                '%',
-                                                '@',
-                                                '&',
+                                                '%',        //Memory Location
+                                                '@',        //Register
+                                                '&',        //Address Of
                                                 '[',
                                                 ']',
                                                 ',',
@@ -20,6 +20,8 @@ namespace NewRuntimeProto
                                             };
         internal string[] Script;
         internal List<List<string>> ScriptPart;
+        internal List<int> OriginalLines;
+        internal List<string> OriginalFile;
         internal string[] Register = { "", "", "", "", "", "", "", "", "", "", "", "" };
         internal Dictionary<string, int> DataVars;
         internal MemoryBlock[] Memory;
@@ -31,11 +33,14 @@ namespace NewRuntimeProto
         internal int DataSegmentStart = -1;
 
         public event ExternalMethodHandler OnExternalMethodCalled;
+        public event ExecutionExceptionHandler OnExecutionException;
 
         public State()
         {
             Script = new string[0];
             ScriptPart = new List<List<string>>();
+            OriginalLines = new List<int>();
+            OriginalFile = new List<string>();
             DataVars = new Dictionary<string, int>();
             Memory = new MemoryBlock[0];
             Stack = new List<string>();
@@ -44,16 +49,25 @@ namespace NewRuntimeProto
             OnExternalMethodCalled = null;
         }
 
-        public void Load(string asmText)
+        public void Load(string AsmFile)
         {
+            string asmText = System.IO.File.ReadAllText(AsmFile);
             //Split script by line breaks
-            string[] SrcLines = asmText.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] SrcLines = asmText.Split(new char[] { '\n', '\r' });
 
             //Find genuine code lines, removing comments (lines beginning with ;) and the like.
             List<string> CleanLines = new List<string>();
+            int lCounter = 0;
             foreach (string s in SrcLines)
+            {
                 if (s.Trim() != "" && !s.Trim().StartsWith(";"))
+                {
                     CleanLines.Add(s.Trim());
+                    OriginalLines.Add(lCounter);
+                    OriginalFile.Add(AsmFile);
+                }
+                lCounter++;
+            }
 
             //Store entire clean script
             Script = CleanLines.ToArray();
@@ -91,7 +105,7 @@ namespace NewRuntimeProto
                         if(p.EndsWith(QuoteChar.ToString()))
                         {
                             QuoteChar = ' ';
-                            fItems.Add(QuoteString);
+                            fItems.Add(QuoteString.Substring(1, QuoteString.Length - 2));
                         }
                     }
                 }
@@ -115,7 +129,9 @@ namespace NewRuntimeProto
             }
 
             if (ScriptSegmentStart == -1)
-                throw new Exception("Required Code Segment Missing.");
+                ThrowExecutionException(AsmFile, 0, "Required Code Segment Missing.");
+
+            CurrentScriptOffset = ScriptSegmentStart;
 
             //Parse Data Segment
             AllocateInitialData();
@@ -140,11 +156,11 @@ namespace NewRuntimeProto
                 {
                     string labelName = ScriptPart[i][0];
                     if (LabelOffsets.ContainsKey(labelName))
-                        throw new Exception("Label '" + labelName + "' Already Defined.");
+                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Already Defined.");
                     if (Externals.Contains(labelName))
-                        throw new Exception("Label '" + labelName + "' Conflicts with External.");
+                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with External.");
                     if (DataVars.ContainsKey(labelName))
-                        throw new Exception("Label '" + labelName + "' Conflicts with Data Variable.");
+                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with Data Variable.");
                     LabelOffsets.Add(ScriptPart[i][0], i);
                 }
             }
@@ -161,13 +177,23 @@ namespace NewRuntimeProto
                         break;
                     string varName = ScriptPart[i][0];
                     if (DataVars.ContainsKey(varName))
-                        throw new Exception("Data Variable '" + varName + "' is Already Defined.");
+                        ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Data Variable '" + varName + "' is Already Defined.");
                     string initialValue = "";
                     if (ScriptPart[i].Count == 3)
+                    {
                         initialValue = ScriptPart[i][2];
-                    int memoryLocation = AllocateMemory(1);
-                    WriteMemoryOffset(memoryLocation, initialValue);
-                    DataVars.Add(varName, memoryLocation);
+                        int memoryLocation = AllocateMemory(1, true);
+                        WriteMemoryOffset(memoryLocation, initialValue);
+                        DataVars.Add(varName, memoryLocation);
+                    }
+                    else if(ScriptPart[i].Count == 5 && ScriptPart[i][2] == "[" && ScriptPart[i][4] == "]")
+                    {
+                        int cValue = 0;
+                        if (!Int32.TryParse(ScriptPart[i][3], out cValue))
+                            ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Integer Value Expected.");
+                        int memoryLocation = AllocateMemory(cValue, true);
+                        DataVars.Add(varName, memoryLocation);
+                    }
                 }
             }
         }
@@ -177,18 +203,114 @@ namespace NewRuntimeProto
             Register[0] = Register[1] = Register[2] = Register[3] = Register[4] = Register[5] = Register[6] = Register[7] = Register[8] = Register[9] = Register[10] = Register[11] = "";
             Memory = new MemoryBlock[0];
             AllocateInitialData();
-            CurrentScriptOffset = -1;
+            CurrentScriptOffset = ScriptSegmentStart;
             Stack.Clear();
         }
 
         public string ResolveGetValue(List<string> valueParts)
         {
-            return "";
+            if(valueParts[0] == "@")
+                return ReadRegister(Convert.ToInt16(valueParts[1]));
+            else if(valueParts[0] == "&")
+            {
+                if (!DataVars.ContainsKey(valueParts[1]))
+                {
+                    ThrowExecutionException("Reference to Data Variable That is Not Defined.");
+                    return "";
+                }
+                else
+                {
+                    int memoryOffset = DataVars[valueParts[1]];
+
+                    if (valueParts.Count > 2 && (valueParts[2] == "+" || valueParts[2] == "-"))
+                    {
+                        string modValue = ResolveGetValue(valueParts.GetRange(3, valueParts.Count - 3));
+                        int iModVal = 0;
+                        if (!Int32.TryParse(modValue, out iModVal))
+                            ThrowExecutionException("Memory Address Modifier Invalid Type.");
+                        if (valueParts[2] == "+")
+                            memoryOffset += iModVal;
+                        else
+                            memoryOffset -= iModVal;
+                    }
+
+                    return memoryOffset.ToString();
+                }
+            }
+            else if(valueParts[0] == "%")
+            {
+                int memoryOffset = -1;
+                if(!Int32.TryParse(valueParts[1], out memoryOffset))
+                {
+                    if (!DataVars.ContainsKey(valueParts[1]))
+                        ThrowExecutionException("Failed To Find Target Memory Address Variable.");
+                    string varValue = ReadMemoryOffset(DataVars[valueParts[1]]);
+                    if (!Int32.TryParse(varValue, out memoryOffset))
+                        ThrowExecutionException("Value Contained In Data Varible is Invalid For Memory Address.");
+                }
+
+                if(valueParts.Count > 2 && (valueParts[2] == "+" || valueParts[2] == "-"))
+                {
+                    string modValue = ResolveGetValue(valueParts.GetRange(3, valueParts.Count - 3));
+                    int iModVal = 0;
+                    if (!Int32.TryParse(modValue, out iModVal))
+                        ThrowExecutionException("Memory Address Modifier Invalid Type.");
+                    if (valueParts[2] == "+")
+                        memoryOffset += iModVal;
+                    else
+                        memoryOffset -= iModVal;
+                }
+
+                return ReadMemoryOffset(memoryOffset);
+            }
+            else
+            {
+                if (!DataVars.ContainsKey(valueParts[0])) //Return literal value
+                    return valueParts[0];
+                else
+                    return ReadMemoryOffset(DataVars[valueParts[0]]);
+            }
         }
 
         public void ResolveSetValue(List<string> valueParts, string setValue)
         {
-            
+            if (valueParts[0] == "@")
+                SetRegister(Convert.ToInt16(valueParts[1]), setValue);
+            else if (valueParts[0] == "%")
+            {
+                int memoryOffset = -1;
+                if (!Int32.TryParse(valueParts[1], out memoryOffset))
+                {
+                    if (!DataVars.ContainsKey(valueParts[1]))
+                        ThrowExecutionException("Failed To Find Target Memory Address Variable.");
+                    string varValue = ReadMemoryOffset(DataVars[valueParts[1]]);
+                    if (!Int32.TryParse(varValue, out memoryOffset))
+                        ThrowExecutionException("Value Contained In Data Varible is Invalid For Memory Address.");
+                }
+
+                if (valueParts.Count > 2 && (valueParts[2] == "+" || valueParts[2] == "-"))
+                {
+                    string modValue = ResolveGetValue(valueParts.GetRange(3, valueParts.Count - 3));
+                    int iModVal = 0;
+                    if (!Int32.TryParse(modValue, out iModVal))
+                        ThrowExecutionException("Memory Address Modifier Invalid Type.");
+                    if (valueParts[2] == "+")
+                        memoryOffset += iModVal;
+                    else
+                        memoryOffset -= iModVal;
+                }
+
+                WriteMemoryOffset(memoryOffset, setValue);
+            }
+            else
+            {
+                if (!DataVars.ContainsKey(valueParts[0]))
+                    ThrowExecutionException("Invalid Parameters Specified.");
+
+
+
+                WriteMemoryOffset(DataVars[valueParts[0]], setValue);
+            }
         }
 
         public bool Iterate()
@@ -218,7 +340,7 @@ namespace NewRuntimeProto
                     {
                         StackPush(ResolveGetValue(Step.GetRange(1, Step.Count - 1)));
                     } break;
-                case "pop":                                             // POP {DEST]               -   Pop value from stack
+                case "pop":                                             // POP [DEST]               -   Pop value from stack
                     {
                         ResolveSetValue(Step.GetRange(1, Step.Count - 1), StackPop());
                     } break;
@@ -260,9 +382,9 @@ namespace NewRuntimeProto
                         int memorySize = -1;
 
                         if (!Int32.TryParse(memLocVal, out memoryLocation))
-                            throw new Exception("Resolved Free Memory Location is Not a Number.");
+                            ThrowExecutionException("Resolved Free Memory Location is Not a Number.");
                         if (!Int32.TryParse(sizeVal, out memorySize))
-                            throw new Exception("Resolved Free Memory Size is Not a Number.");
+                            ThrowExecutionException("Resolved Free Memory Size is Not a Number.");
                         FreeMemory(memoryLocation, memorySize);
                     } break;
                 case "add":                                             // ADD                      -   Pop last 2 values from stack, add and push result onto stack (PUSH 2, PUSH 1 -> 2 + 1 = 3)
@@ -285,7 +407,7 @@ namespace NewRuntimeProto
                             double dValue2 = 0;
 
                             if (!double.TryParse(strValue1, out dValue1) || !double.TryParse(strValue2, out dValue2))
-                                throw new Exception("Calculation Attempted on Non-Numeric Value.");
+                                ThrowExecutionException("Calculation Attempted on Non-Numeric Value.");
 
                             switch(Step[0].ToLower())
                             {
@@ -308,8 +430,31 @@ namespace NewRuntimeProto
                         string strValue = StackPop();
                         double dValue = 0;
                         if (!double.TryParse(strValue, out dValue))
-                            throw new Exception("Attempted To Inverse Non-Numeric Value.");
+                            ThrowExecutionException("Attempted To Inverse Non-Numeric Value.");
                         StackPush((dValue * -1.0).ToString());
+                    } break;
+                case "inc":                                             // INC [VAR], [INC AMOUNT]  -   Increment VAR by INC AMOUNT
+                case "dec":                                             // DEC [VAR], [DEC AMOUNT]  -   Decrement VAR by INC AMOUNT
+                    {
+                        int commaBreak = Step.IndexOf(",");
+                        int amtStart = commaBreak + 1;
+                        int amtLen = Step.Count - amtStart;
+
+                        string currentValue = ResolveGetValue(Step.GetRange(1, commaBreak - 1));
+                        string amtValue = ResolveGetValue(Step.GetRange(amtStart, amtLen));
+
+                        double numericValue = 0;
+                        double numericAmt = 0;
+
+                        if (!double.TryParse(currentValue, out numericValue) || !double.TryParse(amtValue, out numericAmt))
+                            ThrowExecutionException("Invalid Data Types Specified for INC/DEC Values.");
+
+                        if (Step[0].ToLower() == "inc")
+                            numericValue += numericAmt;
+                        else
+                            numericValue -= numericAmt;
+
+                        ResolveSetValue(Step.GetRange(1, commaBreak - 1), numericValue.ToString());
                     } break;
                 case "cmpa":                                            // CMPA                     -   Pop Last 2 values, push true if they AND (PUSH 0, PUSH 1 -> 1 && 0, STACK PUSH 0)
                 case "cmpo":                                            // CMPO                     -   Pop Last 2 values, push true if they OR (PUSH 0, PUSH 1 -> 1 || 0, STACK PUSH 1)
@@ -321,10 +466,10 @@ namespace NewRuntimeProto
                         short sValue2 = -1;
 
                         if (!short.TryParse(strValue1, out sValue1) || short.TryParse(strValue2, out sValue2))
-                            throw new Exception("Attempted Bitwise Operation on Invlaid Value (1).");
+                            ThrowExecutionException("Attempted Bitwise Operation on Invlaid Value (1).");
 
                         if ((sValue1 != 0 && sValue1 != 1) || (sValue2 != 0 && sValue2 != 1))
-                            throw new Exception("Attempted Bitwise Operation on Invalid Value (2).");
+                            ThrowExecutionException("Attempted Bitwise Operation on Invalid Value (2).");
 
                         bool bValue1 = sValue1 == 1;
                         bool bValue2 = sValue2 == 1;
@@ -352,7 +497,7 @@ namespace NewRuntimeProto
                             double dValue2 = 0;
 
                             if (!double.TryParse(strValue1, out dValue1) || !double.TryParse(strValue2, out dValue2))
-                                throw new Exception("Numeric Comparison Attempted on Non-Numeric Value.");
+                                ThrowExecutionException("Numeric Comparison Attempted on Non-Numeric Value.");
 
                             switch(Step[0].ToLower())
                             {
@@ -376,7 +521,7 @@ namespace NewRuntimeProto
                     {
                         string strValue = StackPop();
                         if (strValue != "1" && strValue != "0")
-                            throw new Exception("Atemped Bitwise Comparison on Invalid Value.");
+                            ThrowExecutionException("Atemped Bitwise Comparison on Invalid Value.");
                         if(strValue == "1")
                         {
                             DoLabelJump(Step);
@@ -386,7 +531,7 @@ namespace NewRuntimeProto
                     {
                         string strValue = StackPop();
                         if (strValue != "1" && strValue != "0")
-                            throw new Exception("Atemped Bitwise Comparison on Invalid Value.");
+                            ThrowExecutionException("Atemped Bitwise Comparison on Invalid Value.");
                         if (strValue == "1")
                         {
                             DoOffsetJump(Step);
@@ -400,14 +545,14 @@ namespace NewRuntimeProto
         internal void DoLabelJump(List<string> Step)
         {
             if (!LabelOffsets.ContainsKey(Step[1]) && !Externals.Contains(Step[1]))
-                throw new Exception("Jump Label Requested Does Not Exist.");
+                ThrowExecutionException("Jump Label Requested Does Not Exist.");
 
             if (LabelOffsets.ContainsKey(Step[1]))
                 CurrentScriptOffset = LabelOffsets[Step[1]];
             else
             {
                 if (OnExternalMethodCalled == null)
-                    throw new Exception("External Method Event Handler Not Defined and an External Method was Requested.");
+                    ThrowExecutionException("External Method Event Handler Not Defined and an External Method was Requested.");
                 else
                     OnExternalMethodCalled(new ExternalMethodEventArgs(Step[1], this));
             }
@@ -418,15 +563,15 @@ namespace NewRuntimeProto
             string strValue = ResolveGetValue(Step.GetRange(1, Step.Count - 1));
             int offsetValue = 0;
             if (!Int32.TryParse(strValue, out offsetValue))
-                throw new Exception("Attmpted Offset Jump With Non-Numeric Offset.");
+                ThrowExecutionException("Attmpted Offset Jump With Non-Numeric Offset.");
             int newOffset = CurrentScriptOffset + offsetValue;
             if (newOffset < ScriptSegmentStart || newOffset >= ScriptPart.Count)
-                throw new Exception("Attmpted Offset Jump Beyond Bounds.");
+                ThrowExecutionException("Attmpted Offset Jump Beyond Bounds.");
             CurrentScriptOffset = newOffset;
         }
 
         #region Memory Management
-        public int AllocateMemory(int size)
+        public int AllocateMemory(int size, bool isFixed = false)
         {
             int blockStart = -1;
             int blockSize = -1;
@@ -456,7 +601,11 @@ namespace NewRuntimeProto
             if(blockStart != -1 && blockSize == size)
             {
                 for (long i = blockSize; i < blockStart + blockSize; i++)
+                {
                     Memory[i].ReAlloc("");
+                    if (isFixed)
+                        Memory[i].Fixed = true;
+                }
                 return blockStart;
             }
             else
@@ -467,7 +616,7 @@ namespace NewRuntimeProto
                 for (int i = 0; i < blockStart; i++)
                     NewMemory[i] = Memory[i];
                 for (int i = blockStart; i < NewMemory.Length; i++)
-                    NewMemory[i] = new MemoryBlock("");
+                    NewMemory[i] = new MemoryBlock("", isFixed);
                 Memory = NewMemory;
                 return blockStart;
             }
@@ -476,31 +625,32 @@ namespace NewRuntimeProto
         public void FreeMemory(int offset, int size)
         {
             if (offset < 0 || offset >= Memory.Length || (offset + size) > Memory.Length)
-                throw new Exception("Free Outside Memory Allocated.");
+                ThrowExecutionException("Free Outside Memory Allocated.");
             for(int i = offset; i < offset + size; i++)
             {
                 if (!Memory[i].Used)
-                    throw new Exception("Attempt to Free Unused Memory.");
-                Memory[i].Free();
+                    ThrowExecutionException("Attempt to Free Unused Memory.");
+                if (!Memory[i].Free())
+                    ThrowExecutionException("Attempt to Free Fixed Memory.");
             }
         }
 
         public string ReadMemoryOffset(int offset)
         {
             if (offset < 0 || offset >= Memory.Length)
-                throw new Exception("Read Outside Memory Allocated.");
+                ThrowExecutionException("Read Outside Memory Allocated.");
             if(!Memory[offset].Used)
-                throw new Exception("Attempt to Read UnInitialized Memory.");
+                ThrowExecutionException("Attempt to Read UnInitialized Memory.");
             return Memory[offset].Value;
         }
 
         public void WriteMemoryOffset(int offset, string value)
         {
             if (offset < 0 || offset >= Memory.Length)
-                throw new Exception("Write Outside Bounds.");
+                ThrowExecutionException("Write Outside Bounds.");
 
             if (!Memory[offset].Used)
-                throw new Exception("Attemp to Write to UnInitialized Memory.");
+                ThrowExecutionException("Attemp to Write to UnInitialized Memory.");
 
             Memory[offset].Value = value;
         }
@@ -512,7 +662,7 @@ namespace NewRuntimeProto
         public string ReadRegister(short registerIndex)
         {
             if (registerIndex < 0 || registerIndex >= 12)
-                throw new Exception("Invalid Register");
+                ThrowExecutionException("Invalid Register");
             return Register[registerIndex];
         }
 
@@ -537,7 +687,7 @@ namespace NewRuntimeProto
         public void SetRegister(short registerIndex, string value)
         {
             if (registerIndex < 0 || registerIndex >= 12)
-                throw new Exception("Invalid Register");
+                ThrowExecutionException("Invalid Register");
             Register[registerIndex] = value;
         }
 
@@ -571,7 +721,7 @@ namespace NewRuntimeProto
         public string StackPeek()
         {
             if (Stack.Count < 1)
-                throw new Exception("Stack Exception, Peek / Pop Empty Stack.");
+                ThrowExecutionException("Stack Exception, Peek / Pop Empty Stack.");
             return Stack[Stack.Count - 1];
         }
 
@@ -582,6 +732,23 @@ namespace NewRuntimeProto
             return Val;
         }
 
+        #endregion
+
+
+        #region Event Handlers
+
+        public void ThrowExecutionException(string exceptionDetails)
+        {
+            ThrowExecutionException(OriginalFile[CurrentScriptOffset], OriginalLines[CurrentScriptOffset], exceptionDetails);
+        }
+
+        public void ThrowExecutionException(string srcFile, int srcLine, string exceptionDetails)
+        {
+            if (OnExecutionException == null)
+                throw new Exception("Exception Handler Not Enabled: [" + srcFile + ":" + srcLine.ToString() + " - " + exceptionDetails);
+            else
+                OnExecutionException(new ExecutionExceptionEventArgs(srcFile, srcLine, exceptionDetails));
+        }
         #endregion
 
 

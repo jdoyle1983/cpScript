@@ -1,28 +1,42 @@
+; Data Segment allows the creation of variables
 [DATA]
-Var1: "Var Data 1"
-Var2: 11
-Var3: false
-Var4: 12.01
+ArrAddress: 0
+ArrCounter: 0
+ArrSize: 10000
+Arr: [10000]
+
 [EXTERNAL]
 _console_readline
-_console_read
-_console_write
 _console_writeline
-[CODE]
-; Nothing Here
-JMP _Start
 
-_TestLabel:
-    POP @1
-    MOV &2, @2
-    JMP @1
-	
+
+[CODE]
+JMPL _Start
+
 _Start:
-    PUSH @1
-    PUSH "Your Stuff"
-    PUSH 'More Stuff'
-    PUSHR
-    PUSH %CLOC + 2
-    JMP _TestLabel
-    MOV %Data, @2
-    POPR
+	MOV &Arr, &ArrAddress
+_Count1_Start:
+	PUSH " Counter: "
+	PUSH ArrCounter
+	PUSH 1
+	ADD
+	CON
+	POP %ArrAddress + ArrCounter
+	INC ArrCounter, 1
+	PUSH ArrCounter
+	PUSH ArrSize
+	CMPL
+	JMPLT _Count1_Start
+
+	MOV 0, ArrCounter
+	
+_Count2_Start:
+	PUSH %ArrAddress + ArrCounter
+	JMPL _console_writeline
+	INC ArrCounter, 1
+	PUSH ArrCounter
+	PUSH ArrSize
+	CMPL
+	JMPLT _Count2_Start
+	
+	
