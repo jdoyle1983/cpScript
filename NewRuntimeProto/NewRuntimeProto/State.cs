@@ -209,11 +209,11 @@ namespace NewRuntimeProto
                     {
 
                     } break;
-                case "jumpl":           //Jump to label
+                case "jmpl":           //Jump to label
                     {
 
                     } break;
-                case "jumpo":           //Jump to relative offset 
+                case "jmpo":           //Jump to relative offset 
                     {
 
                     } break;

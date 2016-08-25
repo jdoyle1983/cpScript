@@ -6,7 +6,18 @@ namespace NewRuntimeProto
 {
     class Program
     {
-        static string TestProgram = @"\
+        static string TestProgram = @"
+[DATA]
+Var1: \""Var Data 1\""
+Var2: 11
+Var3: false
+Var4: 12.01
+[EXTERNAL]
+_console_readline
+_console_read
+_console_write
+_console_writeline
+[CODE]
 ; Nothing Here
 JMP _Start
 
