@@ -30,6 +30,8 @@ namespace NewRuntimeProto
         internal int ScriptSegmentStart = -1;
         internal int DataSegmentStart = -1;
 
+        public event ExternalMethodHandler OnExternalMethodCalled;
+
         public State()
         {
             Script = new string[0];
@@ -39,6 +41,7 @@ namespace NewRuntimeProto
             Stack = new List<string>();
             LabelOffsets = new Dictionary<string, int>();
             Externals = new List<string>();
+            OnExternalMethodCalled = null;
         }
 
         public void Load(string asmText)
@@ -309,61 +312,117 @@ namespace NewRuntimeProto
                         StackPush((dValue * -1.0).ToString());
                     } break;
                 case "cmpa":                                            // CMPA                     -   Pop Last 2 values, push true if they AND (PUSH 0, PUSH 1 -> 1 && 0, STACK PUSH 0)
-                    {
-
-                    } break;
                 case "cmpo":                                            // CMPO                     -   Pop Last 2 values, push true if they OR (PUSH 0, PUSH 1 -> 1 || 0, STACK PUSH 1)
                     {
+                        string strValue1 = StackPop();
+                        string strValue2 = StackPop();
 
+                        short sValue1 = -1;
+                        short sValue2 = -1;
+
+                        if (!short.TryParse(strValue1, out sValue1) || short.TryParse(strValue2, out sValue2))
+                            throw new Exception("Attempted Bitwise Operation on Invlaid Value (1).");
+
+                        if ((sValue1 != 0 && sValue1 != 1) || (sValue2 != 0 && sValue2 != 1))
+                            throw new Exception("Attempted Bitwise Operation on Invalid Value (2).");
+
+                        bool bValue1 = sValue1 == 1;
+                        bool bValue2 = sValue2 == 1;
+
+                        if (Step[0].ToLower() == "cmpa") StackPush((bValue2 && bValue1) ? "1" : "0");
+                        else StackPush((bValue2 || bValue1) ? "1" : "0");
                     } break;
                 case "cmpe":                                            // CMPE                     -   Pop Last 2 values, push true if they are equal (PUSH 2, PUSH 1 -> 2 == 1, STACK PUSH 0)
-                    {
-
-                    } break;
                 case "cmpn":                                            // CMPN                     -   Pop Last 2 values, push true if they are not equal (PUSH 2, PUSH 1 -> 2 != 1, STACK PUSH 1)
-                    {
-
-                    }
-                    break;
                 case "cmpg":                                            // CMPG                     -   Pop Last 2 values, push true if value 2 is greater than value 1 (PUSH 2, PUSH 1 -> 2 > 1, STACK PUSH 1)
-                    {
-
-                    }
-                    break;
                 case "cmpge":                                           // CMPGE                    -   Pop Last 2 values, push true if value 2 is greater than or equal to value 1 (PUSH 2, PUSH 1 -> 2 >= 1, STACK PUSH 1)
-                    {
-
-                    }
-                    break;
                 case "cmpl":                                            // CMPEL                    -   Pop Last 2 values, push true if value 2 is less than value 1 (PUSH 2, PUSH 1 -> 2 < 1, STACK PUSH 0)
-                    {
-
-                    }
-                    break;
                 case "cmple":                                           // CMPLE                     -   Pop Last 2 values, push true if value 2 is less than or equal to value 1 (PUSH 2, PUSH 1 -> 2 <= 1, STACK PUSH 0)
                     {
+                        string strValue1 = StackPop();
+                        string strValue2 = StackPop();
 
+                        if (Step[0].ToLower() == "cmpe")
+                            StackPush((strValue2 == strValue1) ? "1" : "0");
+                        else if (Step[0].ToLower() == "cmpn")
+                            StackPush((strValue2 != strValue1) ? "1" : "0");
+                        else
+                        {
+                            double dValue1 = 0;
+                            double dValue2 = 0;
+
+                            if (!double.TryParse(strValue1, out dValue1) || !double.TryParse(strValue2, out dValue2))
+                                throw new Exception("Numeric Comparison Attempted on Non-Numeric Value.");
+
+                            switch(Step[0].ToLower())
+                            {
+                                case "cmpg": StackPush((dValue2 > dValue1) ? "1" : "0"); break;
+                                case "cmpge": StackPush((dValue2 >= dValue1) ? "1" : "0"); break;
+                                case "cmpl": StackPush((dValue2 < dValue1) ? "1" : "0"); break;
+                                case "cmple": StackPush((dValue2 <= dValue1) ? "1" : "0"); break;
+                            }
+                        }
                     }
                     break;
                 case "jmpl":                                            // JMPL LABEL               -   Move execution pointer to LABEL
                     {
-
+                        DoLabelJump(Step);                
                     } break;
                 case "jmpo":                                            // JMPO [OFFSET]            -   Move execution pointer to position [OFFSET] from current location
                     {
-
+                        DoOffsetJump(Step);
                     } break;
                 case "jmplt":                                           // JMPLT LABEL              -   Jump to LABEL if poped value is true
                     {
-
+                        string strValue = StackPop();
+                        if (strValue != "1" && strValue != "0")
+                            throw new Exception("Atemped Bitwise Comparison on Invalid Value.");
+                        if(strValue == "1")
+                        {
+                            DoLabelJump(Step);
+                        }
                     } break;
                 case "jmpot":                                           // JMPOT [OFFSET]           -   Jump to [OFFSET] if poped value is true
                     {
-
+                        string strValue = StackPop();
+                        if (strValue != "1" && strValue != "0")
+                            throw new Exception("Atemped Bitwise Comparison on Invalid Value.");
+                        if (strValue == "1")
+                        {
+                            DoOffsetJump(Step);
+                        }
                     } break;
             }
 
             return true;
+        }
+
+        internal void DoLabelJump(List<string> Step)
+        {
+            if (!LabelOffsets.ContainsKey(Step[1]) && !Externals.Contains(Step[1]))
+                throw new Exception("Jump Label Requested Does Not Exist.");
+
+            if (LabelOffsets.ContainsKey(Step[1]))
+                CurrentScriptOffset = LabelOffsets[Step[1]];
+            else
+            {
+                if (OnExternalMethodCalled == null)
+                    throw new Exception("External Method Event Handler Not Defined and an External Method was Requested.");
+                else
+                    OnExternalMethodCalled(new ExternalMethodEventArgs(Step[1], this));
+            }
+        }
+
+        internal void DoOffsetJump(List<string> Step)
+        {
+            string strValue = ResolveGetValue(Step.GetRange(1, Step.Count - 1));
+            int offsetValue = 0;
+            if (!Int32.TryParse(strValue, out offsetValue))
+                throw new Exception("Attmpted Offset Jump With Non-Numeric Offset.");
+            int newOffset = CurrentScriptOffset + offsetValue;
+            if (newOffset < ScriptSegmentStart || newOffset >= ScriptPart.Count)
+                throw new Exception("Attmpted Offset Jump Beyond Bounds.");
+            CurrentScriptOffset = newOffset;
         }
 
         #region Memory Management
