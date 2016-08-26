@@ -14,7 +14,7 @@ _console_writeline
 JMPL _Start
 
 _Start:
-	MOV &Arr, &ArrAddress
+	MOV &Arr, ArrAddress
 _Count1_Start:
 	PUSH " Counter: "
 	PUSH ArrCounter

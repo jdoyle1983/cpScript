@@ -28,6 +28,7 @@ namespace NewRuntimeProto
         internal List<string> Stack;
         internal Dictionary<string, int> LabelOffsets;
         internal List<string> Externals;
+        internal List<List<string>> DataVarDeclarations;
         internal int CurrentScriptOffset = -1;
         internal int ScriptSegmentStart = -1;
         internal int DataSegmentStart = -1;
@@ -46,14 +47,15 @@ namespace NewRuntimeProto
             Stack = new List<string>();
             LabelOffsets = new Dictionary<string, int>();
             Externals = new List<string>();
+            DataVarDeclarations = new List<List<string>>();
             OnExternalMethodCalled = null;
         }
 
         public void Load(string AsmFile)
         {
-            string asmText = System.IO.File.ReadAllText(AsmFile);
+            //string asmText = System.IO.File.ReadAllText(AsmFile);
             //Split script by line breaks
-            string[] SrcLines = asmText.Split(new char[] { '\n', '\r' });
+            string[] SrcLines = System.IO.File.ReadAllLines(AsmFile);// asmText.Split(new char[] { '\n', '\r' });
 
             //Find genuine code lines, removing comments (lines beginning with ;) and the like.
             List<string> CleanLines = new List<string>();
@@ -134,6 +136,7 @@ namespace NewRuntimeProto
             CurrentScriptOffset = ScriptSegmentStart;
 
             //Parse Data Segment
+            ParseDataVariables();
             AllocateInitialData();
 
             //Parse External Segment
@@ -166,7 +169,65 @@ namespace NewRuntimeProto
             }
         }
 
-        internal void AllocateInitialData()
+        /*
+        public State MergeIntoThisScript(State otherState, bool mergeDataVariables, bool mergeExternals)
+        {
+            List<string> newScript = new List<string>(Script);
+            newScript.AddRange(otherState.Script);
+
+            List<List<string>> newScriptPart = new List<List<string>>(ScriptPart);
+            newScriptPart.AddRange(otherState.ScriptPart);
+
+            List<int> newOriginalLines = new List<int>(OriginalLines);
+            newOriginalLines.AddRange(otherState.OriginalLines);
+
+            List<string> newOriginalFile = new List<string>(OriginalFile);
+            newOriginalFile.AddRange(otherState.OriginalFile);
+
+            List<List<string>> newDataVarDeclarations = new List<List<string>>();
+            Dictionary<string, int> newDataVars = new Dictionary<string, int>(DataVars);
+            foreach(string key in otherState.DataVars.Keys)
+            {
+                if (newDataVars.ContainsKey(key))
+                {
+                    if (!mergeDataVariables)
+                        ThrowExecutionException("No File", 0, "Merge Disabled for Data Variables, Conflict Found.");
+                }
+                
+
+
+            }
+
+            for(int i = 0; i < otherState.DataVars.Keys.Count; i++)
+            {
+                
+                if(newDataVars.ContainsKey(otherState.DataVars.Keys[i]) && !mergeDataVariables)
+                                    
+            }
+
+            //Find each label offset
+            //Example:
+            //MyLabel:
+            for (int i = ScriptSegmentStart; i < ScriptPart.Count; i++)
+            {
+                if (ScriptPart[i].Count == 2 && ScriptPart[i][1] == ":")
+                {
+                    string labelName = ScriptPart[i][0];
+                    if (LabelOffsets.ContainsKey(labelName))
+                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Already Defined.");
+                    if (Externals.Contains(labelName))
+                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with External.");
+                    if (DataVars.ContainsKey(labelName))
+                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with Data Variable.");
+                    LabelOffsets.Add(ScriptPart[i][0], i);
+                }
+            }
+
+            return this;
+        }
+        */
+
+        internal void ParseDataVariables()
         {
             //Parse Data Segment
             if (DataSegmentStart != -1)
@@ -175,25 +236,33 @@ namespace NewRuntimeProto
                 {
                     if (ScriptPart[i][0] == "[")
                         break;
-                    string varName = ScriptPart[i][0];
-                    if (DataVars.ContainsKey(varName))
-                        ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Data Variable '" + varName + "' is Already Defined.");
-                    string initialValue = "";
-                    if (ScriptPart[i].Count == 3)
-                    {
-                        initialValue = ScriptPart[i][2];
-                        int memoryLocation = AllocateMemory(1, true);
-                        WriteMemoryOffset(memoryLocation, initialValue);
-                        DataVars.Add(varName, memoryLocation);
-                    }
-                    else if(ScriptPart[i].Count == 5 && ScriptPart[i][2] == "[" && ScriptPart[i][4] == "]")
-                    {
-                        int cValue = 0;
-                        if (!Int32.TryParse(ScriptPart[i][3], out cValue))
-                            ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Integer Value Expected.");
-                        int memoryLocation = AllocateMemory(cValue, true);
-                        DataVars.Add(varName, memoryLocation);
-                    }
+                    DataVarDeclarations.Add(ScriptPart[i]);
+                }
+            }
+        }
+
+        internal void AllocateInitialData()
+        {
+            for(int i = 0; i < DataVarDeclarations.Count; i++)
+            {
+                string varName = DataVarDeclarations[i][0];
+                if (DataVars.ContainsKey(varName))
+                    ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Data Variable '" + varName + "' is Already Defined.");
+                string initialValue = "";
+                if (DataVarDeclarations[i].Count == 3)
+                {
+                    initialValue = DataVarDeclarations[i][2];
+                    int memoryLocation = AllocateMemory(1, true);
+                    WriteMemoryOffset(memoryLocation, initialValue);
+                    DataVars.Add(varName, memoryLocation);
+                }
+                else if (DataVarDeclarations[i].Count == 5 && DataVarDeclarations[i][2] == "[" && DataVarDeclarations[i][4] == "]")
+                {
+                    int cValue = 0;
+                    if (!Int32.TryParse(DataVarDeclarations[i][3], out cValue))
+                        ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Integer Value Expected.");
+                    int memoryLocation = AllocateMemory(cValue, true);
+                    DataVars.Add(varName, memoryLocation);
                 }
             }
         }
