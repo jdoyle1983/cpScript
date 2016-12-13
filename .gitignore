@@ -17,3 +17,7 @@
 /NewRuntimeProto/NewRuntimeProto/bin/Debug/*.pdb
 /NewRuntimeProto/NewRuntimeProto/obj/Debug/*.pdb
 /NewRuntimeProto/NewRuntimeProto/obj/Debug
+/NewRuntimeProto/NewRuntimeProto/bin/Debug/NewRuntimeProto.vshost.exe.config
+/NewRuntimeProto/NewRuntimeProto/bin/Debug/NewRuntimeProto.vshost.exe
+/NewRuntimeProto/NewRuntimeProto/bin/Debug/NewRuntimeProto.exe.config
+/NewRuntimeProto/NewRuntimeProto/bin/Debug/NewRuntimeProto.exe

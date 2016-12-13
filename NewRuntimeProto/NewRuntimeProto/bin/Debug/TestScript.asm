@@ -13,9 +13,9 @@ _console_writeline
 [CODE]
 JMPL _Start
 
-_Start:
+LBL _Start
 	MOV &Arr, ArrAddress
-_Count1_Start:
+LBL _Count1_Start
 	PUSH " Counter: "
 	PUSH ArrCounter
 	PUSH 1
@@ -30,7 +30,7 @@ _Count1_Start:
 
 	MOV 0, ArrCounter
 	
-_Count2_Start:
+LBL _Count2_Start
 	PUSH %ArrAddress + ArrCounter
 	JMPL _console_writeline
 	INC ArrCounter, 1

@@ -4,51 +4,90 @@ using System.Text;
 
 namespace NewRuntimeProto
 {
+    public delegate void ExternalFunction(State state);
+
+    public enum AsmInstruction
+    {
+        NOOP = 0,
+        LBL,                                    // LBL [LABEL]              -   Creates a label for JMP instructions
+        PUSH,                                   // PUSH [VALUE]             -   Push value onto stack
+        POP,                                    // POP [DEST]               -   Pop value from stack
+        PUSHR,                                  // PUSHR                    -   Push all registers onto stack
+        POPR,                                   // POPR                     -   Pop all registers from stack
+        PUSHA,                                  // PUSHA                    -   Push the code execution offset onto the stack
+        MOV,                                    // MOV [SRC], [DEST]        -   Move value from one location to another
+        MOVA,                                   // MOVA [DEST]              -   Move the code execution offset into variable
+        ALLOC,                                  // ALLOC [SIZE]             -   Allocate adjacent blocks of memory, pushes location on stack
+        FREE,                                   // FREE [MEMLOC], [SIZE]    -   Free adjacent blocks of memory
+        ADD,                                    // ADD                      -   Pop last 2 values from stack, add and push result onto stack (PUSH 2, PUSH 1 -> 2 + 1 = 3)
+        SUB,                                    // SUB                      -   Pop last 2 values from stack, subtract and push result onto stack (PUSH 2, PUSH 1 -> 2 - 1 = 1)
+        MUL,                                    // MUL                      -   Pop last 2 values from stack, multiply and push result onto stack (PUSH 2, PUSH 1 -> 2 * 1 = 2)
+        DIV,                                    // DIV                      -   Pop last 2 values from stack, divide and push result onto stack (PUSH 2, PUSH 1 -> 2 / 1 = 2)
+        MOD,                                    // MOD                      -   Pop last 2 values from stack, modulo and push result onto stack (PUSH 2, PUSH 1 -> 2 % 1 = 0)
+        CON,                                    // CON                      -   Pop last 2 values from stack, concat and push result onto stack (PUSH 2, PUSH 1 -> 2 .. 1 = "21")
+        NEG,                                    // NEG                      -   Pop last value from stack, multiply by -1 and push result onto stack (PUSH 1 -> 1 * -1 = -1)
+        INC,                                    // INC [VAR], [INC AMOUNT]  -   Increment VAR by INC AMOUNT
+        DEC,                                    // DEC [VAR], [DEC AMOUNT]  -   Decrement VAR by INC AMOUNT
+        CMPA,                                   // CMPA                     -   Pop Last 2 values, push true if they AND (PUSH 0, PUSH 1 -> 1 && 0, STACK PUSH 0)
+        CMPO,                                   // CMPO                     -   Pop Last 2 values, push true if they OR (PUSH 0, PUSH 1 -> 1 || 0, STACK PUSH 1)
+        CMPE,                                   // CMPE                     -   Pop Last 2 values, push true if they are equal (PUSH 2, PUSH 1 -> 2 == 1, STACK PUSH 0)
+        CMPN,                                   // CMPN                     -   Pop Last 2 values, push true if they are not equal (PUSH 2, PUSH 1 -> 2 != 1, STACK PUSH 1)
+        CMPG,                                   // CMPG                     -   Pop Last 2 values, push true if value 2 is greater than value 1 (PUSH 2, PUSH 1 -> 2 > 1, STACK PUSH 1)
+        CMPGE,                                  // CMPGE                    -   Pop Last 2 values, push true if value 2 is greater than or equal to value 1 (PUSH 2, PUSH 1 -> 2 >= 1, STACK PUSH 1)
+        CMPL,                                   // CMPL                     -   Pop Last 2 values, push true if value 2 is less than value 1 (PUSH 2, PUSH 1 -> 2 < 1, STACK PUSH 0)
+        CMPLE,                                  // CMPLE                    -   Pop Last 2 values, push true if value 2 is less than or equal to value 1 (PUSH 2, PUSH 1 -> 2 <= 1, STACK PUSH 0)
+        JMPL,                                   // JMPL LABEL               -   Move execution pointer to LABEL
+        JMPO,                                   // JMPO [OFFSET]            -   Move execution pointer to position [OFFSET] realtive to current location
+        JMPF,                                   // JMPF [OFFSET]            -   Move execution pointer to position fixed [OFFSET]
+        JMPLT,                                  // JMPLT LABEL              -   Jump to LABEL if poped value is true
+        JMPOT,                                  // JMPOT [OFFSET]           -   Jump to [OFFSET] relative to current location if poped value is true
+        JMPFT,                                  // JMPFT [OFFSET]           -   Jump to [OFFSET] if poped value is true
+    }
+
     public class State
     {
-        internal static char[] SplitChars = {
-                                                ' ',
-                                                '%',        //Memory Location
-                                                '@',        //Register
-                                                '&',        //Address Of
-                                                '[',
-                                                ']',
-                                                ',',
-                                                '+',
-                                                '-',
-                                                ':'
-                                            };
-        internal string[] Script;
-        internal List<List<string>> ScriptPart;
-        internal List<int> OriginalLines;
-        internal List<string> OriginalFile;
+        internal static char[] SplitChars = { ' ', '%', '@', '&', '[', ']', ',', '+', '-', ':' };
+
+        internal List<Tuple<AsmInstruction, List<string>>> CodePart;
+        internal List<Tuple<string, int>> OriginalLocation;
+        internal List<string> Externals;
+        internal List<List<string>> DataVarDeclarations;
+
+        internal Dictionary<string, int> LabelOffsets;
+
         internal string[] Register = { "", "", "", "", "", "", "", "", "", "", "", "" };
         internal Dictionary<string, int> DataVars;
         internal MemoryBlock[] Memory;
-        internal List<string> Stack;
-        internal Dictionary<string, int> LabelOffsets;
-        internal List<string> Externals;
-        internal List<List<string>> DataVarDeclarations;
+        internal List<string> Stack;       
         internal int CurrentScriptOffset = -1;
-        internal int ScriptSegmentStart = -1;
-        internal int DataSegmentStart = -1;
 
-        public event ExternalMethodHandler OnExternalMethodCalled;
+        internal Dictionary<string, ExternalFunction> ExternalFunctions;
+
         public event ExecutionExceptionHandler OnExecutionException;
 
         public State()
         {
-            Script = new string[0];
-            ScriptPart = new List<List<string>>();
-            OriginalLines = new List<int>();
-            OriginalFile = new List<string>();
+            CodePart = new List<Tuple<AsmInstruction, List<string>>>();
+            OriginalLocation = new List<Tuple<string, int>>();
+            Externals = new List<string>();
+            DataVarDeclarations = new List<List<string>>();
+
+            LabelOffsets = new Dictionary<string, int>();
+
             DataVars = new Dictionary<string, int>();
             Memory = new MemoryBlock[0];
             Stack = new List<string>();
-            LabelOffsets = new Dictionary<string, int>();
-            Externals = new List<string>();
-            DataVarDeclarations = new List<List<string>>();
-            OnExternalMethodCalled = null;
+            CurrentScriptOffset = -1;
+
+            ExternalFunctions = new Dictionary<string, ExternalFunction>();          
+            
+            OnExecutionException = null;
+        }
+
+        public void RegisterFunction(string functionName, ExternalFunction functionHandler)
+        {
+            if (!ExternalFunctions.ContainsKey(functionName) && functionHandler != null)
+                ExternalFunctions.Add(functionName, functionHandler);
         }
 
         public void Load(string AsmFile)
@@ -59,20 +98,22 @@ namespace NewRuntimeProto
 
             //Find genuine code lines, removing comments (lines beginning with ;) and the like.
             List<string> CleanLines = new List<string>();
-            int lCounter = 0;
+            List<Tuple<string, int>> BaseOriginalLocation = new List<Tuple<string, int>>();
+            int lCounter = 1;
             foreach (string s in SrcLines)
             {
                 if (s.Trim() != "" && !s.Trim().StartsWith(";"))
                 {
                     CleanLines.Add(s.Trim());
-                    OriginalLines.Add(lCounter);
-                    OriginalFile.Add(AsmFile);
+                    BaseOriginalLocation.Add(new Tuple<string, int>(AsmFile, lCounter));
                 }
                 lCounter++;
             }
 
             //Store entire clean script
-            Script = CleanLines.ToArray();
+            string[] Script = CleanLines.ToArray();
+
+            List<List<string>> TotalCodeParts = new List<List<string>>();
 
             //Pre-Split all lines
             foreach (string s in Script)
@@ -111,143 +152,152 @@ namespace NewRuntimeProto
                         }
                     }
                 }
-                ScriptPart.Add(fItems);
+                TotalCodeParts.Add(fItems);
             }
 
-            int ExternalSegmentStart = -1;
+            int targetArea = -1;
 
-            for (int i = 0; i < ScriptPart.Count; i++)
+            for(int i = 0; i < TotalCodeParts.Count; i++)
             {
-                if(ScriptPart[i].Count == 3 && ScriptPart[i][0] == "[" && ScriptPart[i][2] == "]")
+                if(TotalCodeParts[i].Count == 3 && TotalCodeParts[i][0] == "[" && TotalCodeParts[i][2] == "]")
                 {
-                    switch(ScriptPart[i][1].ToLower())
+                    if (TotalCodeParts[i][1].ToLower() == "data")
+                        targetArea = 1;
+                    else if (TotalCodeParts[i][1].ToLower() == "external")
+                        targetArea = 2;
+                    else if (TotalCodeParts[i][1].ToLower() == "code")
+                        targetArea = 3;
+                }
+                else
+                {
+                    if (targetArea == 1)
+                        DataVarDeclarations.Add(TotalCodeParts[i]);
+                    else if (targetArea == 2)
+                        Externals.Add(TotalCodeParts[i][0]);
+                    else if (targetArea == 3)
                     {
-                        case "data": DataSegmentStart = i + 1; break;
-                        case "external": ExternalSegmentStart = i + 1; break;
-                        case "code": ScriptSegmentStart = i + 1; break;
+                        AsmInstruction Cmd = AsmInstruction.NOOP;
+
+                        switch(TotalCodeParts[i][0].ToLower())
+                        {
+                            case "lbl": Cmd = AsmInstruction.LBL; break;
+                            case "push": Cmd = AsmInstruction.PUSH; break;
+                            case "pop": Cmd = AsmInstruction.POP; break;
+                            case "pushr": Cmd = AsmInstruction.PUSHR; break;
+                            case "popr": Cmd = AsmInstruction.POPR; break;
+                            case "pusha": Cmd = AsmInstruction.PUSHA; break;
+                            case "mov": Cmd = AsmInstruction.MOV; break;
+                            case "mova": Cmd = AsmInstruction.MOVA; break;
+                            case "alloc": Cmd = AsmInstruction.ALLOC; break;
+                            case "free": Cmd = AsmInstruction.FREE; break;
+                            case "add": Cmd = AsmInstruction.ADD; break;
+                            case "sub": Cmd = AsmInstruction.SUB; break;
+                            case "mul": Cmd = AsmInstruction.MUL; break;
+                            case "div": Cmd = AsmInstruction.DIV; break;
+                            case "mod": Cmd = AsmInstruction.MOD; break;
+                            case "con": Cmd = AsmInstruction.CON; break;
+                            case "neg": Cmd = AsmInstruction.NEG; break;
+                            case "inc": Cmd = AsmInstruction.INC; break;
+                            case "dec": Cmd = AsmInstruction.DEC; break;
+                            case "cmpa": Cmd = AsmInstruction.CMPA; break;
+                            case "cmpo": Cmd = AsmInstruction.CMPO; break;
+                            case "cmpe": Cmd = AsmInstruction.CMPE; break;
+                            case "cmpn": Cmd = AsmInstruction.CMPN; break;
+                            case "cmpg": Cmd = AsmInstruction.CMPG; break;
+                            case "cmpge": Cmd = AsmInstruction.CMPGE; break;
+                            case "cmpl": Cmd = AsmInstruction.CMPL; break;
+                            case "cmple": Cmd = AsmInstruction.CMPLE; break;
+                            case "jmpl": Cmd = AsmInstruction.JMPL; break;
+                            case "jmpo": Cmd = AsmInstruction.JMPO; break;
+                            case "jmpf": Cmd = AsmInstruction.JMPF; break;
+                            case "jmplt": Cmd = AsmInstruction.JMPLT; break;
+                            case "jmpot": Cmd = AsmInstruction.JMPOT; break;
+                            case "jmpft": Cmd = AsmInstruction.JMPFT; break;
+                        }
+                        CodePart.Add(new Tuple<AsmInstruction, List<string>>(Cmd, TotalCodeParts[i].GetRange(1, TotalCodeParts[i].Count - 1)));
+                        OriginalLocation.Add(BaseOriginalLocation[i]);
                     }
-                    
                 }
             }
 
-            if (ScriptSegmentStart == -1)
-                ThrowExecutionException(AsmFile, 0, "Required Code Segment Missing.");
-
-            CurrentScriptOffset = ScriptSegmentStart;
+            CurrentScriptOffset = 0;
 
             //Parse Data Segment
-            ParseDataVariables();
             AllocateInitialData();
 
-            //Parse External Segment
-            if(ExternalSegmentStart != -1)
-            {
-                for(int i = ExternalSegmentStart; i < ScriptPart.Count; i++)
-                {
-                    if(ScriptPart[i][0] == "[")
-                        break;
-                    Externals.Add(ScriptPart[i][0]);
-                }
-            }
-
-            //Find each label offset
-            //Example:
-            //MyLabel:
-            for (int i = ScriptSegmentStart; i < ScriptPart.Count; i++)
-            {
-                if (ScriptPart[i].Count == 2 && ScriptPart[i][1] == ":")
-                {
-                    string labelName = ScriptPart[i][0];
-                    if (LabelOffsets.ContainsKey(labelName))
-                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Already Defined.");
-                    if (Externals.Contains(labelName))
-                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with External.");
-                    if (DataVars.ContainsKey(labelName))
-                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with Data Variable.");
-                    LabelOffsets.Add(ScriptPart[i][0], i);
-                }
-            }
+            DiscoverLabels();
         }
 
-        /*
-        public State MergeIntoThisScript(State otherState, bool mergeDataVariables, bool mergeExternals)
+        public State MergeIntoThisScript(State otherState)
         {
-            List<string> newScript = new List<string>(Script);
-            newScript.AddRange(otherState.Script);
+            List<Tuple<AsmInstruction, List<string>>> newCodePart = new List<Tuple<AsmInstruction, List<string>>>(CodePart);
+            newCodePart.AddRange(otherState.CodePart);
 
-            List<List<string>> newScriptPart = new List<List<string>>(ScriptPart);
-            newScriptPart.AddRange(otherState.ScriptPart);
+            List<Tuple<string, int>> newOriginalLocation = new List<Tuple<string, int>>(OriginalLocation);
+            newOriginalLocation.AddRange(otherState.OriginalLocation);
 
-            List<int> newOriginalLines = new List<int>(OriginalLines);
-            newOriginalLines.AddRange(otherState.OriginalLines);
-
-            List<string> newOriginalFile = new List<string>(OriginalFile);
-            newOriginalFile.AddRange(otherState.OriginalFile);
-
-            List<List<string>> newDataVarDeclarations = new List<List<string>>();
-            Dictionary<string, int> newDataVars = new Dictionary<string, int>(DataVars);
-            foreach(string key in otherState.DataVars.Keys)
+            List<List<string>> newDataVarDeclarations = new List<List<string>>(DataVarDeclarations);
+            foreach(List<string> otherDataVarDeclaration in otherState.DataVarDeclarations)
             {
-                if (newDataVars.ContainsKey(key))
+                bool foundMatch = false;
+                foreach(List<string> existingDataVarDeclaration in newDataVarDeclarations)
                 {
-                    if (!mergeDataVariables)
-                        ThrowExecutionException("No File", 0, "Merge Disabled for Data Variables, Conflict Found.");
+                    if(existingDataVarDeclaration[0] == otherDataVarDeclaration[0])
+                    {
+                        foundMatch = true;
+                        break;
+                    }
                 }
-                
 
-
+                if (foundMatch)
+                    ThrowExecutionException(new Tuple<string, int>("PARSER", 0), "Data Variables Conflict Found During Merge (" + otherDataVarDeclaration[0] + " Already Defined).");
+                else
+                    newDataVarDeclarations.Add(otherDataVarDeclaration);
             }
+            
+            List<String> newExternals = new List<string>(Externals);
+            foreach(string otherExternal in otherState.Externals)
+                if (!newExternals.Contains(otherExternal))
+                    newExternals.Add(otherExternal);
 
-            for(int i = 0; i < otherState.DataVars.Keys.Count; i++)
-            {
-                
-                if(newDataVars.ContainsKey(otherState.DataVars.Keys[i]) && !mergeDataVariables)
-                                    
-            }
+            CodePart = newCodePart;
+            OriginalLocation = newOriginalLocation;
+            Externals = newExternals;
+            DataVarDeclarations = newDataVarDeclarations;
 
-            //Find each label offset
-            //Example:
-            //MyLabel:
-            for (int i = ScriptSegmentStart; i < ScriptPart.Count; i++)
-            {
-                if (ScriptPart[i].Count == 2 && ScriptPart[i][1] == ":")
-                {
-                    string labelName = ScriptPart[i][0];
-                    if (LabelOffsets.ContainsKey(labelName))
-                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Already Defined.");
-                    if (Externals.Contains(labelName))
-                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with External.");
-                    if (DataVars.ContainsKey(labelName))
-                        ThrowExecutionException(AsmFile, OriginalLines[i], "Label '" + labelName + "' Conflicts with Data Variable.");
-                    LabelOffsets.Add(ScriptPart[i][0], i);
-                }
-            }
+            Reset();
+            DiscoverLabels();
 
             return this;
         }
-        */
 
-        internal void ParseDataVariables()
+        internal void DiscoverLabels()
         {
-            //Parse Data Segment
-            if (DataSegmentStart != -1)
+            LabelOffsets = new Dictionary<string, int>();
+            for (int i = 0; i < CodePart.Count; i++)
             {
-                for (int i = DataSegmentStart; i < ScriptPart.Count; i++)
+                if(CodePart[i].Item1 == AsmInstruction.LBL)
                 {
-                    if (ScriptPart[i][0] == "[")
-                        break;
-                    DataVarDeclarations.Add(ScriptPart[i]);
+                    string labelName = CodePart[i].Item2[0];
+                    if (LabelOffsets.ContainsKey(labelName))
+                        ThrowExecutionException(OriginalLocation[i], "Label '" + labelName + "' Already Defined.");
+                    if (Externals.Contains(labelName))
+                        ThrowExecutionException(OriginalLocation[i], "Label '" + labelName + "' Conflicts with External.");
+                    if (DataVars.ContainsKey(labelName))
+                        ThrowExecutionException(OriginalLocation[i], "Label '" + labelName + "' Conflicts with Data Variable.");
+                    LabelOffsets.Add(CodePart[i].Item2[0], i);
                 }
             }
         }
 
         internal void AllocateInitialData()
         {
+            DataVars.Clear();
             for(int i = 0; i < DataVarDeclarations.Count; i++)
             {
                 string varName = DataVarDeclarations[i][0];
                 if (DataVars.ContainsKey(varName))
-                    ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Data Variable '" + varName + "' is Already Defined.");
+                    ThrowExecutionException(OriginalLocation[i], "Data Variable '" + varName + "' is Already Defined.");
                 string initialValue = "";
                 if (DataVarDeclarations[i].Count == 3)
                 {
@@ -260,7 +310,7 @@ namespace NewRuntimeProto
                 {
                     int cValue = 0;
                     if (!Int32.TryParse(DataVarDeclarations[i][3], out cValue))
-                        ThrowExecutionException(OriginalFile[i], OriginalLines[i], "Integer Value Expected.");
+                        ThrowExecutionException(OriginalLocation[i], "Integer Value Expected.");
                     int memoryLocation = AllocateMemory(cValue, true);
                     DataVars.Add(varName, memoryLocation);
                 }
@@ -272,7 +322,7 @@ namespace NewRuntimeProto
             Register[0] = Register[1] = Register[2] = Register[3] = Register[4] = Register[5] = Register[6] = Register[7] = Register[8] = Register[9] = Register[10] = Register[11] = "";
             Memory = new MemoryBlock[0];
             AllocateInitialData();
-            CurrentScriptOffset = ScriptSegmentStart;
+            CurrentScriptOffset = 0;
             Stack.Clear();
         }
 
@@ -330,7 +380,7 @@ namespace NewRuntimeProto
                         memoryOffset -= iModVal;
                 }
 
-                return ReadMemoryOffset(memoryOffset);
+                return memoryOffset.ToString();
             }
             else
             {
@@ -386,66 +436,75 @@ namespace NewRuntimeProto
         {
             CurrentScriptOffset++;
 
-            if(CurrentScriptOffset >= Script.Length)
+            if(CurrentScriptOffset >= CodePart.Count)
             {
-                CurrentScriptOffset = Script.Length - 1;
+                CurrentScriptOffset = CodePart.Count - 1;
                 return false;
             }
 
-            if (ScriptPart[CurrentScriptOffset][0].EndsWith(":"))
+            while (CodePart[CurrentScriptOffset].Item1 == AsmInstruction.LBL && CurrentScriptOffset < CodePart.Count)
                 CurrentScriptOffset++;
 
-            if (CurrentScriptOffset >= Script.Length)
+            if (CurrentScriptOffset >= CodePart.Count)
             {
-                CurrentScriptOffset = Script.Length - 1;
+                CurrentScriptOffset = CodePart.Count - 1;
                 return false;
             }
 
-            List<string> Step = ScriptPart[CurrentScriptOffset];
+            Tuple<AsmInstruction, List<string>> Step = CodePart[CurrentScriptOffset];
 
-            switch(Step[0].ToLower())
+            switch(Step.Item1)
             {
-                case "push":                                            // PUSH [VALUE]             -    Push value onto stack
+                case AsmInstruction.PUSH:                                            // PUSH [VALUE]             -    Push value onto stack
                     {
-                        StackPush(ResolveGetValue(Step.GetRange(1, Step.Count - 1)));
+                        StackPush(ResolveGetValue(Step.Item2));
                     } break;
-                case "pop":                                             // POP [DEST]               -   Pop value from stack
+                case AsmInstruction.POP:                                             // POP [DEST]               -   Pop value from stack
                     {
-                        ResolveSetValue(Step.GetRange(1, Step.Count - 1), StackPop());
-                    } break;
-                case "pushr":                                           // PUSHR                    -   Push all registers onto stack
+                        ResolveSetValue(Step.Item2, StackPop());
+                    } break;  
+                case AsmInstruction.PUSHR:                                           // PUSHR                    -   Push all registers onto stack
                     {
                         for (int i = 0; i < 12; i++)
                             StackPush(Register[i]);
                     } break;
-                case "popr":                                            // POPR                     -   Pop all registers from stack
+                case AsmInstruction.POPR:                                            // POPR                     -   Pop all registers from stack
                     {
                         for (int i = 11; i >= 0; i--)
                             Register[i] = StackPop();
                     } break;
-                case "mov":                                             // MOV [SRC], [DEST]        -   Move value from one location to another
+                case AsmInstruction.PUSHA:                                           // PUSHA                    -   Push the code execution offset onto the stack
                     {
-                        int commaBreak = Step.IndexOf(",");
+                        StackPush(CurrentScriptOffset.ToString());
+                    }
+                    break;
+                case AsmInstruction.MOV:                                             // MOV [SRC], [DEST]        -   Move value from one location to another
+                    {
+                        int commaBreak = Step.Item2.IndexOf(",");
                         int destStart = commaBreak + 1;
-                        int destLen = Step.Count - destStart;
-                        ResolveSetValue(Step.GetRange(destStart, destLen), ResolveGetValue(Step.GetRange(1, commaBreak - 1)));
+                        int destLen = Step.Item2.Count - destStart;
+                        ResolveSetValue(Step.Item2.GetRange(destStart, destLen), ResolveGetValue(Step.Item2.GetRange(0, commaBreak)));
                     } break;
-                case "alloc":                                           // ALLOC [SIZE]             -   Allocate blocks of memory, pushes location on stack
+                case AsmInstruction.MOVA:                                            // MOVA [DEST]              -   Move the code execution offset into variable
+                    {
+                        ResolveSetValue(Step.Item2, CurrentScriptOffset.ToString());
+                    } break;
+                case AsmInstruction.ALLOC:                                           // ALLOC [SIZE]             -   Allocate blocks of memory, pushes location on stack
                     {
                         int allocSize = 0;
-                        string sizeVal = ResolveGetValue(Step.GetRange(1, Step.Count - 1));
+                        string sizeVal = ResolveGetValue(Step.Item2);
                         if (!Int32.TryParse(sizeVal, out allocSize))
                             throw new Exception("Resolved Alloc Value is Not a Number.");
                         StackPush(AllocateMemory(allocSize).ToString());
                     } break;
-                case "free":                                            // FREE [MEMLOC], [SIZE]    -   Free blocks of memory
+                case AsmInstruction.FREE:                                            // FREE [MEMLOC], [SIZE]    -   Free blocks of memory
                     {
-                        int commaBreak = Step.IndexOf(",");
+                        int commaBreak = Step.Item2.IndexOf(",");
                         int sizeStart = commaBreak + 1;
-                        int sizeLen = Step.Count - sizeStart;
+                        int sizeLen = Step.Item2.Count - sizeStart;
 
-                        string memLocVal = ResolveGetValue(Step.GetRange(1, commaBreak - 1));
-                        string sizeVal = ResolveGetValue(Step.GetRange(sizeStart, sizeLen));
+                        string memLocVal = ResolveGetValue(Step.Item2.GetRange(0, commaBreak));
+                        string sizeVal = ResolveGetValue(Step.Item2.GetRange(sizeStart, sizeLen));
 
                         int memoryLocation = -1;
                         int memorySize = -1;
@@ -456,17 +515,17 @@ namespace NewRuntimeProto
                             ThrowExecutionException("Resolved Free Memory Size is Not a Number.");
                         FreeMemory(memoryLocation, memorySize);
                     } break;
-                case "add":                                             // ADD                      -   Pop last 2 values from stack, add and push result onto stack (PUSH 2, PUSH 1 -> 2 + 1 = 3)
-                case "sub":                                             // SUB                      -   Pop last 2 values from stack, subtract and push result onto stack (PUSH 2, PUSH 1 -> 2 - 1 = 1)
-                case "mul":                                             // MUL                      -   Pop last 2 values from stack, multiply and push result onto stack (PUSH 2, PUSH 1 -> 2 * 1 = 2)
-                case "div":                                             // DIV                      -   Pop last 2 values from stack, divide and push result onto stack (PUSH 2, PUSH 1 -> 2 / 1 = 2)
-                case "mod":                                             // MOD                      -   Pop last 2 values from stack, modulo and push result onto stack (PUSH 2, PUSH 1 -> 2 % 1 = 0)
-                case "con":                                             // CON                      -   Pop last 2 values from stack, concat and push result onto stack (PUSH 2, PUSH 1 -> 2 .. 1 = "21")
+                case AsmInstruction.ADD:                                             // ADD                      -   Pop last 2 values from stack, add and push result onto stack (PUSH 2, PUSH 1 -> 2 + 1 = 3)
+                case AsmInstruction.SUB:                                             // SUB                      -   Pop last 2 values from stack, subtract and push result onto stack (PUSH 2, PUSH 1 -> 2 - 1 = 1)
+                case AsmInstruction.MUL:                                             // MUL                      -   Pop last 2 values from stack, multiply and push result onto stack (PUSH 2, PUSH 1 -> 2 * 1 = 2)
+                case AsmInstruction.DIV:                                             // DIV                      -   Pop last 2 values from stack, divide and push result onto stack (PUSH 2, PUSH 1 -> 2 / 1 = 2)
+                case AsmInstruction.MOD:                                             // MOD                      -   Pop last 2 values from stack, modulo and push result onto stack (PUSH 2, PUSH 1 -> 2 % 1 = 0)
+                case AsmInstruction.CON:                                             // CON                      -   Pop last 2 values from stack, concat and push result onto stack (PUSH 2, PUSH 1 -> 2 .. 1 = "21")
                     {
                         string strValue1 = StackPop();
                         string strValue2 = StackPop();
 
-                        if(Step[0].ToLower() == "con")
+                        if(Step.Item1 == AsmInstruction.CON)
                         {
                             StackPush(strValue2 + strValue1);
                         }
@@ -478,23 +537,23 @@ namespace NewRuntimeProto
                             if (!double.TryParse(strValue1, out dValue1) || !double.TryParse(strValue2, out dValue2))
                                 ThrowExecutionException("Calculation Attempted on Non-Numeric Value.");
 
-                            switch(Step[0].ToLower())
+                            switch(Step.Item1)
                             {
-                                case "add": StackPush((dValue2 + dValue1).ToString()); break;
-                                case "sub": StackPush((dValue2 + dValue1).ToString()); break;
-                                case "mul": StackPush((dValue2 * dValue1).ToString()); break;
-                                case "div":
-                                case "mod":
+                                case AsmInstruction.ADD: StackPush((dValue2 + dValue1).ToString()); break;
+                                case AsmInstruction.SUB: StackPush((dValue2 + dValue1).ToString()); break;
+                                case AsmInstruction.MUL: StackPush((dValue2 * dValue1).ToString()); break;
+                                case AsmInstruction.DIV:
+                                case AsmInstruction.MOD:
                                     {
                                         if (dValue1 == 0)
                                             throw new Exception("Calculation Attempted Divided by Zero.");
-                                        if (Step[0].ToLower() == "div") StackPush((dValue2 / dValue1).ToString());
+                                        if (Step.Item1 == AsmInstruction.DIV) StackPush((dValue2 / dValue1).ToString());
                                         else StackPush((dValue2 % dValue1).ToString());
                                     } break;
                             }
                         }
                     } break;
-                case "neg":                                             // NEG                      -   Pop last value from stack, multiply by -1 and push result onto stack (PUSH 1 -> 1 * -1 = -1)
+                case AsmInstruction.NEG:                                             // NEG                      -   Pop last value from stack, multiply by -1 and push result onto stack (PUSH 1 -> 1 * -1 = -1)
                     {
                         string strValue = StackPop();
                         double dValue = 0;
@@ -502,15 +561,15 @@ namespace NewRuntimeProto
                             ThrowExecutionException("Attempted To Inverse Non-Numeric Value.");
                         StackPush((dValue * -1.0).ToString());
                     } break;
-                case "inc":                                             // INC [VAR], [INC AMOUNT]  -   Increment VAR by INC AMOUNT
-                case "dec":                                             // DEC [VAR], [DEC AMOUNT]  -   Decrement VAR by INC AMOUNT
+                case AsmInstruction.INC:                                             // INC [VAR], [INC AMOUNT]  -   Increment VAR by INC AMOUNT
+                case AsmInstruction.DEC:                                             // DEC [VAR], [DEC AMOUNT]  -   Decrement VAR by INC AMOUNT
                     {
-                        int commaBreak = Step.IndexOf(",");
+                        int commaBreak = Step.Item2.IndexOf(",");
                         int amtStart = commaBreak + 1;
-                        int amtLen = Step.Count - amtStart;
+                        int amtLen = Step.Item2.Count - amtStart;
 
-                        string currentValue = ResolveGetValue(Step.GetRange(1, commaBreak - 1));
-                        string amtValue = ResolveGetValue(Step.GetRange(amtStart, amtLen));
+                        string currentValue = ResolveGetValue(Step.Item2.GetRange(0, commaBreak));
+                        string amtValue = ResolveGetValue(Step.Item2.GetRange(amtStart, amtLen));
 
                         double numericValue = 0;
                         double numericAmt = 0;
@@ -518,15 +577,15 @@ namespace NewRuntimeProto
                         if (!double.TryParse(currentValue, out numericValue) || !double.TryParse(amtValue, out numericAmt))
                             ThrowExecutionException("Invalid Data Types Specified for INC/DEC Values.");
 
-                        if (Step[0].ToLower() == "inc")
+                        if (Step.Item1 == AsmInstruction.INC)
                             numericValue += numericAmt;
                         else
                             numericValue -= numericAmt;
 
-                        ResolveSetValue(Step.GetRange(1, commaBreak - 1), numericValue.ToString());
+                        ResolveSetValue(Step.Item2.GetRange(0, commaBreak), numericValue.ToString());
                     } break;
-                case "cmpa":                                            // CMPA                     -   Pop Last 2 values, push true if they AND (PUSH 0, PUSH 1 -> 1 && 0, STACK PUSH 0)
-                case "cmpo":                                            // CMPO                     -   Pop Last 2 values, push true if they OR (PUSH 0, PUSH 1 -> 1 || 0, STACK PUSH 1)
+                case AsmInstruction.CMPA:                                            // CMPA                     -   Pop Last 2 values, push true if they AND (PUSH 0, PUSH 1 -> 1 && 0, STACK PUSH 0)
+                case AsmInstruction.CMPO:                                            // CMPO                     -   Pop Last 2 values, push true if they OR (PUSH 0, PUSH 1 -> 1 || 0, STACK PUSH 1)
                     {
                         string strValue1 = StackPop();
                         string strValue2 = StackPop();
@@ -543,22 +602,22 @@ namespace NewRuntimeProto
                         bool bValue1 = sValue1 == 1;
                         bool bValue2 = sValue2 == 1;
 
-                        if (Step[0].ToLower() == "cmpa") StackPush((bValue2 && bValue1) ? "1" : "0");
+                        if (Step.Item1 == AsmInstruction.CMPA) StackPush((bValue2 && bValue1) ? "1" : "0");
                         else StackPush((bValue2 || bValue1) ? "1" : "0");
                     } break;
-                case "cmpe":                                            // CMPE                     -   Pop Last 2 values, push true if they are equal (PUSH 2, PUSH 1 -> 2 == 1, STACK PUSH 0)
-                case "cmpn":                                            // CMPN                     -   Pop Last 2 values, push true if they are not equal (PUSH 2, PUSH 1 -> 2 != 1, STACK PUSH 1)
-                case "cmpg":                                            // CMPG                     -   Pop Last 2 values, push true if value 2 is greater than value 1 (PUSH 2, PUSH 1 -> 2 > 1, STACK PUSH 1)
-                case "cmpge":                                           // CMPGE                    -   Pop Last 2 values, push true if value 2 is greater than or equal to value 1 (PUSH 2, PUSH 1 -> 2 >= 1, STACK PUSH 1)
-                case "cmpl":                                            // CMPEL                    -   Pop Last 2 values, push true if value 2 is less than value 1 (PUSH 2, PUSH 1 -> 2 < 1, STACK PUSH 0)
-                case "cmple":                                           // CMPLE                     -   Pop Last 2 values, push true if value 2 is less than or equal to value 1 (PUSH 2, PUSH 1 -> 2 <= 1, STACK PUSH 0)
+                case AsmInstruction.CMPE:                                            // CMPE                     -   Pop Last 2 values, push true if they are equal (PUSH 2, PUSH 1 -> 2 == 1, STACK PUSH 0)
+                case AsmInstruction.CMPN:                                            // CMPN                     -   Pop Last 2 values, push true if they are not equal (PUSH 2, PUSH 1 -> 2 != 1, STACK PUSH 1)
+                case AsmInstruction.CMPG:                                            // CMPG                     -   Pop Last 2 values, push true if value 2 is greater than value 1 (PUSH 2, PUSH 1 -> 2 > 1, STACK PUSH 1)
+                case AsmInstruction.CMPGE:                                           // CMPGE                    -   Pop Last 2 values, push true if value 2 is greater than or equal to value 1 (PUSH 2, PUSH 1 -> 2 >= 1, STACK PUSH 1)
+                case AsmInstruction.CMPL:                                            // CMPEL                    -   Pop Last 2 values, push true if value 2 is less than value 1 (PUSH 2, PUSH 1 -> 2 < 1, STACK PUSH 0)
+                case AsmInstruction.CMPLE:                                           // CMPLE                     -   Pop Last 2 values, push true if value 2 is less than or equal to value 1 (PUSH 2, PUSH 1 -> 2 <= 1, STACK PUSH 0)
                     {
                         string strValue1 = StackPop();
                         string strValue2 = StackPop();
 
-                        if (Step[0].ToLower() == "cmpe")
+                        if (Step.Item1 == AsmInstruction.CMPE)
                             StackPush((strValue2 == strValue1) ? "1" : "0");
-                        else if (Step[0].ToLower() == "cmpn")
+                        else if (Step.Item1 == AsmInstruction.CMPN)
                             StackPush((strValue2 != strValue1) ? "1" : "0");
                         else
                         {
@@ -568,75 +627,111 @@ namespace NewRuntimeProto
                             if (!double.TryParse(strValue1, out dValue1) || !double.TryParse(strValue2, out dValue2))
                                 ThrowExecutionException("Numeric Comparison Attempted on Non-Numeric Value.");
 
-                            switch(Step[0].ToLower())
+                            switch(Step.Item1)
                             {
-                                case "cmpg": StackPush((dValue2 > dValue1) ? "1" : "0"); break;
-                                case "cmpge": StackPush((dValue2 >= dValue1) ? "1" : "0"); break;
-                                case "cmpl": StackPush((dValue2 < dValue1) ? "1" : "0"); break;
-                                case "cmple": StackPush((dValue2 <= dValue1) ? "1" : "0"); break;
+                                case AsmInstruction.CMPG: StackPush((dValue2 > dValue1) ? "1" : "0"); break;
+                                case AsmInstruction.CMPGE: StackPush((dValue2 >= dValue1) ? "1" : "0"); break;
+                                case AsmInstruction.CMPL: StackPush((dValue2 < dValue1) ? "1" : "0"); break;
+                                case AsmInstruction.CMPLE: StackPush((dValue2 <= dValue1) ? "1" : "0"); break;
                             }
                         }
                     }
                     break;
-                case "jmpl":                                            // JMPL LABEL               -   Move execution pointer to LABEL
+                case AsmInstruction.JMPL:                                            // JMPL LABEL               -   Move execution pointer to LABEL
                     {
                         DoLabelJump(Step);                
                     } break;
-                case "jmpo":                                            // JMPO [OFFSET]            -   Move execution pointer to position [OFFSET] from current location
+                case AsmInstruction.JMPO:                                            // JMPO [OFFSET]            -   Move execution pointer to position [OFFSET] from current location
                     {
                         DoOffsetJump(Step);
                     } break;
-                case "jmplt":                                           // JMPLT LABEL              -   Jump to LABEL if poped value is true
+                case AsmInstruction.JMPF:
                     {
-                        string strValue = StackPop();
-                        if (strValue != "1" && strValue != "0")
-                            ThrowExecutionException("Atemped Bitwise Comparison on Invalid Value.");
-                        if(strValue == "1")
-                        {
-                            DoLabelJump(Step);
-                        }
+                        DoFixedJump(Step);
                     } break;
-                case "jmpot":                                           // JMPOT [OFFSET]           -   Jump to [OFFSET] if poped value is true
+                case AsmInstruction.JMPLT:                                           // JMPLT LABEL              -   Jump to LABEL if poped value is true
                     {
-                        string strValue = StackPop();
-                        if (strValue != "1" && strValue != "0")
-                            ThrowExecutionException("Atemped Bitwise Comparison on Invalid Value.");
-                        if (strValue == "1")
-                        {
+                        if (DoConditionCheck(Step))
+                            DoLabelJump(Step);
+                    } break;
+                case AsmInstruction.JMPOT:                                           // JMPOT [OFFSET]           -   Jump to [OFFSET] if poped value is true
+                    {
+                        if (DoConditionCheck(Step))
                             DoOffsetJump(Step);
-                        }
+                    } break;
+                case AsmInstruction.JMPFT:
+                    {
+                        if (DoConditionCheck(Step))
+                            DoFixedJump(Step);
                     } break;
             }
 
             return true;
         }
 
-        internal void DoLabelJump(List<string> Step)
+        internal bool DoConditionCheck(Tuple<AsmInstruction, List<string>> Step)
         {
-            if (!LabelOffsets.ContainsKey(Step[1]) && !Externals.Contains(Step[1]))
+            string strValue = StackPop();
+            if (strValue != "1" && strValue != "0")
+                ThrowExecutionException("Atemped Bitwise Comparison on Invalid Value.");
+            if (strValue == "1")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        internal void DoLabelJump(Tuple<AsmInstruction, List<string>> Step)
+        {
+            if (!LabelOffsets.ContainsKey(Step.Item2[0]) && !Externals.Contains(Step.Item2[0]))
                 ThrowExecutionException("Jump Label Requested Does Not Exist.");
 
-            if (LabelOffsets.ContainsKey(Step[1]))
-                CurrentScriptOffset = LabelOffsets[Step[1]];
+            if (LabelOffsets.ContainsKey(Step.Item2[0]))
+                CurrentScriptOffset = LabelOffsets[Step.Item2[0]];
             else
             {
-                if (OnExternalMethodCalled == null)
-                    ThrowExecutionException("External Method Event Handler Not Defined and an External Method was Requested.");
+                if (Externals.Contains(Step.Item2[0]) && ExternalFunctions.ContainsKey(Step.Item2[0]))
+                    ExternalFunctions[Step.Item2[0]](this);
                 else
-                    OnExternalMethodCalled(new ExternalMethodEventArgs(Step[1], this));
+                {
+                    if (!ExternalFunctions.ContainsKey(Step.Item2[0]))
+                    {
+                        if (Externals.Contains(Step.Item2[0]))
+                            ThrowExecutionException("External Method Event Handler Not Registered for External '" + Step.Item2[0] + "'.");
+                        else
+                            ThrowExecutionException("Invalid Label (No Label or Defined External Found For '" + Step.Item2[0] + "'.");
+                    }
+                    else
+                    {
+                        if(!Externals.Contains(Step.Item2[0]))
+                            ThrowExecutionException("External Method Event Handler Registered For '" + Step.Item2[0] + "', But Not Defined in External Segment.");
+                    }
+                }
             }
         }
 
-        internal void DoOffsetJump(List<string> Step)
+        internal void DoOffsetJump(Tuple<AsmInstruction, List<string>> Step)
         {
-            string strValue = ResolveGetValue(Step.GetRange(1, Step.Count - 1));
+            string strValue = ResolveGetValue(Step.Item2);
             int offsetValue = 0;
             if (!Int32.TryParse(strValue, out offsetValue))
                 ThrowExecutionException("Attmpted Offset Jump With Non-Numeric Offset.");
             int newOffset = CurrentScriptOffset + offsetValue;
-            if (newOffset < ScriptSegmentStart || newOffset >= ScriptPart.Count)
+            if (newOffset < 0 || newOffset >= CodePart.Count)
                 ThrowExecutionException("Attmpted Offset Jump Beyond Bounds.");
             CurrentScriptOffset = newOffset;
+        }
+
+        internal void DoFixedJump(Tuple<AsmInstruction, List<string>> Step)
+        {
+            string strValue = ResolveGetValue(Step.Item2);
+            int offsetValue = 0;
+            if (!Int32.TryParse(strValue, out offsetValue))
+                ThrowExecutionException("Attmpted Fixed Jump With Non-Numeric Offset.");
+            if(offsetValue < 0 || offsetValue >= CodePart.Count)
+                ThrowExecutionException("Attmpted Fixed Jump Beyond Bounds.");
+            CurrentScriptOffset = offsetValue;
         }
 
         #region Memory Management
@@ -808,15 +903,15 @@ namespace NewRuntimeProto
 
         public void ThrowExecutionException(string exceptionDetails)
         {
-            ThrowExecutionException(OriginalFile[CurrentScriptOffset], OriginalLines[CurrentScriptOffset], exceptionDetails);
+            ThrowExecutionException(OriginalLocation[CurrentScriptOffset], exceptionDetails);
         }
 
-        public void ThrowExecutionException(string srcFile, int srcLine, string exceptionDetails)
+        public void ThrowExecutionException(Tuple<string, int> exceptionLocation, string exceptionDetails)
         {
             if (OnExecutionException == null)
-                throw new Exception("Exception Handler Not Enabled: [" + srcFile + ":" + srcLine.ToString() + " - " + exceptionDetails);
+                throw new Exception("Exception Handler Not Enabled: [" + exceptionLocation.Item1 + ":" + exceptionLocation.Item2.ToString() + " - " + exceptionDetails);
             else
-                OnExecutionException(new ExecutionExceptionEventArgs(srcFile, srcLine, exceptionDetails));
+                OnExecutionException(new ExecutionExceptionEventArgs(exceptionLocation.Item1, exceptionLocation.Item2, exceptionDetails));
         }
         #endregion
 

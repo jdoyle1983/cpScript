@@ -15,9 +15,14 @@ namespace NewRuntimeProto
 
             DateTime startTime = DateTime.Now;
             State tState = new State();
-            tState.OnExternalMethodCalled += TState_OnExternalMethodCalled;
             tState.OnExecutionException += TState_OnExecutionException;
+            tState.RegisterFunction("_console_writeline", External_Console_WriteLine);
+            tState.RegisterFunction("_console.readline", External_Console_ReadLine);
             tState.Load(AppDomain.CurrentDomain.BaseDirectory + "TestScript.asm");
+
+            State addonState = new State();
+            addonState.Load(AppDomain.CurrentDomain.BaseDirectory + "TestScript_Addon.asm");
+            tState = tState.MergeIntoThisScript(addonState);
 
             DateTime runTime = DateTime.Now;
 
@@ -25,18 +30,12 @@ namespace NewRuntimeProto
 
             DateTime endTime = DateTime.Now;
 
-            DateTime native2Start = DateTime.Now;
-            for (int i = 0; i < 10000; i++)
-                Console.WriteLine(i.ToString());
-            DateTime native2End = DateTime.Now;
-
             Console.WriteLine();
             Console.WriteLine("Done.");
             Console.WriteLine("Init Time    : " + (runTime - startTime).TotalMilliseconds.ToString() + "ms");
             Console.WriteLine("Run Time     : " + (endTime - runTime).TotalMilliseconds.ToString() + "ms");
             Console.WriteLine("Total Time   : " + (endTime - startTime).TotalMilliseconds.ToString() + "ms");
             Console.WriteLine("Native Time  : " + (nativeEnd - nativeStart).TotalMilliseconds.ToString() + "ms");
-            Console.WriteLine("Native2 Time : " + (native2End - native2Start).TotalMilliseconds.ToString() + "ms");
             Console.ReadLine();
         }
 
@@ -47,12 +46,14 @@ namespace NewRuntimeProto
             throw new Exception(r);
         }
 
-        private static void TState_OnExternalMethodCalled(ExternalMethodEventArgs e)
+        private static void External_Console_WriteLine(State state)
         {
-            if (e.ExternalMethodRequested == "_console_writeline")
-                Console.WriteLine(e.ScriptState.StackPop());
-            else if (e.ExternalMethodRequested == "_console_readline")
-                e.ScriptState.StackPush(Console.ReadLine());
+            Console.WriteLine(state.StackPop());
+        }
+
+        private static void External_Console_ReadLine(State state)
+        {
+            state.StackPush(Console.ReadLine());
         }
     }
 }
