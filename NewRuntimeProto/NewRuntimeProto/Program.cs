@@ -20,9 +20,9 @@ namespace NewRuntimeProto
             tState.RegisterFunction("_console.readline", External_Console_ReadLine);
             tState.Load(AppDomain.CurrentDomain.BaseDirectory + "TestScript.asm");
 
-            State addonState = new State();
-            addonState.Load(AppDomain.CurrentDomain.BaseDirectory + "TestScript_Addon.asm");
-            tState = tState.MergeIntoThisScript(addonState);
+            //State addonState = new State();
+            //addonState.Load(AppDomain.CurrentDomain.BaseDirectory + "TestScript_Addon.asm");
+            //tState = tState.MergeIntoThisScript(addonState);
 
             DateTime runTime = DateTime.Now;
 
