@@ -37,7 +37,9 @@
 #include <MemoryBlockSetHeader.h>
 #include <Parser.h>
 #include <Token.h>
+#ifdef USECOMPRESSION
 #include <miniz.c>
+#endif
 
 typedef struct
 {
@@ -589,6 +591,7 @@ EXPORT void* State_New(char* ScriptText)
     return state;
 };
 
+#ifdef USECOMPRESSION
 EXPORT void* State_NewFromCompiled(void* StoredScript, long Len)
 {
     int i = 0;
@@ -786,6 +789,7 @@ EXPORT void* State_Compile(void* S, long* len)
 	
 	return resultData;
 };
+#endif
 
 EXPORT void State_Delete(void* S)
 {

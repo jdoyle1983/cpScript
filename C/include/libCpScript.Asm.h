@@ -35,8 +35,10 @@ extern "C" {
 #endif
 
 EXPORT void* State_New(char* ScriptText);
+#ifdef USECOMPRESSION
 EXPORT void* State_NewFromCompiled(void* Script, long Len);
 EXPORT void* State_Compile(void* state, long* len);
+#endif
 EXPORT void State_Delete(void* State);
 EXPORT void State_RegisterFunction(void* State, char* Name, void (*UserFunction)(void*), short StubFunction);
 EXPORT short State_Iterate(void* State);
