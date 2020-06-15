@@ -1,9 +1,6 @@
 CpScript
 ==================================
 
-*Note: Please use the stable branch for production implementations.
-
-
 
 ANSI C
 ----------------------------------
