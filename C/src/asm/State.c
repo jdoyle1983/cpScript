@@ -49,17 +49,17 @@ typedef struct
     Stack* _Headers;
     Stack* _BlockHeaders;
     List* _Tokens;
-    int _Offset;
+    size_t _Offset;
 	
-	int _DbgLine;
-	int _DbgColumn;
+	size_t _DbgLine;
+	size_t _DbgColumn;
 	char* _DbgFile;
 } State;
 
 typedef struct
 {
     short Tok;
-    int StrIdx;
+    size_t StrIdx;
 } CompiledAssemblyToken;
 
 CompiledAssemblyToken* CompiledAssemblyToken_New(short tok, int strIdx)
@@ -115,7 +115,7 @@ short ptRegister(char* Val)
 
 short ptLabel(State* state, char* Val)
 {
-    int i = 0;
+    size_t i = 0;
     for(i = 0; i < state->_Labels->Count; i++)
     {
         LabelDef* l = List_LabelDefAtIndex(state->_Labels, i);
@@ -143,12 +143,12 @@ short ptInteger(char* Val)
     return 0;
 };
 
-short pt1(State* state, char* Val)
+short pt1(char* Val)
 {
     return ptIntegerNonNegative(Val);
 };
 
-short pt2(State* state, char* Val)
+short pt2(char* Val)
 {
     return ptInteger(Val);
 };
@@ -158,7 +158,7 @@ short pt3(State* state, char* Val)
     return ptLabel(state, Val);
 };
 
-short pt4(State* state, char* Val)
+short pt4(char* Val)
 {
     if(ptRegister(Val) == 1 || ptMemoryVar(Val) == 1 || ptMemoryBlockVarIndex(Val) == 1)
         return 1;
@@ -179,14 +179,14 @@ short pt8(State* state, char* Val)
     return 0;
 };
 
-short pt9(State* state, char* Val)
+short pt9(char* Val)
 {
     return ptMemoryVar(Val);
 };
 
 void SetRegister(State* state, int id, char* Value)
 {
-    int targetId = id - 1;
+    size_t targetId = id - 1;
     List* r = Stack_PeekList(state->_Registers);
     char* n = (char*)malloc(sizeof(char) * (strlen(Value) + 1));
     strcpy(n, Value);
@@ -210,21 +210,21 @@ void SetRegister(State* state, int id, char* Value)
 
 char* ReadRegister(State* state, int id)
 {
-    int targetId = id - 1;
+    size_t targetId = id - 1;
     List* r = Stack_PeekList(state->_Registers);
     if(targetId < r->Count)
         return List_StringAtIndex(r, targetId);
     return NULL;
 };
 
-void AllocateMemoryBlockSet(State* state, char* Id, int Count)
+void AllocateMemoryBlockSet(State* state, char* Id, size_t Count)
 {
     MemoryBlockSetHeader* h = MemoryBlockSetHeader_New(Id, Count);
 	List* Headers = (List*)Stack_Peek(state->_BlockHeaders);
-    int i = 0;
+    size_t i = 0;
 	
-	int ContStart = -1;
-	int ContCount = 0;
+	intmax_t ContStart = -1;
+	size_t ContCount = 0;
 	for(i = 0; i < state->_Memory->Count; i++)
 	{
 		if(ContCount >= Count)
@@ -269,7 +269,7 @@ void AllocateMemoryBlock(State* state, char* Id)
     MemoryBlockHeader* h = NULL;
 	List* Headers = Stack_PeekList(state->_Headers);
     short found = 0;
-    int c = 0;
+    size_t c = 0;
     for(c = 0; c < state->_Memory->Count; c++)
     {
         MemoryBlock* b = List_MemoryBlockAtIndex(state->_Memory, c);
@@ -298,7 +298,7 @@ void ReferenceMemoryBlockSet(State* state, char* OrigId, char* NewId)
     MemoryBlockSetHeader* hed = NULL;
     MemoryBlockSetHeader* hed2 = NULL;
     List* BlockHeaders = Stack_Peek(state->_BlockHeaders);
-    int c = 0;
+    size_t c = 0;
     for(c = 0; c < BlockHeaders->Count; c++)
     {
         MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
@@ -310,7 +310,7 @@ void ReferenceMemoryBlockSet(State* state, char* OrigId, char* NewId)
 
     if(hed2 != NULL)
     {
-		int i = 0;
+		size_t i = 0;
         short shouldAdd = 1;
         if(hed == NULL)
             hed = MemoryBlockSetHeader_New(NewId, hed2->IndexOffset->Count);
@@ -331,7 +331,7 @@ void ReferenceMemoryBlockSet(State* state, char* OrigId, char* NewId)
 void ReferenceMemoryBlock(State* state, char* OrigId, char* NewId)
 {
     MemoryBlockHeader* hed = NULL;
-    int c = 0;
+    size_t c = 0;
     List* Headers = Stack_PeekList(state->_Headers);
     int targetOffset = -1;
     for(c = 0; c < Headers->Count; c++)
@@ -357,10 +357,10 @@ void SetMemoryBlockSetIndex(State* state, char* Id, char* Value)
 	char* Name = NULL;
 	char* IndexChar = NULL;
     int idx = -1;
-    int i = 0;
+    size_t i = 0;
 	int Index = -1;
 	List* BlockHeaders = NULL;
-	int c = 0;
+	size_t c = 0;
 
     for(i = 0; i < strlen(Id); i++)
         if(Id[i] == ':')
@@ -390,7 +390,7 @@ void SetMemoryBlockSetIndex(State* state, char* Id, char* Value)
 void SetMemoryBlock(State* state, char* Id, char* Value)
 {
     List* Headers = Stack_PeekList(state->_Headers);
-    int c = 0;
+    size_t c = 0;
     for(c = 0; c < Headers->Count; c++)
     {
         MemoryBlockHeader* h = List_MemoryBlockHeaderAtIndex(Headers, c);
@@ -410,9 +410,9 @@ char* ReadMemoryBlockSetIndex(State* state, char* Id)
 	char* IndexChar = NULL;
 	int Index = -1;
 	List* BlockHeaders;
-	int c = 0;
+	size_t c = 0;
     int idx = -1;
-    int i = 0;
+    size_t i = 0;
     for(i = 0; i < strlen(Id); i++)
         if(Id[i] == ':')
             idx = i;
@@ -443,7 +443,7 @@ char* ReadMemoryBlock(State* state, char* Id)
 {
     char* rValue = NULL;
     List* Headers = Stack_PeekList(state->_Headers);
-    int c = 0;
+    size_t c = 0;
     for(c = 0; c < Headers->Count; c++)
     {
         MemoryBlockHeader* h = List_MemoryBlockHeaderAtIndex(Headers, c);
@@ -457,11 +457,11 @@ char* ReadMemoryBlock(State* state, char* Id)
     return rValue;
 };
 
-void ResizeMemoryBlockSet(State* state, char* Id, int NewSize)
+void ResizeMemoryBlockSet(State* state, char* Id, size_t NewSize)
 {
 	MemoryBlockSetHeader* hed = NULL;
     List* BlockHeaders = Stack_PeekList(state->_BlockHeaders);
-    int c = 0;
+    size_t c = 0;
     for(c = 0; c < BlockHeaders->Count; c++)
     {
         MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
@@ -474,7 +474,7 @@ void ResizeMemoryBlockSet(State* state, char* Id, int NewSize)
 
     if(hed != NULL)
     {
-		int CurrentSize = hed->IndexOffset->Count;
+		size_t CurrentSize = hed->IndexOffset->Count;
 		if(CurrentSize != NewSize)
 		{
 			if(CurrentSize > NewSize)
@@ -500,7 +500,7 @@ void FreeMemoryBlockSet(State* state, char* Id)
 {
     MemoryBlockSetHeader* hed = NULL;
     List* BlockHeaders = Stack_PeekList(state->_BlockHeaders);
-    int c = 0;
+    size_t c = 0;
     for(c = 0; c < BlockHeaders->Count; c++)
     {
         MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
@@ -524,7 +524,7 @@ void FreeMemoryBlockSet(State* state, char* Id)
 void FreeMemoryBlock(State* state, char* Id)
 {
     List* Headers = Stack_PeekList(state->_Headers);
-    int c = 0;
+    size_t c = 0;
     for(c = 0; c < Headers->Count; c++)
     {
         MemoryBlockHeader* h = List_MemoryBlockHeaderAtIndex(Headers, c);
@@ -539,7 +539,7 @@ void FreeMemoryBlock(State* state, char* Id)
 
 void State_DoInit(State* state)
 {
-    int i = 0;
+    size_t i = 0;
 
     for(i = 0; i < state->_Tokens->Count; i++)
     {
@@ -591,7 +591,7 @@ EXPORT void* State_New(char* ScriptText)
 
 EXPORT void* State_NewFromCompiled(void* StoredScript, long Len)
 {
-    int i = 0;
+    size_t i = 0;
     int offset = 0;
 
     char* Magic = malloc(sizeof(char) * 3);
@@ -616,8 +616,8 @@ EXPORT void* State_NewFromCompiled(void* StoredScript, long Len)
 	
     List* StrValues = List_New();
 
-    int StrLen = 0;
-    int CmpLen = 0;
+    size_t StrLen = 0;
+    size_t CmpLen = 0;
 
     memcpy(&StrLen, Script + offset, sizeof(int));
     offset += sizeof(int);
@@ -692,15 +692,15 @@ EXPORT void* State_Compile(void* S, long* len)
     State* state = (State*)S;
     List* CmpToks = List_New();
     List* StrValues = List_New();
-    int i = 0;
+    size_t i = 0;
     for(i = 0; i < state->_Tokens->Count; i++)
     {
         AssemblyToken* t = List_AssemblyTokenAtIndex(state->_Tokens, i);
-        int newStrIdx = -1;
+        intmax_t newStrIdx = -1;
         short tt = t->Tok;
         if(tt == tRegister || tt == tMemoryVar || tt == tLiteral || tt == tQuotedLiteral)
         {
-            int e = 0;
+            size_t e = 0;
             for(e = 0; e < List_Count(StrValues) && newStrIdx == -1; e++)
                 if(strcmp(List_StringAtIndex(StrValues, e), t->Val) == 0)
                     newStrIdx = e;
@@ -792,8 +792,8 @@ EXPORT void* State_Compile(void* S, long* len)
 EXPORT void State_Delete(void* S)
 {
     State* state = (State*)S;
-    int i = 0;
-    int e = 0;
+    size_t i = 0;
+    size_t e = 0;
 
     for(i = 0; i < state->_Tokens->Count; i++)
         AssemblyToken_Delete(List_AssemblyTokenAtIndex(state->_Tokens, i));
@@ -853,7 +853,7 @@ EXPORT void State_RegisterFunction(void* S, char* Name, void (*UserFunction)(voi
 {
     State* state = (State*)S;
     short wasFound = 0;
-    int i = 0;
+    size_t i = 0;
     for(i = 0; i < state->_Labels->Count; i++)
     {
         LabelDef* l = List_LabelDefAtIndex(state->_Labels, i);
@@ -915,7 +915,7 @@ void StatePush(State* state)
 
 void StatePop(State* state)
 {
-	int i = 0;
+	size_t i = 0;
 
     List* OldRegister = Stack_PopList(state->_Registers);
     List* OldHeaders = Stack_PopList(state->_Headers);
@@ -938,10 +938,11 @@ void StatePop(State* state)
 EXPORT short State_Iterate(void* S)
 {
     State* state = (State*)S;
+    short overrun = 0;
     if(state->_Offset >= state->_Tokens->Count)
-        state->_Offset = -1;
+        overrun = 1;
 
-    if(state->_Offset > -1)
+    if(overrun == 0)
     {
         //printf("**********DBG: '%s' (Stack Count: %d)\n", CurrentTok(state)->Val, state->_Stack->Count);
         switch(CurrentTok(state)->Tok)
@@ -951,7 +952,7 @@ EXPORT short State_Iterate(void* S)
             case tPushB:
             {
 				List* BlockHeaders = NULL;
-				int c = 0;
+				size_t c = 0;
                 state->_Offset++;
                 if(ptMemoryBlockVar(CurrentTok(state)->Val) == 0)
                 {
@@ -964,7 +965,7 @@ EXPORT short State_Iterate(void* S)
                     MemoryBlockSetHeader* h = List_MemoryBlockSetHeaderAtIndex(BlockHeaders, c);
                     if(strcmp(h->Name, CurrentTok(state)->Val) == 0)
                     {
-                        int i = 0;
+                        size_t i = 0;
                         for(i = 0; i < h->IndexOffset->Count; i++)
                             State_PushInt(state, MemoryBlockSetHeader_GetOffset(h, i));
                         State_PushInt(state, h->IndexOffset->Count);
@@ -978,7 +979,7 @@ EXPORT short State_Iterate(void* S)
             {
 				int targetOffset = -1;
 				List* Headers = NULL;
-				int c = 0;
+				size_t c = 0;
                 state->_Offset++;
                 if(ptMemoryVar(CurrentTok(state)->Val) == 0)
                 {
@@ -1008,10 +1009,10 @@ EXPORT short State_Iterate(void* S)
             {
 				MemoryBlockSetHeader* hed = NULL;
 				List* BlockHeaders = NULL;
-				int c = 0;
+				size_t c = 0;
 				short shouldAdd = 1;
-				int Count = -1;
-				int i = 0;
+				intmax_t Count = -1;
+				intmax_t i = 0;
 
                 state->_Offset++;
                 if(ptMemoryBlockVar(CurrentTok(state)->Val) == 0)
@@ -1055,7 +1056,7 @@ EXPORT short State_Iterate(void* S)
             {
 				short found = 0;
 				List* Headers = NULL;
-				int c = 0;
+				size_t c = 0;
 
                 state->_Offset++;
                 if(ptMemoryVar(CurrentTok(state)->Val) == 0)
@@ -1099,7 +1100,7 @@ EXPORT short State_Iterate(void* S)
                 state->_Offset++;
                 srcTok = CurrentTok(state);
 
-                if(pt4(state, destTok->Val) == 0)
+                if(pt4(destTok->Val) == 0)
                 {
                     //printf("ERROR (Incorrect dest)\n");
                 }
@@ -1142,7 +1143,7 @@ EXPORT short State_Iterate(void* S)
             {
 				char* Val;
                 state->_Offset++;
-                if(pt4(state, CurrentTok(state)->Val) == 0)
+                if(pt4(CurrentTok(state)->Val) == 0)
                 {
                     //printf("ERROR (Invalid Pop Value)\n");
                 }
@@ -1250,7 +1251,7 @@ EXPORT short State_Iterate(void* S)
             {
 				char* labelTitle;
 				LabelDef* l = NULL;
-				int c = 0;
+				size_t c = 0;
 
                 state->_Offset++;
                 labelTitle = CurrentTok(state)->Val;
@@ -1311,7 +1312,7 @@ EXPORT short State_Iterate(void* S)
             {
 				char* labelTitle;
 				LabelDef* l = NULL;
-				int c = 0;
+				size_t c = 0;
 
                 state->_Offset++;
                 labelTitle = CurrentTok(state)->Val;
@@ -1378,7 +1379,7 @@ EXPORT short State_Iterate(void* S)
                             State_PushBool(state, strcmp(v1, v2) == 0);
                         else
                             State_PushBool(state, strcmp(v1, v2) != 0);
-                    }
+                    } break;
                     default:
                     {
                         double d1 = 0;
@@ -1415,7 +1416,7 @@ EXPORT short State_Iterate(void* S)
 				char* val1;
 				char* val2;
 				int newOffset = -1;
-				int c = 0;
+				size_t c = 0;
 				short didEval = 0;
                 short validDouble = 0;
                 double d1 = 0;
@@ -1594,7 +1595,7 @@ EXPORT short State_Iterate(void* S)
         }
     }
 
-    if(state->_Offset > -1)
+    if(overrun == 0)
         return 1;
     return 0;
 };
@@ -1608,14 +1609,16 @@ EXPORT void State_RunFromMethod(void* S, char* Name)
 EXPORT void State_LoadMethod(void* S, char* Name)
 {
     State* state = (State*)S;
-	int i = 0;
+    short wasFound = 0;
+	size_t i = 0;
     state->_Offset = -1;
-    for(i = 0; i < state->_Labels->Count && state->_Offset == -1; i++)
+    for(i = 0; i < state->_Labels->Count && wasFound == 0; i++)
     {
         LabelDef* l = List_LabelDefAtIndex(state->_Labels, i);
         if(strcmp(l->Label, Name) == 0 && l->Offset >= 0)
 		{
             state->_Offset = l->Offset;
+            wasFound = 1;
 			break;
 		}
     }
@@ -1695,7 +1698,7 @@ EXPORT void* State_Pop(void* S)
 	#if INTPTR_MAX == INT32_MAX
 		r = (void*)atoi(v);
 	#elif INTPTR_MAX == INT64_MAX
-		r = (void*)atol(v);
+		r = (void*)atoll(v);
 	#else
 		#error "Environment not 32 or 64 bit."
 	#endif
@@ -1784,7 +1787,7 @@ EXPORT void State_Push(void* S, void* v)
 	#if INTPTR_MAX == INT32_MAX
 		sprintf(p, "%i", (int)v);
 	#elif INTPTR_MAX == INT64_MAX
-		sprintf(p, "%li", (long)v);
+		sprintf(p, "%lli", (long long)v);
 	#else
 		#error "Environment not 32 or 64 bit."
 	#endif

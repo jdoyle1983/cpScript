@@ -96,7 +96,7 @@ void Function_Delete(Function* func)
 		free(func->Name);
 	if(func->Blocks != NULL)
 		List_Delete(func->Blocks);
-	int i = 0;
+	size_t i = 0;
 	if(func->Parameters != NULL)
 	{
 		for(i = 0; i < List_Count(func->Parameters); i++)
@@ -110,7 +110,7 @@ List* Function_ParseFunctionDefs(List* Blocks)
 {
 	List* Functions = List_New();
 	
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(Blocks); i++)
 	{
 		CodeBlock* b = List_CodeBlockAtIndex(Blocks, i);

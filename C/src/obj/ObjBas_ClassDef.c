@@ -74,7 +74,7 @@ void ClassDef_Delete(ClassDef* def)
 {
 	if(def->Name == NULL)
 		free(def->Name);
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(def->Properties); i++)
 		free(List_StringAtIndex(def->Properties, i));
 	List_Delete(def->Properties);
@@ -86,7 +86,7 @@ void ClassDef_Delete(ClassDef* def)
 
 char* ClassDef_GetFirstMethodLabel(ClassDef* def, char* Name)
 {
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(def->Methods); i++)
 	{
 		Function* meth = List_FunctionAtIndex(def->Methods, i);
@@ -112,7 +112,7 @@ char* ClassDef_GetFirstMethodLabel(ClassDef* def, char* Name)
 List* ClassDef_GetStaticMethods(ClassDef* def)
 {
 	List* Results = List_New();
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(def->Methods); i++)
 	{
 		Function* f = List_FunctionAtIndex(def->Methods, i);
@@ -143,7 +143,7 @@ List* ClassDef_GetStaticMethods(ClassDef* def)
 List* ClassDef_GetInstanceMethods(ClassDef* def)
 {
 	List* Results = List_New();
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(def->Methods); i++)
 	{
 		Function* f = List_FunctionAtIndex(def->Methods, i);
@@ -170,12 +170,12 @@ List* ClassDef_GetInstanceMethods(ClassDef* def)
 	if(def->Extends != NULL)
 	{
 		List* parentResults = ClassDef_GetInstanceMethods(def->Extends);
-		int i = 0;
+		size_t i = 0;
 		for(i = 0; i < List_Count(parentResults); i++)
 		{
 			short found = 0;
 			ClassConversion* cnv = List_ClassConversionAtIndex(parentResults, i);
-			int e = 0;
+			size_t e = 0;
 			for(e = 0; e < List_Count(Results); e++)
 			{
 				ClassConversion* cnv2 = List_ClassConversionAtIndex(Results, e);
@@ -199,12 +199,12 @@ void RecurseGetProps(ClassDef* def, ClassDef* exDef)
 {
 	if(exDef->Extends != NULL)
 		RecurseGetProps(def, exDef->Extends);
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(exDef->Properties); i++)
 	{
 		char* thisProp = List_StringAtIndex(exDef->Properties, i);
 		short found = 0;
-		int e = 0;
+		size_t e = 0;
 		for(e = 0; e < List_Count(def->Properties); e++)
 			if(strcmp(thisProp, List_StringAtIndex(def->Properties, e)) == 0)
 				found = 1;
@@ -220,7 +220,7 @@ void RecurseGetProps(ClassDef* def, ClassDef* exDef)
 List* ClassDef_ParseClassDefs(List* Blocks)
 {
 	List* defs = List_New();
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(Blocks); i++)
 	{
 		CodeBlock* thisBlock = List_CodeBlockAtIndex(Blocks, i);
@@ -231,7 +231,7 @@ List* ClassDef_ParseClassDefs(List* Blocks)
 			{
 				char* exClassName = List_TokenAtIndex(thisBlock->Tokens, 3)->Value;
 				ClassDef* exClass = NULL;
-				int r = 0;
+				size_t r = 0;
 				for(r = 0; r < List_Count(defs); r++)
 					if(strcmp(List_ClassDefAtIndex(defs, r)->Name, exClassName) == 0)
 						exClass = List_ClassDefAtIndex(defs, r);

@@ -28,30 +28,32 @@
 	Items stored in list must be allocated / cleaned up outside of the list
 */
 
+#include <stddef.h>
+
 typedef struct
 {
-	int Count;
+	size_t Count;
 	void** Items;
-	int ActualCount;
+	size_t ActualCount;
 } List;
 
 List* List_New(void);
 void List_Delete(List* list);
 
-int List_Count(List* list);
+size_t List_Count(List* list);
 
 void List_Add(List* list, void* item);
 void List_AddInFront(List* list, void* item);
-void* List_AtIndex(List* list, int idx);
+void* List_AtIndex(List* list, size_t idx);
 
 void List_Remove(List* list, void* item);
-void List_RemoveAt(List* list, int idx);
+void List_RemoveAt(List* list, size_t idx);
 
 void List_Reverse(List* list);
 
 void List_Clear(List* list);
 
-int List_IntAtIndex(List* list, int idx);
+int List_IntAtIndex(List* list, size_t idx);
 void List_AddInt(List* list, int item);
 
 /*

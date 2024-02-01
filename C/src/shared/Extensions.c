@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 /*
 	Various helper methods used by Object Basic and Cp Asm
@@ -42,8 +43,8 @@ char* StrToLowTrim(char* SrcStr)
 
 char* StrLeft(char* SrcStr)
 {
-    int Start = -1;
-    int i = 0;
+    intmax_t Start = -1;
+    size_t i = 0;
 	
     for(i = 0; i < strlen(SrcStr) && Start == -1; i++)
         if(SrcStr[i] != ' ' && SrcStr[i] != '\n' && SrcStr[i] != '\r' && SrcStr[i] != '\t')
@@ -62,7 +63,7 @@ char* StrLeft(char* SrcStr)
 char* StrRight(char* SrcStr)
 {
     int End = -1;
-    int i = 0;
+    size_t i = 0;
     
 	for(i = 0; i < strlen(SrcStr); i++)
         if(SrcStr[i] != ' ' && SrcStr[i] != '\n' && SrcStr[i] != '\r' && SrcStr[i] != '\t')
@@ -88,7 +89,7 @@ char* StrTrim(char* SrcStr)
 
 char* StrToLower(char* SrcStr)
 {
-	int i = 0;
+	size_t i = 0;
     char* r = StrCopy(SrcStr);
     for(i = 0; i < strlen(r); i++)
         r[i] = tolower(r[i]);
@@ -99,11 +100,11 @@ short StrStartsWith(char* SrcStr, char* TestStr)
 {
 	short r = 0;
 	
-	int len = strlen(TestStr);
+	size_t len = strlen(TestStr);
 	if(strlen(SrcStr) >= len)
 	{
 		short allMatch = 1;
-		int i = 0;
+		size_t i = 0;
 		for(i = 0; i < strlen(TestStr) && allMatch == 1; i++)
 		{
 			if(TestStr[i] != SrcStr[i])
@@ -139,11 +140,11 @@ char* StrCopyAnd(char* SrcStr, char* AddStr)
 	return r;
 };
 
-char* SubStr(char* Src, int Start, int End)
+char* SubStr(char* Src, size_t Start, size_t End)
 {
 	char* r = (char*)malloc(sizeof(char) * (strlen(Src) + 1));
-	int c = 0;
-	int i = 0;
+	size_t c = 0;
+	size_t i = 0;
 	for(i = Start; i <= End && i < strlen(Src); i++)
 	{
 		r[c] = Src[i];
@@ -158,10 +159,10 @@ List* Split(char* SrcStr, char* DelimChars)
 {
 	List* r = List_New();
 
-	int start = 0;
+	size_t start = 0;
 
-	int s = 0;
-	int d = 0;
+	size_t s = 0;
+	size_t d = 0;
 	for(s = 0; s < strlen(SrcStr); s++)
 	{
 		for(d = 0; d < strlen(DelimChars); d++)
@@ -183,10 +184,10 @@ List* SplitAndKeep(char* SrcStr, char* DelimChars)
 {
 	List* r = List_New();
 
-	int start = 0;
+	size_t start = 0;
 
-	int s = 0;
-	int d = 0;
+	size_t s = 0;
+	size_t d = 0;
 	for(s = 0; s < strlen(SrcStr); s++)
 	{
 		for(d = 0; d < strlen(DelimChars); d++)
@@ -236,7 +237,7 @@ short CanConvertToInt(char* Src)
     short rValue = 1;
     char* t = StrTrim(Src);
 
-    int i = 0;
+    size_t i = 0;
     for(i = 0; i < strlen(t) && rValue == 1; i++)
     {
         if( t[i] == '-' && i != 0)
@@ -254,7 +255,7 @@ short CanConvertToBool(char* Src)
     short rValue = 1;
     char* t = StrTrim(Src);
 
-    int i = 0;
+    size_t i = 0;
     for(i = 0; i < strlen(t) && rValue == 1; i++)
     {
         if( t[i] != '0' && t[i] != '1')
@@ -270,8 +271,8 @@ short CanConvertToDouble(char* Src)
     short rValue = 1;
     char* t = StrTrim(Src);
 
-    int i = 0;
-    int d = 0;
+    size_t i = 0;
+    size_t d = 0;
     for(i = 0; i < strlen(t) && rValue == 1; i++)
     {
         if( t[i] == '-')
@@ -297,8 +298,8 @@ short CanConvertToDouble(char* Src)
 short ShouldMakeDoubletToInt(double v)
 {
 	short rValue = 1;
-	int i = 0;
-    int d = -1;
+	size_t i = 0;
+    intmax_t d = -1;
 
     char* Src = (char*)malloc(sizeof(char) * 3000);
     sprintf(Src, "%f", v);

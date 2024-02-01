@@ -100,7 +100,7 @@ short IsFunction(Token* c, List* ValidFunctions)
 	
 	if(t == Literal || t == ExClassAction)
 	{
-		int i = 0;
+		size_t i = 0;
 		for(i = 0; i < List_Count(ValidFunctions); i++)
 			if(strcmp(List_StringAtIndex(ValidFunctions, i), c->Value) == 0)
 				return 1;
@@ -131,7 +131,7 @@ List* Evaluator_Parse(List* Input, List* ValidFunctions)
 	//Pre parse negative
 	List* PreParsedTokens = List_New();
 	int lastTokenType = ttINVALID;
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(Input); i++)
 	{
 		Token* t = List_TokenAtIndex(Input, i);

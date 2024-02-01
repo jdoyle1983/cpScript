@@ -41,12 +41,12 @@ typedef struct
 	List* Classes;
 	char* AsmResult;
 	List* Blocks;
-	long NextLabel;
+	size_t NextLabel;
 	short ScriptLoaded;
-	long RegisterCount;
+	size_t RegisterCount;
 	Function* CurrentFunction;
 	ClassDef* CurrentClass;
-	long CurrentBlock;
+	size_t CurrentBlock;
 	List* CurrentVars;
 	List* CurrentClassVars;
 	List* CurrentClassProperties;
@@ -132,11 +132,12 @@ void AppendAsmLine(ObjectBasicScript* obj, char* NewLine)
 
 void MethodStub(void* State)
 {
+	State = State;
 };
 
 void ObjectBasicScript_Delete(ObjectBasicScript* obj)
 {
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(obj->Functions); i++)
 		Function_Delete(List_FunctionAtIndex(obj->Functions, i));
 	List_Delete(obj->Functions);
@@ -186,7 +187,7 @@ List* FunctionList(ObjectBasicScript* obj)
 {
 	List* Names = List_New();
 	
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(obj->Functions); i++)
 	{
 		Function* thisFunc = List_FunctionAtIndex(obj->Functions, i);
@@ -205,7 +206,7 @@ List* FunctionList(ObjectBasicScript* obj)
 	{
 		ClassDef* classDef = List_ClassDefAtIndex(obj->Classes, i);
 		List* StaticMethods = ClassDef_GetStaticMethods(classDef);
-		int e = 0;
+		size_t e = 0;
 		for(e = 0; e < List_Count(StaticMethods); e++)
 		{
 			ClassConversion* cnv = List_ClassConversionAtIndex(StaticMethods, e);
@@ -226,8 +227,8 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	List* _OutLines = List_New();
 	List* _PreProcLines = List_New();
 	List* _SrcLines = Split(Script, "\n");
-	int i = 0;
-	int a = 0;
+	size_t i = 0;
+	size_t a = 0;
 	for(i = 0; i < List_Count(_SrcLines); i++)
 	{
 		char* s = List_StringAtIndex(_SrcLines, i);
@@ -264,7 +265,7 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 	{
 		char* filePath = List_StringAtIndex(ToIncludeFiles, i);
 		short found = 0;
-		int e = 0;
+		size_t e = 0;
 		for(e = 0; e < List_Count(IncludedFiles); e++)
 			if(strcmp(List_StringAtIndex(IncludedFiles, e), filePath) == 0)
 				found = 1;
@@ -355,7 +356,7 @@ char* ParsePreProcessor(ObjectBasicScript* obj, char* Script)
 void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 {
 	List* toEval = List_New();
-	int i;
+	size_t i;
 	for(i = bStart; i < List_Count(List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock)->Tokens); i++)
 		List_Add(toEval, List_TokenAtIndex(List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock)->Tokens, i));
 	List* availFunctions = FunctionList(obj);
@@ -369,14 +370,14 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 			case ExClassAction:
 			{
 				short WasFound = 0;
-				int e = 0;
+				size_t e = 0;
 				if(obj->CurrentFunction != NULL)
 				{
 					List* Parts = Split(t->Value, ".");
 					FunctionParam* TargetParam = NULL;
 					ClassDef* TargetClassType = NULL;
 					
-					int ParamCount = List_Count(obj->CurrentFunction->Parameters);
+					size_t ParamCount = List_Count(obj->CurrentFunction->Parameters);
 					for(e = 0; e < ParamCount; e++)
 					{
 						FunctionParam* thisParam = List_FunctionParamAtIndex(obj->CurrentFunction->Parameters, e);
@@ -389,7 +390,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 					
 					if(TargetParam != NULL)
 					{
-						int ClassCount = List_Count(obj->Classes);
+						size_t ClassCount = List_Count(obj->Classes);
 						for(e = 0; e < ClassCount; e++)
 						{
 							ClassDef* thisClass = List_ClassDefAtIndex(obj->Classes, e);
@@ -403,13 +404,13 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 					
 					if(TargetClassType != NULL)
 					{
-						int PropertyCount = List_Count(TargetClassType->Properties);
+						size_t PropertyCount = List_Count(TargetClassType->Properties);
 						for(e = 0; e < PropertyCount; e++)
 						{
 							if(strcmp(List_StringAtIndex(TargetClassType->Properties, e), List_StringAtIndex(Parts, 1)) == 0)
 							{
 								char* tmpOutput = (char*)malloc(sizeof(char) * 5000);
-								sprintf(tmpOutput, "PUSH $%s:%d", List_StringAtIndex(Parts, 0), e + 1);
+								sprintf(tmpOutput, "PUSH $%s:%lld", List_StringAtIndex(Parts, 0), e + 1);
 								AppendAsmLine(obj, tmpOutput);
 								break;
 							}
@@ -439,7 +440,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 							List* splitList = Split(con->Input, ".");
 							AppendAsm(obj, "PUSHB $");
 							AppendAsmLine(obj, List_StringAtIndex(splitList, 0));
-							int a = 0;
+							size_t a = 0;
 							for(a = 0; a < List_Count(splitList); a++)
 								free(List_StringAtIndex(splitList, a));
 							List_Delete(splitList);
@@ -455,7 +456,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 				{
 					ClassDef* cd = List_ClassDefAtIndex(obj->Classes, e);
 					List* StaticMethods = ClassDef_GetStaticMethods(cd);
-					int a = 0;
+					size_t a = 0;
 					for(a = 0; a < List_Count(StaticMethods); a++)
 					{
 						ClassConversion* con = List_ClassConversionAtIndex(StaticMethods, a);
@@ -479,7 +480,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 			case Literal:
 			{
 				short found = 0;
-				int e = 0;
+				size_t e = 0;
 				
 				for(e = 0; e < List_Count(obj->Functions); e++)
 				{
@@ -522,7 +523,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 							else
 							{
 								char* thisResult = (char*)malloc(sizeof(char) * 5000);
-								sprintf(thisResult, "PUSH @%d", e + 1);
+								sprintf(thisResult, "PUSH @%lld", e + 1);
 								AppendAsmLine(obj, thisResult);
 								free(thisResult);
 							}
@@ -539,7 +540,7 @@ void EvaluateExpression(ObjectBasicScript* obj, int bStart)
 						{
 							found = 1;
 							char* thisResult = (char*)malloc(sizeof(char) * 5000);
-							sprintf(thisResult, "PUSH $this:%d", e + 1);
+							sprintf(thisResult, "PUSH $this:%lld", e + 1);
 							AppendAsmLine(obj, thisResult);
 							free(thisResult);
 						}
@@ -648,7 +649,7 @@ void ParseAsmBlock(ObjectBasicScript* obj)
 		char* AsmLine = (char*)malloc(sizeof(char) * 5000);
 		strcpy(AsmLine, "");
 		
-		int i = 0;
+		size_t i = 0;
 		
 		for(i = 0; i < List_Count(getCurrentBlock(obj)->Tokens); i++)
 		{
@@ -726,7 +727,7 @@ void ParseIfBlock(ObjectBasicScript* obj)
 char* getVarOrLit(ObjectBasicScript* obj, char* input)
 {
 	char* r = (char*)malloc(sizeof(char) * 5000);
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(obj->CurrentFunction->Parameters); i++)
 	{
 		FunctionParam* thisParam = List_FunctionParamAtIndex(obj->CurrentFunction->Parameters, i);
@@ -739,7 +740,7 @@ char* getVarOrLit(ObjectBasicScript* obj, char* input)
 			}
 			else
 			{
-				sprintf(r, "@%d", (i + 1));
+				sprintf(r, "@%lld", (i + 1));
 				return r;
 			}
 		}
@@ -752,7 +753,7 @@ char* getVarOrLit(ObjectBasicScript* obj, char* input)
 			char* thisProperty = List_StringAtIndex(obj->CurrentClass->Properties, i);
 			if(strcmp(thisProperty, input) == 0)
 			{
-				sprintf(r, "$this:%d", (i + 1));
+				sprintf(r, "$this:%lld", (i + 1));
 				return r;
 			}
 		}
@@ -886,8 +887,8 @@ void RecurseInit(ObjectBasicScript* obj, char* varName, ClassDef* cls)
 
 void ParseBlock(ObjectBasicScript* obj)
 {
-	int i = 0;
-	int e = 0;
+	size_t i = 0;
+	size_t e = 0;
 	char* thisResult = (char*)malloc(sizeof(char) * 5000);
 	CodeBlock* thisBlock = List_CodeBlockAtIndex(obj->CurrentFunction->Blocks, obj->CurrentBlock);
 	Token* thisToken = List_TokenAtIndex(thisBlock->Tokens, 0);
@@ -974,7 +975,7 @@ void ParseBlock(ObjectBasicScript* obj)
 							}
 							else
 							{
-								sprintf(thisResult, "POP @%d", (i + 1));
+								sprintf(thisResult, "POP @%lld", (i + 1));
 								AppendAsmLine(obj, thisResult);
 							}
 						}
@@ -988,7 +989,7 @@ void ParseBlock(ObjectBasicScript* obj)
 						if(strcmp(thisProp, t->Value) == 0)
 						{
 							found = 1;
-							sprintf(thisResult, "POP $this:%d", (i + 1));
+							sprintf(thisResult, "POP $this:%lld", (i + 1));
 							AppendAsmLine(obj, thisResult);
 						}
 					}
@@ -1006,11 +1007,11 @@ void ParseBlock(ObjectBasicScript* obj)
 						char* tclassVar = List_TokenAtIndex(thisBlock->Tokens, 1)->Value;
 						char* classVar = (char*)malloc(sizeof(char) * (strlen(tclassVar) + 1));
 						strcpy(classVar, tclassVar);
-						sprintf(thisResult, "ABS $%s, %d", classVar, List_Count(thisClass->Properties));
+						sprintf(thisResult, "ABS $%s, %lld", classVar, List_Count(thisClass->Properties));
 						AppendAsmLine(obj, thisResult);
 						List_Add(obj->CurrentClassVars, classVar);
 						RecurseInit(obj, classVar, thisClass);
-						int p = 0;
+						size_t p = 0;
 						for(p = 0; p < List_Count(thisClass->Properties); p++)
 						{
 							char* thisProp = List_StringAtIndex(thisClass->Properties, p);
@@ -1019,7 +1020,7 @@ void ParseBlock(ObjectBasicScript* obj)
 							con->Input = (char*)malloc(sizeof(char) * (strlen(classVar) + strlen(thisProp) + 2));
 							sprintf(con->Input, "%s.%s", classVar, thisProp);
 							con->Output = (char*)malloc(sizeof(char) * (strlen(classVar) + 100));
-							sprintf(con->Output, "$%s:%d", classVar, (p + 1));
+							sprintf(con->Output, "$%s:%lld", classVar, (p + 1));
 							List_Add(obj->CurrentClassProperties, con);
 						}
 						List* instanceMethods = ClassDef_GetInstanceMethods(thisClass);
@@ -1063,7 +1064,7 @@ void ParseBlock(ObjectBasicScript* obj)
 
 void resetCurrentVars(ObjectBasicScript* obj)
 {
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(obj->CurrentVars); i++)
 		free(List_StringAtIndex(obj->CurrentVars, i));
 	List_Delete(obj->CurrentVars);
@@ -1079,11 +1080,11 @@ void ParseClasses(ObjectBasicScript* obj)
 {
 	char* thisResult = (char*)malloc(sizeof(char) * 5000);
 	
-	int i = 0;
-	int e = 0;
-	int a = 0;
-	int b = 0;
-	int z = 0;
+	size_t i = 0;
+	size_t e = 0;
+	size_t a = 0;
+	size_t b = 0;
+	size_t z = 0;
 	for(i = 0; i < List_Count(obj->Classes); i++)
 	{
 		ClassDef* def = List_ClassDefAtIndex(obj->Classes, i);
@@ -1098,8 +1099,8 @@ void ParseClasses(ObjectBasicScript* obj)
 			AppendAsmLine(obj, mdef->Name);
 			if(mdef->IsStatic == 0)
 				AppendAsmLine(obj, "POPB $this");
-			int total = List_Count(mdef->Parameters);
-			int counter = 0;
+			size_t total = List_Count(mdef->Parameters);
+			size_t counter = 0;
 			for(counter = 0; counter < total; counter++)
 			{
 				FunctionParam* thisParam = List_FunctionParamAtIndex(mdef->Parameters, counter);
@@ -1128,7 +1129,7 @@ void ParseClasses(ObjectBasicScript* obj)
 				}
 				else
 				{
-					sprintf(thisResult, "POP @%d", counter + 1);
+					sprintf(thisResult, "POP @%lld", counter + 1);
 					AppendAsmLine(obj, thisResult);					
 				}
 				obj->RegisterCount++;
@@ -1161,8 +1162,8 @@ void ParseClasses(ObjectBasicScript* obj)
 
 void ParseFunctions(ObjectBasicScript* obj)
 {
-	int i = 0;
-	int e = 0;
+	size_t i = 0;
+	size_t e = 0;
 	for(i = 0; i < List_Count(obj->Functions); i++)
 	{
 		Function* func = List_FunctionAtIndex(obj->Functions, i);
@@ -1264,7 +1265,7 @@ EXPORT void LoadScript(ObjectBasicScript* obj, char* Script)
 		char* ProcScript = ParsePreProcessor(obj, Script);		
 		obj->AsmResult = (char*)malloc(sizeof(char) * 1);
 		obj->AsmResult[0] = '\0';
-		int i = 0;
+		size_t i = 0;
 		
 		List* Stage1 = Tokenizer_Tokenize(ProcScript);
 		List* Stage2 = Tokenizer_ParseExtended(Stage1);

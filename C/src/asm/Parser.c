@@ -41,7 +41,7 @@ List* Parse(char* Input)
 		pToks = SplitAndKeep(Input, " ,\n\r\'\"");
 	else
 		pToks = List_New();
-    int a = 0;
+    size_t a = 0;
 
     for(a = 0; a < pToks->Count; a++)
     {

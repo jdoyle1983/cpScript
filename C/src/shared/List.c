@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <List.h>
+#include <stdint.h>
 
 List* List_New(void)
 {
@@ -41,7 +42,7 @@ void List_Delete(List* list)
 	free(list);
 };
 
-int List_Count(List* list)
+size_t List_Count(List* list)
 {
 	return list->Count;
 };
@@ -65,32 +66,32 @@ void List_AddInFront(List* list, void* item)
 		list->ActualCount = list->ActualCount + 10;
 		list->Items = (void**)realloc(list->Items, sizeof(void*) * list->ActualCount);
 	}
-	int i = 0;
+	size_t i = 0;
 	for(i = list->Count - 1; i > 0; i--)
 		list->Items[i] = list->Items[i - 1];
 	list->Items[0] = item;
 };
 
-void* List_AtIndex(List* list, int idx)
+void* List_AtIndex(List* list, size_t idx)
 {
 	return list->Items[idx];
 };
 
 void List_Remove(List* list, void* item)
 {
-	int idx = -1;
-	int i = 0;
+	intmax_t idx = -1;
+	size_t i = 0;
 	for(i = 0; i < list->Count && idx == -1; i++)
 		if(list->Items[i] == item)
 			idx = i;
 	List_RemoveAt(list, idx);
 };
 
-void List_RemoveAt(List* list, int idx)
+void List_RemoveAt(List* list, size_t idx)
 {
-	if(idx >= 0 && idx < list->Count)
+	if(idx < list->Count)
 	{
-		int e = 0;
+		size_t e = 0;
 		for(e = idx; e < list->Count - 1; e++)
 			list->Items[e] = list->Items[e + 1];
 		list->Count--;
@@ -105,7 +106,7 @@ void List_RemoveAt(List* list, int idx)
 void List_Reverse(List* list)
 {
 	void** revList = (void**)malloc(sizeof(void*) * list->Count);
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < list->Count; i++)
 		revList[i] = list->Items[list->Count - (i + 1)];
 	free(list->Items);
@@ -120,7 +121,7 @@ void List_Clear(List* list)
     list->Items = (void**)malloc(0);
 };
 
-int List_IntAtIndex(List* list, int idx)
+int List_IntAtIndex(List* list, size_t idx)
 {
 	return *((int*)List_AtIndex(list, idx));
 };

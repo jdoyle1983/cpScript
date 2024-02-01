@@ -42,7 +42,7 @@ List* BlockBuilder_ConvertToBlocks(List* Toks)
 	List* Blocks = List_New();
 	List* Current = List_New();
 
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(Toks); i++)
 	{
 		if((List_TokenAtIndex(Toks, i))->Type == Eol)

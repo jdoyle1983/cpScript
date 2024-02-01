@@ -115,7 +115,7 @@ List* Tokenizer_Tokenize(char* SrcScript)
 	QuoteString[0] = '\0';
 	char QuoteChar = '\"';
 	
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < List_Count(cToks); i++)
 	{
 		char* t = List_StringAtIndex(cToks, i);
@@ -260,7 +260,7 @@ List* Tokenizer_Tokenize(char* SrcScript)
 List* Tokenizer_ParseExtended(List* Input)
 {
 	List* Toks = List_New();
-	int count = 0;
+	size_t count = 0;
 	for(count = 0; count < List_Count(Input); count++)
 	{
 		Token* t = List_TokenAtIndex(Input, count);

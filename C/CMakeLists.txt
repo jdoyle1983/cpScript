@@ -63,6 +63,7 @@ set_target_properties(StaticObjLibrary PROPERTIES SUFFIX ".a")
 
 target_include_directories(StaticObjLibrary PUBLIC include include/obj include/shared)
 
+
 add_library(SharedObjLibrary SHARED
         src/obj/ObjBas_BlockBuilder.c
         src/obj/ObjBas_ClassDef.c
@@ -145,3 +146,39 @@ add_executable(makeExec
 
 target_link_libraries(makeExec StaticAsmLibrary StaticObjLibrary StaticStandardLibrary "m")
 target_include_directories(makeExec PUBLIC include)
+
+
+
+### - Library Files for "includes"
+add_custom_target(StdObjConsoleIO ALL DEPENDS ${PROJECT_SOURCE_DIR}/../Build/Lib/ConsoleIO.obh)
+add_custom_target(StdObjFileIO ALL DEPENDS ${PROJECT_SOURCE_DIR}/../Build/Lib/FileIO.obh)
+add_custom_target(StdObjMath ALL DEPENDS ${PROJECT_SOURCE_DIR}/../Build/Lib/Math.obh)
+add_custom_target(StdObjUtilities ALL DEPENDS ${PROJECT_SOURCE_DIR}/../Build/Lib/Utilities.obh)
+
+add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/../Build/Lib/ConsoleIO.obh
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/ConsoleIO.obh
+        ${PROJECT_SOURCE_DIR}/../Build/Lib/ConsoleIO.obh
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/ConsoleIO.obh
+)
+
+add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/../Build/Lib/FileIO.obh
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/FileIO.obh
+        ${PROJECT_SOURCE_DIR}/../Build/Lib/FileIO.obh
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/FileIO.obh
+)
+
+add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/../Build/Lib/Math.obh
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/Math.obh
+        ${PROJECT_SOURCE_DIR}/../Build/Lib/Math.obh
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/Math.obh
+)
+
+add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/../Build/Lib/Utilities.obh
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/Utilities.obh
+        ${PROJECT_SOURCE_DIR}/../Build/Lib/Utilities.obh
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ObjectBasicHeaders/Utilities.obh
+)

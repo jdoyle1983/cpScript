@@ -55,7 +55,7 @@ int MemoryBlockSetHeader_GetOffset(MemoryBlockSetHeader* Header, int Idx)
 
 void MemoryBlockSetHeader_Delete(MemoryBlockSetHeader* Header)
 {
-	int i = 0;
+	size_t i = 0;
 	for(i = 0; i < Header->IndexOffset->Count; i++)
 		free(Header->IndexOffset->Items[i]);
     List_Delete(Header->IndexOffset);

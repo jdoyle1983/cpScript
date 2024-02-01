@@ -30,7 +30,7 @@ char* StrToLowTrim(char* SrcStr);
 char* StrLeft(char* SrcStr);
 char* StrRight(char* SrcStr);
 char* StrTrim(char* SrcStr);
-char* SubStr(char* Src, int Start, int End);
+char* SubStr(char* Src, size_t Start, size_t End);
 List* Split(char* SrcStr, char* DelimChars);
 List* SplitAndKeep(char* SrcStr, char* DelimChars);
 char* StrToLower(char* SrcStr);
