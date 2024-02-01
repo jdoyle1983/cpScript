@@ -1,6 +1,7 @@
-
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{A76C3B3E-D827-4FCD-A1CD-94F3C15F9B0E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cpScriptTest.Net", "cpScriptTest.Net\cpScriptTest.Net.csproj", "{18C70325-2F07-4687-ACDB-5D4F92F8269A}"
@@ -17,10 +18,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libCpScript.Net.StdLib", "l
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
 		Debug x86|Any CPU = Debug x86|Any CPU
+		Debug|Any CPU = Debug|Any CPU
 		Release x86|Any CPU = Release x86|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{18C70325-2F07-4687-ACDB-5D4F92F8269A}.Debug x86|Any CPU.ActiveCfg = Debug x86|Any CPU
@@ -56,6 +57,9 @@ Global
 		{C2D74C98-942E-404F-9A7F-3C67FAB962C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2D74C98-942E-404F-9A7F-3C67FAB962C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{18C70325-2F07-4687-ACDB-5D4F92F8269A} = {A76C3B3E-D827-4FCD-A1CD-94F3C15F9B0E}
 		{3E22C42D-F84A-4466-932F-AF5326DFDBE2} = {37CA7073-D220-4DF4-8C1B-EFD581EF5AEB}
@@ -63,10 +67,10 @@ Global
 		{481C2BC8-C6E5-4273-BEAB-1F76CDA83C81} = {37CA7073-D220-4DF4-8C1B-EFD581EF5AEB}
 		{C2D74C98-942E-404F-9A7F-3C67FAB962C3} = {481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}
 	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0669C3F7-9A5B-4645-A11B-3FE60D4C351A}
+	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = cpScriptTest.Net\cpScriptTest.Net.csproj
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
