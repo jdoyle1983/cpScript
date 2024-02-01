@@ -31,3 +31,9 @@
 /CSharp/cpScriptTest.Net/obj/cpScriptTest.Net/project.assets.json
 /CSharp/cpScriptTest.Net/obj/cpScriptTest.Net/project.nuget.cache
 /CSharp/Backup/cpScript.sln
+/C/cmake-build-debug/
+/C/cmake-build-release/
+/Build/Fib.asm
+/Build/Fib.cmp
+*.packagespec.json
+rider.project.*.info
