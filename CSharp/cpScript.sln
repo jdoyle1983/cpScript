@@ -1,19 +1,19 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{A76C3B3E-D827-4FCD-A1CD-94F3C15F9B0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cpScriptTest.Net", "cpScriptTest.Net\cpScriptTest.Net.csproj", "{18C70325-2F07-4687-ACDB-5D4F92F8269A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cpScriptTest.Net", "cpScriptTest.Net\cpScriptTest.Net.csproj", "{18C70325-2F07-4687-ACDB-5D4F92F8269A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{37CA7073-D220-4DF4-8C1B-EFD581EF5AEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.Asm", "libCpScript.Net.Asm\libCpScript.Net.Asm.csproj", "{3E22C42D-F84A-4466-932F-AF5326DFDBE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libCpScript.Net.Asm", "libCpScript.Net.Asm\libCpScript.Net.Asm.csproj", "{3E22C42D-F84A-4466-932F-AF5326DFDBE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.ObjectBasic", "libCpScript.Net.ObjectBasic\libCpScript.Net.ObjectBasic.csproj", "{53631606-901F-4C0A-8D43-1A828B8094F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libCpScript.Net.ObjectBasic", "libCpScript.Net.ObjectBasic\libCpScript.Net.ObjectBasic.csproj", "{53631606-901F-4C0A-8D43-1A828B8094F5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StdLib", "StdLib", "{481C2BC8-C6E5-4273-BEAB-1F76CDA83C81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libCpScript.Net.StdLib", "libCpScript.Net.StdLib\libCpScript.Net.StdLib.csproj", "{C2D74C98-942E-404F-9A7F-3C67FAB962C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libCpScript.Net.StdLib", "libCpScript.Net.StdLib\libCpScript.Net.StdLib.csproj", "{C2D74C98-942E-404F-9A7F-3C67FAB962C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

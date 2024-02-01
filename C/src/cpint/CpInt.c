@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     if(srcBuffer[0] != 'C' || srcBuffer[1] != 'A' || srcBuffer[2] != 'C')
     {
         void* State = State_New(srcBuffer);
-        cmpBuffer = State_Compile(State, &cmpLen);
+        cmpBuffer = (void*)State_Compile(State, &cmpLen);
         didCompile = 1;
         State_Delete(State);
     }
@@ -91,7 +91,8 @@ int main(int argc, char* argv[])
         cmpLen = srcLen;
     }
 
-    void* State = State_NewFromCompiled(cmpBuffer, cmpLen);
+    void* State = (void*)State_NewFromCompiled(cmpBuffer, cmpLen);
+
     if(shouldRun == 1)
     {
         CpStdLib_InstallConsoleIO(State);

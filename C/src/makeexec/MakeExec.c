@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 #include <libCpScript.Asm.h>
 #include <libCpScript.ObjectBasic.h>
 
@@ -66,7 +67,7 @@ int main(int argc, char* argv[])
 			
 				void* State = State_New(srcText);
 				
-				binData = State_Compile(State, &binSize);
+				binData = (void*)State_Compile(State, &binSize);
 				State_Delete(State);
 			}
 			else
@@ -78,7 +79,7 @@ int main(int argc, char* argv[])
 				ObjScript_Load(Script, srcText);
 				void* State = State_New(ObjScript_GetAsm(Script));
 						
-				binData = State_Compile(State, &binSize);
+				binData = (void*)State_Compile(State, &binSize);
 				State_Delete(State);		
 				ObjScript_Delete(Script);
 			}

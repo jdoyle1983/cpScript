@@ -1,24 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{18C70325-2F07-4687-ACDB-5D4F92F8269A}</ProjectGuid>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
-    <RootNamespace>cpScriptTest.Net</RootNamespace>
-    <AssemblyName>cpScriptTest.Net</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyTitle>cpScriptTest.Net</AssemblyTitle>
+    <AssemblyVersion>1.0.*</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
     <OutputPath>..\..\Build</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
@@ -26,51 +15,31 @@
     <DebugType>none</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>..\..\Build</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug x86|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>..\..\Build</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release x86|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>..\..\Build</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <ProjectReference Include="..\libCpScript.Net.Asm\libCpScript.Net.Asm.csproj" />
+    <ProjectReference Include="..\libCpScript.Net.ObjectBasic\libCpScript.Net.ObjectBasic.csproj" />
+    <ProjectReference Include="..\libCpScript.Net.StdLib\libCpScript.Net.StdLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Main.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libCpScript.Net.Asm\libCpScript.Net.Asm.csproj">
-      <Project>{3E22C42D-F84A-4466-932F-AF5326DFDBE2}</Project>
-      <Name>libCpScript.Net.Asm</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\libCpScript.Net.ObjectBasic\libCpScript.Net.ObjectBasic.csproj">
-      <Project>{53631606-901F-4C0A-8D43-1A828B8094F5}</Project>
-      <Name>libCpScript.Net.ObjectBasic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\libCpScript.Net.StdLib\libCpScript.Net.StdLib.csproj">
-      <Project>{C2D74C98-942E-404F-9A7F-3C67FAB962C3}</Project>
-      <Name>libCpScript.Net.StdLib</Name>
-    </ProjectReference>
+    <Content Include="Directory.Build.props" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,3 +1,5 @@
+.idea/
+CSharp/.idea/
 /Build/Lib/ConsoleIO.obh
 /Build/Lib/FileIO.obh
 /Build/Lib/Math.obh

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 #include <libCpScript.Asm.h>
 #include <CpStdLib.h>
 
@@ -60,7 +61,7 @@ int main(int argc, char* argv[])
 	free(This1);
 	free(This2);
 	
-	void* State = State_NewFromCompiled(b, RealSize);
+	void* State = (void*)State_NewFromCompiled(b, RealSize);
 
 	CpStdLib_InstallConsoleIO(State);
 	CpStdLib_InstallFileIO(State);
